@@ -1,16 +1,11 @@
 const BANNED_WORDS = [
-  "death", "die", "died", "dead", "dying", "kill", "killed", "murder",
-  "blood", "gore", "bleed", "wound", "stab", "shoot", "gun", "weapon",
-  "violence", "fight", "attack", "hurt", "pain", "suffer",
-  "sex", "sexual", "naked", "nude", "body part",
-  "drug", "alcohol", "beer", "wine", "drunk", "smoke", "vape",
-  "hate", "racist", "bully", "bullying", "abuse",
-  "hell", "damn", "crap", "idiot", "stupid",
-  "scary", "horror", "monster", "terrify", "frightening", "nightmare",
-  "bomb", "explosion", "fire", "burn",
-  "religion", "god", "pray", "church", "mosque", "temple",
-  "political", "president", "election", "vote",
-  "personal information", "address", "phone", "email", "password",
+  "gore", "bleed", "stabbed", "gunshot", "murder",
+  "sexual", "naked", "nude",
+  "alcohol", "beer", "wine", "drunk", "vaping",
+  "racist", "bullying",
+  "profanity", "explicit",
+  "self-harm", "suicide",
+  "nightmare", "horrifying", "terrifying",
 ];
 
 export function checkSafety(text: string): boolean {
