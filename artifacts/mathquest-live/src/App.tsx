@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useStartGame, useTakeTurn, useGetEnding } from "@workspace/api-client-react";
 import { GameState, INITIAL_STATE, Hero } from "./types";
 import { generateMathProblem, generateRecoveryProblem } from "./mathEngine";
+import { playCorrect, playWrong, playClick, playTransition } from "./lib/sounds";
 
 import { TitleScreen } from "./pages/TitleScreen";
 import { SetupScreen } from "./pages/SetupScreen";
@@ -36,8 +37,9 @@ function GameApp() {
   const getEndingMutation = useGetEnding();
 
   const handleStart = (hero: Hero, difficulty: string, adventureSeed: string) => {
+    playTransition();
     setState(s => ({ ...s, hero, difficulty, adventureSeed, isLoading: true, screen: 'game' }));
-    
+
     startGameMutation.mutate(
       { data: { hero, difficulty, adventureSeed, maxTurns: state.maxTurns } },
       {
@@ -67,6 +69,7 @@ function GameApp() {
   };
 
   const handleChoiceSelect = (choiceId: string, choiceLabel: string) => {
+    playClick();
     setState(s => ({
       ...s,
       chosenAction: choiceLabel,
@@ -79,12 +82,12 @@ function GameApp() {
     if (!prob) return;
 
     if (answer === prob.correctAnswer) {
-      // Correct!
+      playCorrect();
       const newMathSolved = state.mathSolved + 1;
-      
-      setState(s => ({ 
-        ...s, 
-        isLoading: true, 
+
+      setState(s => ({
+        ...s,
+        isLoading: true,
         currentMathProblem: null,
         wrongAttempts: 0,
         showHint: false,
@@ -93,7 +96,6 @@ function GameApp() {
       }));
 
       if (state.turn >= state.maxTurns) {
-        // Ending
         getEndingMutation.mutate(
           { data: {
             hero: state.hero,
@@ -122,13 +124,12 @@ function GameApp() {
                 screen: 'ending',
                 endingTitle: "A Triumphant Return",
                 endingText: "You have completed your journey through the magical lands and returned safely home, wiser and stronger than before.",
-                badge: "🌟 Star of Logic",
+                badge: "Star of Logic",
               }));
             }
           }
         );
       } else {
-        // Next Turn
         const nextTurn = state.turn + 1;
         takeTurnMutation.mutate(
           { data: {
@@ -170,7 +171,7 @@ function GameApp() {
       }
 
     } else {
-      // Incorrect
+      playWrong();
       const attempts = state.wrongAttempts + 1;
       if (attempts >= 2 && !state.recoveryMode) {
         setState(s => ({
@@ -193,23 +194,23 @@ function GameApp() {
   return (
     <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/30">
       {state.screen === 'title' && (
-        <TitleScreen onBegin={() => setState(s => ({ ...s, screen: 'setup' }))} />
+        <TitleScreen onBegin={() => { playTransition(); setState(s => ({ ...s, screen: 'setup' })); }} />
       )}
       {state.screen === 'setup' && (
         <SetupScreen onStart={handleStart} />
       )}
       {state.screen === 'game' && (
-        <GameScreen 
-          state={state} 
-          onChoiceSelect={handleChoiceSelect} 
-          onMathAnswer={handleMathAnswer} 
+        <GameScreen
+          state={state}
+          onChoiceSelect={handleChoiceSelect}
+          onMathAnswer={handleMathAnswer}
         />
       )}
       {state.screen === 'ending' && (
-        <EndingScreen 
-          state={state} 
+        <EndingScreen
+          state={state}
           onPlayAgain={handlePlayAgain}
-          onNewHero={() => setState(INITIAL_STATE)}
+          onNewHero={() => { playTransition(); setState(INITIAL_STATE); }}
         />
       )}
     </div>
