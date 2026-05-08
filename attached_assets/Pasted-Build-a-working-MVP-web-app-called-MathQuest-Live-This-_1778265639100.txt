@@ -1,0 +1,615 @@
+Build a working MVP web app called MathQuest Live.
+
+This is a classroom-safe AI-powered math adventure game for 4th grade students. The app should generate a fresh short adventure each time, but the student should only interact through preset choices and math answers. No student freeform story input.
+
+The core idea:
+A student chooses a hero setup, then plays an 8-turn adventure. Each turn:
+1. The AI narrates a short scene.
+2. The AI provides exactly 3 safe action choices.
+3. The student chooses one action.
+4. The app generates a math problem based on selected difficulty.
+5. The student must answer correctly to continue.
+6. After 8 successful turns, the AI generates a short ending.
+
+The app should be portable and not tied to Replit-specific deployment. Build it as a normal Vite frontend + Node/Express backend that can later be Dockerized and deployed on an Unraid server behind NGINX Proxy Manager.
+
+Use this stack:
+- Frontend: Vite + vanilla JavaScript
+- Backend: Node.js + Express
+- AI provider: OpenAI API from the backend only
+- Styling: regular CSS or Tailwind if configured properly, but do not rely on Canva or external app builders
+- No database
+- No login
+- No persistent saved student data
+- No student accounts
+- No retained game history after page refresh
+
+Important security requirement:
+The OpenAI API key must never be exposed in frontend code.
+Use an environment variable on the server:
+OPENAI_API_KEY
+
+Create a .env.example file with:
+OPENAI_API_KEY=your_api_key_here
+PORT=3000
+
+Do not commit or hardcode a real API key.
+
+Project structure should be clean and maintainable:
+
+mathquest-live/
+├─ package.json
+├─ README.md
+├─ .env.example
+├─ client/
+│  ├─ index.html
+│  └─ src/
+│     ├─ main.js
+│     ├─ styles.css
+│     ├─ api.js
+│     ├─ state.js
+│     ├─ setupScreen.js
+│     ├─ gameScreen.js
+│     ├─ mathEngine.js
+│     ├─ uiHelpers.js
+│     └─ data.js
+└─ server/
+   ├─ index.js
+   ├─ openaiClient.js
+   ├─ storyPrompt.js
+   ├─ storySchema.js
+   ├─ safety.js
+   └─ gameRules.js
+
+If you prefer slightly different file names, that is acceptable, but keep frontend, backend, story prompt, safety, and math generation separated.
+
+FRONTEND REQUIREMENTS
+
+Create a polished but simple single-page app.
+
+Screens:
+1. Title screen
+2. Hero setup screen
+3. Active adventure screen
+4. Ending screen
+
+Title screen:
+- App title: MathQuest Live
+- Subtitle: A new math adventure every time.
+- Button: Begin Quest
+
+Hero setup screen:
+Students must choose from preset options only.
+
+Hero name options:
+- Astra
+- Kael
+- Nova
+- Mira
+- Jax
+- Luna
+- Orion
+- Sage
+- Zara
+- Theo
+- Elara
+- Milo
+
+Pronoun options:
+- she/her
+- he/him
+- they/them
+
+Ancestry/species options:
+Use “ancestry” or “species,” not “race.”
+Options:
+- Human
+- Elf
+- Dwarf
+- Dragonborn
+- Fae
+- Robot
+- Merfolk
+- Beastfolk
+- Starborn
+
+Class options:
+- Wizard
+- Warrior
+- Explorer
+- Rogue
+- Inventor
+- Healer
+- Beast Tamer
+- Elementalist
+
+Difficulty options:
+- Easy
+- Medium
+- Hard
+- Extreme
+
+Adventure seed/theme options:
+Allow either “Random” or a preset list:
+- The Sky Temple
+- The Crystal Forest
+- The Clockwork Volcano
+- The Moonlit Library
+- The Lost Reef City
+- The Floating Market
+- The Dragon Egg Rescue
+- The Puzzle Pyramid
+- The Candy Comet
+- The Tiny Giant’s Garden
+- The Museum After Midnight
+- The Friendly Ghost Lighthouse
+
+No student typing for character names or story actions.
+All inputs should be dropdowns, cards, or buttons.
+
+Active adventure screen:
+Show:
+- Hero name/class summary
+- Difficulty
+- Turn progress, such as Turn 3 of 8
+- Math solved count
+- Current scene title
+- Current story text
+- Three action choice buttons
+- Math problem area that appears after an action is chosen
+- Feedback for correct/incorrect answers
+
+Game flow:
+1. When the adventure starts, call the backend to generate the intro scene.
+2. Display scene and 3 choices.
+3. When the student picks a choice, hide/disable the choices and show a math problem.
+4. Student answers the math problem by clicking one of four multiple-choice answer buttons.
+5. If correct:
+   - increment turn count and mathSolved
+   - call backend for next scene using the selected choice, story summary, hero info, and turn number
+6. If incorrect:
+   - show friendly feedback
+   - allow another attempt
+7. After two incorrect attempts:
+   - show a short hint
+   - generate or reveal a simpler recovery problem
+   - once recovery problem is solved, allow story to continue
+8. After 8 successful turns, call backend for an ending scene and show the Ending screen.
+
+Do not allow students to progress the story without solving math.
+
+Ending screen:
+Show:
+- Ending title
+- Ending story text
+- Badge earned
+- Math challenges solved
+- Button: Play Again
+- Button: Choose New Hero
+
+Game state:
+Keep game state in browser memory only.
+If the page refreshes, the game resets.
+No localStorage for MVP.
+No database.
+
+MATH ENGINE REQUIREMENTS
+
+The math should be generated by the app, not by AI.
+Create a frontend mathEngine.js or shared math generator.
+
+Each math problem should have:
+- prompt
+- 4 answer choices
+- correct answer
+- difficulty
+- optional skill label
+
+Use deterministic code to calculate the correct answer.
+
+Difficulty guidelines:
+
+Easy:
+- addition within 1,000
+- subtraction within 1,000
+- basic multiplication facts 0–12
+- simple place value
+Examples:
+“What is 347 + 128?”
+“What is 9 × 6?”
+“What is the value of the 7 in 4,732?”
+
+Medium:
+- multi-digit multiplication by one digit
+- division facts and simple remainders
+- area/perimeter of rectangles
+- equivalent fractions
+Examples:
+“What is 34 × 6?”
+“A rectangle is 8 units long and 5 units wide. What is its area?”
+“Which fraction is equivalent to 2/4?”
+
+Hard:
+- multi-step word problems
+- larger multiplication
+- division with remainders
+- fraction comparison
+- angle and geometry basics
+Examples:
+“A bridge has 7 sections with 24 stones each. 18 stones crack. How many good stones remain?”
+“Which is greater: 3/4 or 5/8?”
+
+Extreme:
+- multi-step problems
+- mixed operations
+- harder fraction/decimal reasoning
+- more challenging geometry
+Examples:
+“A machine has 6 gears. Each gear has 28 teeth. If 37 teeth are damaged, how many working teeth remain?”
+“A trail is 3.6 miles long. The hero walks 1.25 miles, then 0.8 miles. How much is left?”
+
+Keep problems appropriate for strong 4th grade math.
+Avoid algebra beyond simple missing-factor style problems.
+Avoid decimals in Easy.
+Avoid negative numbers.
+
+Multiple-choice answers:
+- Always include the correct answer.
+- Generate three plausible wrong answers.
+- Shuffle choices.
+- Do not allow duplicate choices.
+
+AI STORY REQUIREMENTS
+
+The AI should only generate:
+- scene title
+- short story text
+- exactly 3 action choices
+- updated story summary
+- ending title/text when ending
+
+The AI should never generate or solve math problems.
+
+Use the backend for all AI calls.
+
+Use OpenAI’s API from server/openaiClient.js.
+Use a modern efficient model suitable for short structured story generation.
+If unsure, use a configurable model constant in server/openaiClient.js, such as:
+const STORY_MODEL = process.env.OPENAI_MODEL || "gpt-4.1-mini";
+
+If the exact API syntax is uncertain, write the code cleanly and document where the OpenAI API call happens.
+
+Use structured JSON output.
+The backend should return JSON to the frontend in this format for a story turn:
+
+{
+  "sceneTitle": "The Gear of Thunder",
+  "storyText": "Nova adjusted the glowing gear as clouds swirled around the Sky Temple...",
+  "choices": [
+    { "id": "A", "label": "Inspect the glowing gear mechanism" },
+    { "id": "B", "label": "Ask the storm sprite what it needs" },
+    { "id": "C", "label": "Search the balcony for another path" }
+  ],
+  "storySummary": "Nova entered the Sky Temple and discovered a broken weather engine connected to a nervous storm sprite.",
+  "safetyRating": "kid_safe"
+}
+
+For ending:
+
+{
+  "endingTitle": "The Inventor Who Calmed the Sky",
+  "endingText": "With one final clever adjustment, Nova balanced the temple engine...",
+  "badge": "Storm Solver",
+  "safetyRating": "kid_safe"
+}
+
+Backend API routes:
+
+POST /api/game/start
+Input:
+{
+  "hero": {
+    "name": "Nova",
+    "pronouns": "she/her",
+    "ancestry": "Starborn",
+    "className": "Inventor"
+  },
+  "difficulty": "medium",
+  "adventureSeed": "The Sky Temple",
+  "maxTurns": 8
+}
+
+Output:
+story turn JSON
+
+POST /api/game/turn
+Input:
+{
+  "hero": {...},
+  "difficulty": "medium",
+  "adventureSeed": "The Sky Temple",
+  "turn": 3,
+  "maxTurns": 8,
+  "storySummary": "Previous short summary here",
+  "chosenAction": "Inspect the glowing gear mechanism",
+  "mathResult": "correct"
+}
+
+Output:
+story turn JSON
+
+POST /api/game/ending
+Input:
+{
+  "hero": {...},
+  "difficulty": "medium",
+  "adventureSeed": "The Sky Temple",
+  "turn": 8,
+  "maxTurns": 8,
+  "storySummary": "Short summary of completed adventure",
+  "mathSolved": 8
+}
+
+Output:
+ending JSON
+
+BACKEND SAFETY REQUIREMENTS
+
+The game must be classroom-safe for 4th grade students, ages 9–11.
+
+The AI prompt must include strict safety rules:
+- no gore
+- no graphic violence
+- no death
+- no romance
+- no profanity
+- no horror
+- no realistic weapons harming people
+- no bullying
+- no stereotypes
+- no real-world politics
+- no real-world religion
+- no drugs, alcohol, smoking, or vaping
+- no sexual content
+- no self-harm
+- no asking students for personal information
+- no references to real student data
+- no freeform instructions for real-world risky actions
+
+Allowed adventure danger:
+- cartoon adventure danger
+- puzzles
+- magical obstacles
+- friendly monsters
+- storms
+- locked doors
+- unstable machines
+- mysteries
+- dramatic but non-graphic peril
+
+The story should resolve problems through:
+- math
+- observation
+- kindness
+- creativity
+- teamwork
+- courage
+- patience
+- problem-solving
+
+Ancestry/species must only affect appearance and fantasy flavor.
+It must never imply intelligence, morality, behavior, personality, bravery, or ability.
+Gender/pronouns must only affect pronoun use.
+
+The AI should write in a fun, adventurous, middle-grade tone.
+Think classroom-safe fantasy/sci-fi adventure.
+Keep each story scene short: around 100–180 words.
+Choices should be short and clear.
+Each choice should be safe and classroom-appropriate.
+
+The backend should validate AI output before sending it to the frontend:
+- Must have sceneTitle
+- Must have storyText
+- Must have exactly 3 choices
+- Each choice must have id A/B/C
+- Each choice label must be under 90 characters
+- storyText must not be too long
+- safetyRating must equal "kid_safe"
+
+If AI output is invalid or unsafe:
+Return a safe fallback scene instead of failing.
+
+Fallback scene:
+{
+  "sceneTitle": "The Puzzle Path",
+  "storyText": "The path ahead glows with gentle puzzle magic. Your hero studies the symbols and notices three safe ways forward.",
+  "choices": [
+    { "id": "A", "label": "Study the symbols carefully" },
+    { "id": "B", "label": "Ask a friendly guide for help" },
+    { "id": "C", "label": "Look for a hidden pattern" }
+  ],
+  "storySummary": "The hero is following a safe puzzle path and solving challenges.",
+  "safetyRating": "kid_safe"
+}
+
+Fallback ending:
+{
+  "endingTitle": "The Puzzle Champion",
+  "endingText": "With focus, courage, and careful thinking, your hero solves the final challenge and brings the adventure to a joyful end.",
+  "badge": "Puzzle Champion",
+  "safetyRating": "kid_safe"
+}
+
+Add a simple custom safety filter in server/safety.js.
+It should check for obvious banned words/topics and reject unsafe output.
+It does not need to be perfect, but it should provide an extra layer.
+
+Optional:
+If possible, include OpenAI moderation checking in a clearly separated function, but do not make the whole app fail if moderation is unavailable. If moderation fails, use the fallback scene.
+
+STORY PROMPT REQUIREMENTS
+
+Create server/storyPrompt.js with functions:
+- buildStartPrompt(gameData)
+- buildTurnPrompt(gameData)
+- buildEndingPrompt(gameData)
+
+The prompt should remind the AI:
+- This is for a 4th grade classroom
+- Use exactly 3 choices
+- No freeform student input
+- Do not generate math
+- Stay inside the chosen adventure seed
+- Keep it safe, short, and exciting
+- Return JSON only
+
+Example system instruction to include:
+
+“You are the story engine for MathQuest Live, a classroom-safe math adventure game for 4th grade students. Write short, exciting, kid-safe scenes. The student can only choose from buttons and must solve math to continue. Never generate math problems. Never ask for personal information. Return only valid JSON matching the required format.”
+
+ADVENTURE SEED REQUIREMENTS
+
+Create data for adventure seeds.
+Each seed should include:
+- title
+- setting
+- objective
+- safe creatures or helpers
+- forbidden twists to avoid
+
+Examples:
+
+The Sky Temple:
+setting: A floating temple above the clouds
+objective: Repair the weather engine before the storm spreads
+helpers: storm sprite, cloud turtle, bronze owl
+avoid: falling deaths, lightning injuries, sacrifice
+
+The Crystal Forest:
+setting: A forest of glowing crystal trees
+objective: Restore the missing light to the forest heart
+helpers: crystal fox, moss giant, singing beetles
+avoid: scary body horror, cursed possession
+
+The Clockwork Volcano:
+setting: A volcano filled with ancient gears and steam pipes
+objective: Cool the overheating machine before it erupts harmlessly into sparkles and steam
+helpers: gear goblin, lava salamander, clockwork bird
+avoid: burns, death, destruction of towns
+
+The Moonlit Library:
+setting: A magical library that rearranges itself at night
+objective: Find the lost chapter before sunrise
+helpers: owl librarian, book mouse, floating candle
+avoid: horror, ghosts that frighten students
+
+The Lost Reef City:
+setting: An underwater city protected by glowing coral
+objective: Help repair the coral gate before the current changes
+helpers: merfolk guide, puzzle crab, lantern fish
+avoid: drowning, scary sea monsters
+
+The Friendly Ghost Lighthouse:
+setting: A lighthouse guided by a friendly ghost keeper
+objective: Relight the beacon so ships can find the safe harbor
+helpers: friendly ghost, seagull scout, moon moth
+avoid: horror, death-focused ghost story
+
+The AI should use the seed as inspiration, not as a rigid script.
+
+UX / DESIGN REQUIREMENTS
+
+The UI should feel like a fantasy/sci-fi adventure:
+- dark magical background
+- readable cards
+- large buttons
+- clear progress
+- kid-friendly but not babyish
+- works on desktop, Chromebook, and tablet sizes
+- no tiny text
+- no clutter
+
+Use accessible colors and good contrast.
+Buttons should be large enough for students.
+Math answer choices should be obvious and easy to click.
+
+Add a loading state when waiting for AI:
+- “The narrator is writing the next chapter...”
+- Disable buttons while loading
+
+Add error states:
+If backend fails:
+- Show fallback scene
+- Do not crash the app
+
+README REQUIREMENTS
+
+Create a README.md explaining:
+- What the app is
+- How to install dependencies
+- How to add OPENAI_API_KEY
+- How to run locally
+- How to build
+- Project structure
+- Safety design choices
+- That no student data is saved
+
+Commands should include:
+npm install
+npm run dev
+npm run build
+npm start
+
+PACKAGE REQUIREMENTS
+
+Make package.json scripts simple:
+- dev: run both client and server in development, using concurrently if needed
+- dev:client
+- dev:server
+- build: build the frontend
+- start: start the Express server
+
+The Express server should serve the built frontend in production if possible.
+In development, frontend can run on Vite and proxy /api to the backend.
+
+Add a Vite proxy so frontend API calls to /api go to localhost:3000 in development.
+
+ACCEPTANCE TESTS
+
+After building, the app should do this:
+
+1. User opens the app.
+2. Clicks Begin Quest.
+3. Chooses:
+   - name: Nova
+   - pronouns: she/her
+   - ancestry: Starborn
+   - class: Inventor
+   - difficulty: Medium
+   - adventure: The Sky Temple
+4. Clicks Start Adventure.
+5. App calls backend and shows an AI-generated intro scene.
+6. App shows exactly 3 action buttons.
+7. User clicks an action.
+8. App shows a math problem with 4 multiple-choice answers.
+9. User answers correctly.
+10. App advances to the next AI-generated scene.
+11. After 8 successful turns, app shows an ending.
+12. Play Again resets the game.
+
+Also verify:
+- No OpenAI API key appears in frontend files.
+- No freeform story input exists.
+- Refreshing the page resets the game.
+- AI failure uses fallback scene.
+- Invalid AI output uses fallback scene.
+- The game does not continue until math is solved.
+
+Do not overbuild.
+Do not add accounts.
+Do not add a database.
+Do not add multiplayer.
+Do not add image generation.
+Do not add voice.
+Do not add analytics.
+Build the core playable loop first.

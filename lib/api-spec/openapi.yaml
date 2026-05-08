@@ -3,13 +3,15 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: MathQuest Live API specification
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: game
+    description: MathQuest Live game operations
 paths:
   /healthz:
     get:
@@ -24,6 +26,67 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /game/start:
+    post:
+      operationId: startGame
+      tags: [game]
+      summary: Start a new game adventure
+      description: Generates the first scene of the adventure
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StartGameBody"
+      responses:
+        "200":
+          description: First story scene
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StoryTurnResponse"
+
+  /game/turn:
+    post:
+      operationId: takeTurn
+      tags: [game]
+      summary: Advance the adventure by one turn
+      description: Generates the next scene based on the chosen action
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TakeTurnBody"
+      responses:
+        "200":
+          description: Next story scene
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StoryTurnResponse"
+
+  /game/ending:
+    post:
+      operationId: getEnding
+      tags: [game]
+      summary: Generate the adventure ending
+      description: Generates the final ending scene after 8 turns
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GetEndingBody"
+      responses:
+        "200":
+          description: Adventure ending
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EndingResponse"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +97,141 @@ components:
       required:
         - status
 
+    HeroInfo:
+      type: object
+      properties:
+        name:
+          type: string
+        pronouns:
+          type: string
+        ancestry:
+          type: string
+        className:
+          type: string
+      required:
+        - name
+        - pronouns
+        - ancestry
+        - className
+
+    StoryChoice:
+      type: object
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+      required:
+        - id
+        - label
+
+    StoryTurnResponse:
+      type: object
+      properties:
+        sceneTitle:
+          type: string
+        storyText:
+          type: string
+        choices:
+          type: array
+          items:
+            $ref: "#/components/schemas/StoryChoice"
+        storySummary:
+          type: string
+        safetyRating:
+          type: string
+      required:
+        - sceneTitle
+        - storyText
+        - choices
+        - storySummary
+        - safetyRating
+
+    EndingResponse:
+      type: object
+      properties:
+        endingTitle:
+          type: string
+        endingText:
+          type: string
+        badge:
+          type: string
+        safetyRating:
+          type: string
+      required:
+        - endingTitle
+        - endingText
+        - badge
+        - safetyRating
+
+    StartGameBody:
+      type: object
+      properties:
+        hero:
+          $ref: "#/components/schemas/HeroInfo"
+        difficulty:
+          type: string
+        adventureSeed:
+          type: string
+        maxTurns:
+          type: integer
+      required:
+        - hero
+        - difficulty
+        - adventureSeed
+        - maxTurns
+
+    TakeTurnBody:
+      type: object
+      properties:
+        hero:
+          $ref: "#/components/schemas/HeroInfo"
+        difficulty:
+          type: string
+        adventureSeed:
+          type: string
+        turn:
+          type: integer
+        maxTurns:
+          type: integer
+        storySummary:
+          type: string
+        chosenAction:
+          type: string
+        mathResult:
+          type: string
+      required:
+        - hero
+        - difficulty
+        - adventureSeed
+        - turn
+        - maxTurns
+        - storySummary
+        - chosenAction
+        - mathResult
+
+    GetEndingBody:
+      type: object
+      properties:
+        hero:
+          $ref: "#/components/schemas/HeroInfo"
+        difficulty:
+          type: string
+        adventureSeed:
+          type: string
+        turn:
+          type: integer
+        maxTurns:
+          type: integer
+        storySummary:
+          type: string
+        mathSolved:
+          type: integer
+      required:
+        - hero
+        - difficulty
+        - adventureSeed
+        - turn
+        - maxTurns
+        - storySummary
+        - mathSolved
