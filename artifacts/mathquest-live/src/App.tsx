@@ -36,12 +36,12 @@ function GameApp() {
   const takeTurnMutation = useTakeTurn();
   const getEndingMutation = useGetEnding();
 
-  const handleStart = (hero: Hero, difficulty: string, adventureSeed: string) => {
+  const handleStart = (hero: Hero, difficulty: string, adventureSeed: string, maxTurns: number) => {
     playTransition();
-    setState(s => ({ ...s, hero, difficulty, adventureSeed, isLoading: true, screen: 'game' }));
+    setState(s => ({ ...s, hero, difficulty, adventureSeed, maxTurns, isLoading: true, screen: 'game' }));
 
     startGameMutation.mutate(
-      { data: { hero, difficulty, adventureSeed, maxTurns: state.maxTurns } },
+      { data: { hero, difficulty, adventureSeed, maxTurns } },
       {
         onSuccess: (res) => {
           setState(s => ({
@@ -188,7 +188,12 @@ function GameApp() {
   };
 
   const handlePlayAgain = () => {
-    handleStart(state.hero, state.difficulty, state.adventureSeed);
+    handleStart(state.hero, state.difficulty, state.adventureSeed, state.maxTurns);
+  };
+
+  const handleExitToTitle = () => {
+    playTransition();
+    setState(INITIAL_STATE);
   };
 
   return (
@@ -204,6 +209,7 @@ function GameApp() {
           state={state}
           onChoiceSelect={handleChoiceSelect}
           onMathAnswer={handleMathAnswer}
+          onExitToTitle={handleExitToTitle}
         />
       )}
       {state.screen === 'ending' && (
