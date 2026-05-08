@@ -100,6 +100,24 @@ const ADVENTURE_SEEDS: Record<string, { setting: string; objective: string; help
   },
 };
 
+const RANDOM_SEEDS = Object.keys(ADVENTURE_SEEDS);
+
+function resolveSeed(adventureSeed: string) {
+  if (adventureSeed === "Random") {
+    const picked = RANDOM_SEEDS[Math.floor(Math.random() * RANDOM_SEEDS.length)];
+    return { name: picked, ...ADVENTURE_SEEDS[picked] };
+  }
+  const found = ADVENTURE_SEEDS[adventureSeed];
+  if (found) return { name: adventureSeed, ...found };
+  return {
+    name: adventureSeed,
+    setting: "A magical world full of puzzles and wonder",
+    objective: "Complete the adventure by solving challenges",
+    helpers: "friendly guide, magical creature, wise elder",
+    avoid: "anything unsafe or inappropriate",
+  };
+}
+
 const SYSTEM_PROMPT = `You are the story engine for MathQuest Live, a classroom-safe math adventure game for 4th grade students ages 9-11. Write short, exciting, kid-safe scenes.
 
 IMPORTANT RULES:
@@ -111,8 +129,7 @@ IMPORTANT RULES:
 - Problems resolved through: math, observation, kindness, creativity, teamwork, courage
 - Ancestry/species only affects appearance and fantasy flavor — never implies intelligence or ability
 - Pronouns only affect pronoun use in the story
-- Write in fun, adventurous middle-grade tone
-- Keep each scene short: 100-180 words maximum
+- Write in fun, adventurous middle-grade tone like a fantasy novel
 - The student can ONLY choose from buttons — no freeform input
 - Do NOT generate math problems — the app handles all math separately
 - Return ONLY valid JSON matching the required format
@@ -121,18 +138,12 @@ IMPORTANT RULES:
 - Each choice label must be under 90 characters`;
 
 export function buildStartPrompt(data: StartGameData): string {
-  const seed = ADVENTURE_SEEDS[data.adventureSeed] || {
-    setting: "A magical world full of puzzles and wonder",
-    objective: "Complete the adventure by solving challenges",
-    helpers: "friendly guide, magical creature, wise elder",
-    avoid: "anything unsafe or inappropriate",
-  };
-
+  const seed = resolveSeed(data.adventureSeed);
   const hero = data.hero;
 
   return `${SYSTEM_PROMPT}
 
-ADVENTURE SEED: ${data.adventureSeed}
+ADVENTURE SEED: ${seed.name}
 Setting: ${seed.setting}
 Objective: ${seed.objective}
 Possible helpers: ${seed.helpers}
@@ -143,38 +154,38 @@ Class: ${hero.className}
 Ancestry/Species: ${hero.ancestry}
 Pronouns: ${hero.pronouns}
 Difficulty: ${data.difficulty}
-This is Turn 1 of ${data.maxTurns}.
 
-Write the opening scene of the adventure. Introduce ${hero.name} and the adventure setting. End with exactly 3 clear, safe action choices for the student.
+This is the OPENING SCENE — it must be longer than all other scenes (200-260 words).
+
+Your task: Write a vivid, immersive opening that does THREE things:
+1. Introduces ${hero.name} as a character — give them personality, a brief backstory hint, and a reason why they are the right hero for this quest. Use their class and ancestry to flavor their appearance and style (appearance only, never personality or ability).
+2. Sets the scene — paint a picture of where the adventure begins, using rich sensory details.
+3. Launches the adventure — give them a clear quest goal and end with exactly 3 action choices.
+
+Make the student feel like they are stepping into the pages of a fantasy story. Use vivid, descriptive language. Refer to ${hero.name} by name and use ${hero.pronouns.split("/")[0]} pronouns correctly.
 
 Respond ONLY with valid JSON in this exact format:
 {
   "sceneTitle": "short dramatic scene title",
-  "storyText": "100-180 words of exciting, safe story text",
+  "storyText": "200-260 words of vivid, exciting opening story text",
   "choices": [
     { "id": "A", "label": "clear action under 90 chars" },
     { "id": "B", "label": "clear action under 90 chars" },
     { "id": "C", "label": "clear action under 90 chars" }
   ],
-  "storySummary": "1-2 sentence summary of what happened",
+  "storySummary": "1-2 sentence summary of who the hero is and what happened",
   "safetyRating": "kid_safe"
 }`;
 }
 
 export function buildTurnPrompt(data: TurnData): string {
-  const seed = ADVENTURE_SEEDS[data.adventureSeed] || {
-    setting: "A magical world full of puzzles and wonder",
-    objective: "Complete the adventure by solving challenges",
-    helpers: "friendly guide, magical creature, wise elder",
-    avoid: "anything unsafe or inappropriate",
-  };
-
+  const seed = resolveSeed(data.adventureSeed);
   const hero = data.hero;
   const turnsLeft = data.maxTurns - data.turn;
 
   return `${SYSTEM_PROMPT}
 
-ADVENTURE SEED: ${data.adventureSeed}
+ADVENTURE SEED: ${seed.name}
 Setting: ${seed.setting}
 Objective: ${seed.objective}
 Possible helpers: ${seed.helpers}
@@ -185,19 +196,18 @@ Class: ${hero.className}
 Ancestry/Species: ${hero.ancestry}
 Pronouns: ${hero.pronouns}
 Difficulty: ${data.difficulty}
-This is Turn ${data.turn} of ${data.maxTurns} (${turnsLeft} turns remaining).
 
 STORY SO FAR: ${data.storySummary}
 
 The student chose: "${data.chosenAction}"
 Math result: ${data.mathResult}
 
-Continue the adventure from where we left off. The student solved the math challenge successfully and can now act on their choice. ${turnsLeft <= 2 ? "The adventure is nearing its climax — build toward an exciting resolution!" : "Keep the adventure moving forward with new discoveries."} End with exactly 3 new safe action choices.
+Continue the adventure from where we left off. ${hero.name} solved the math challenge and can now act. Write 120-160 words of exciting story. ${turnsLeft <= 2 ? "The adventure is nearing its climax — build urgently toward a satisfying resolution!" : turnsLeft <= 4 ? "The adventure is at its midpoint — raise the stakes and introduce a new complication." : "Keep the adventure moving forward with new discoveries."} End with exactly 3 new safe action choices.
 
 Respond ONLY with valid JSON in this exact format:
 {
   "sceneTitle": "short dramatic scene title",
-  "storyText": "100-180 words of exciting, safe story text",
+  "storyText": "120-160 words of exciting, safe story text",
   "choices": [
     { "id": "A", "label": "clear action under 90 chars" },
     { "id": "B", "label": "clear action under 90 chars" },
@@ -223,13 +233,19 @@ Math challenges solved: ${data.mathSolved} of ${data.maxTurns}
 
 STORY SO FAR: ${data.storySummary}
 
-Write a triumphant, joyful ending to this adventure! The hero has completed all ${data.maxTurns} turns and solved ${data.mathSolved} math challenges. Make it feel earned and exciting. Give the hero a creative badge name that reflects their adventure.
+Write a triumphant, emotionally satisfying ending to this adventure! ${hero.name} has completed the quest and solved ${data.mathSolved} math challenges. The ending should:
+- Resolve the quest objective fully
+- Celebrate the hero's cleverness and courage
+- Feel like the final page of a great fantasy story
+- Give the hero a unique, creative badge name that reflects their specific adventure
+
+Write 150-200 words of triumphant, joyful ending.
 
 Respond ONLY with valid JSON in this exact format:
 {
   "endingTitle": "dramatic ending title",
-  "endingText": "100-200 words of triumphant, safe ending story",
-  "badge": "Creative Badge Name",
+  "endingText": "150-200 words of triumphant, safe ending story",
+  "badge": "Creative Badge Name (2-4 words)",
   "safetyRating": "kid_safe"
 }`;
 }

@@ -1,6 +1,4 @@
-import { Button } from "@/components/ui/button";
 import { GameState } from "../types";
-import { Card, CardContent } from "@/components/ui/card";
 
 interface EndingScreenProps {
   state: GameState;
@@ -12,52 +10,47 @@ export function EndingScreen({ state, onPlayAgain, onNewHero }: EndingScreenProp
   const { endingTitle, endingText, badge, mathSolved, hero } = state;
 
   return (
-    <div className="min-h-[100dvh] w-full flex flex-col items-center justify-center p-4 md:p-8 animate-in fade-in zoom-in-95 duration-1000">
-      <div className="max-w-3xl w-full space-y-8 text-center">
+    <div className="min-h-[100dvh] w-full flex flex-col items-center justify-center p-4 md:p-8 animate-in fade-in duration-1000 bg-[#0d0a07]">
+      <div className="max-w-3xl w-full space-y-10 text-center">
         
-        <div className="space-y-4">
-          <div className="inline-block p-6 bg-accent/20 rounded-full mb-4 shadow-[0_0_60px_rgba(var(--accent),0.3)]">
-            <div className="text-6xl text-accent font-black tracking-widest">{badge}</div>
+        <div className="space-y-6">
+          <div className="inline-flex flex-col items-center p-8 bg-[#1c1208] border-4 border-[#c9a227] shadow-[0_0_50px_rgba(201,162,39,0.3)] mx-auto relative overflow-hidden">
+            <div className="absolute inset-0 bg-[#c9a227] opacity-10 mix-blend-overlay"></div>
+            <span className="text-[#c9a227] font-sans uppercase tracking-widest text-sm mb-4 font-bold">Quest Complete</span>
+            <div className="rs-title text-4xl md:text-5xl font-black">{badge}</div>
           </div>
-          <h1 className="text-5xl md:text-7xl font-bold text-primary drop-shadow-lg font-serif">
+          
+          <h1 className="rs-title text-5xl md:text-7xl font-bold pt-4">
             {endingTitle}
           </h1>
-          <p className="text-xl text-muted-foreground">
-            A heroic tale concluded for {hero.name}.
-          </p>
         </div>
 
-        <Card className="bg-card/60 backdrop-blur-md border-primary/30 shadow-xl text-left">
-          <CardContent className="p-8 space-y-6">
-            <p className="text-xl leading-relaxed text-foreground/90 whitespace-pre-wrap">
-              {endingText}
-            </p>
-            
-            <div className="bg-secondary/10 border border-secondary/30 rounded-xl p-4 flex items-center justify-between">
-              <span className="text-lg font-medium text-secondary">Math Challenges Overcome</span>
-              <span className="text-3xl font-black font-mono text-secondary">{mathSolved}</span>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="rs-panel p-8 md:p-10 text-left space-y-8">
+          <p className="story-text text-xl md:text-2xl leading-loose">
+            {endingText}
+          </p>
+          
+          <div className="border-t-2 border-b-2 border-[#2a8c7a] py-6 flex flex-col md:flex-row items-center justify-between bg-[#0d0a07]/50 px-6">
+            <span className="text-xl font-bold text-[#2a8c7a] uppercase tracking-widest mb-2 md:mb-0">Challenges Overcome</span>
+            <span className="text-5xl font-black font-sans text-[#2a8c7a] drop-shadow-[0_0_10px_rgba(42,140,122,0.5)]">{mathSolved}</span>
+          </div>
+        </div>
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
-          <Button 
-            size="lg" 
-            className="w-full sm:w-auto text-xl px-12 py-8 rounded-full"
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-6">
+          <button 
+            className="rs-button w-full sm:w-auto text-xl px-12 py-6"
             onClick={onPlayAgain}
             data-testid="button-play-again"
           >
-            Play Again
-          </Button>
-          <Button 
-            variant="outline"
-            size="lg" 
-            className="w-full sm:w-auto text-xl px-12 py-8 rounded-full border-primary/50 hover:bg-primary/10"
+            Quest Again
+          </button>
+          <button 
+            className="rs-button w-full sm:w-auto text-xl px-12 py-6 !bg-[#0d0a07] !text-[#8c7a55] !border-[#4a3610]"
             onClick={onNewHero}
             data-testid="button-new-hero"
           >
-            Choose New Hero
-          </Button>
+            New Hero
+          </button>
         </div>
         
       </div>
