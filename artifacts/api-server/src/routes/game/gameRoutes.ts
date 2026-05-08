@@ -1,12 +1,10 @@
 import { Router } from "express";
-import { openai } from "@workspace/integrations-openai-ai-server";
 import { StartGameBody, TakeTurnBody, GetEndingBody } from "@workspace/api-zod";
 import { buildStartPrompt, buildTurnPrompt, buildEndingPrompt } from "./storyPrompt.js";
 import { checkStoryTurnSafety, checkEndingSafety } from "./safety.js";
+import { openai, STORY_MODEL } from "../../lib/openaiClient.js";
 
 const router = Router();
-
-const STORY_MODEL = process.env.OPENAI_MODEL || "gpt-5-mini";
 
 const FALLBACK_SCENE = {
   sceneTitle: "The Puzzle Path",
