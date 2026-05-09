@@ -6,11 +6,13 @@ dist
 tmp
 out-tsc
 *.tsbuildinfo
+**/*.tsbuildinfo
 .expo
 .expo-shared
 
 # dependencies
 node_modules
+.pnpm-store
 
 # IDEs and editors
 /.idea

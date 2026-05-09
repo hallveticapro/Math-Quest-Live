@@ -8,7 +8,7 @@
     "dev": "set -a; [ ! -f .env ] || . ./.env; set +a; pnpm -r --parallel --filter @workspace/api-server --filter @workspace/mathquest-live run dev",
     "build": "pnpm run typecheck && pnpm -r --if-present run build",
     "start": "NODE_ENV=${NODE_ENV:-production} PORT=${PORT:-3000} STATIC_DIR=${STATIC_DIR:-artifacts/mathquest-live/dist/public} node --enable-source-maps artifacts/api-server/dist/index.mjs",
-    "typecheck:libs": "tsc --build",
+    "typecheck:libs": "tsc --build --force",
     "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck"
   },
   "private": true,
