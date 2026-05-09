@@ -2,12 +2,12 @@ import { useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Hero } from "../types";
+import { DIFFICULTY_OPTIONS } from "../math/floridaBestMath";
 
 const NAMES = ["Astra", "Kael", "Nova", "Mira", "Jax", "Luna", "Orion", "Sage", "Zara", "Theo", "Elara", "Milo"];
 const PRONOUNS = ["she/her", "he/him", "they/them"];
 const ANCESTRIES = ["Human", "Elf", "Dwarf", "Dragonborn", "Fae", "Robot", "Merfolk", "Beastfolk", "Starborn"];
 const CLASSES = ["Wizard", "Warrior", "Explorer", "Rogue", "Inventor", "Healer", "Beast Tamer", "Elementalist"];
-const DIFFICULTIES = ["Easy", "Medium", "Hard", "Extreme"];
 const SEEDS = ["Random", "The Sky Temple", "The Crystal Forest", "The Clockwork Volcano", "The Moonlit Library", "The Lost Reef City", "The Floating Market", "The Dragon Egg Rescue", "The Puzzle Pyramid", "The Candy Comet", "The Tiny Giant's Garden", "The Museum After Midnight", "The Friendly Ghost Lighthouse"];
 
 const STORY_LENGTHS = [
@@ -21,7 +21,7 @@ export function SetupScreen({ onStart }: { onStart: (hero: Hero, difficulty: str
   const [pronouns, setPronouns] = useState(PRONOUNS[0]);
   const [ancestry, setAncestry] = useState(ANCESTRIES[0]);
   const [className, setClassName] = useState(CLASSES[0]);
-  const [difficulty, setDifficulty] = useState(DIFFICULTIES[1]);
+  const [difficulty, setDifficulty] = useState(DIFFICULTY_OPTIONS[1].value);
   const [seed, setSeed] = useState(SEEDS[0]);
   const [maxTurns, setMaxTurns] = useState(8);
 
@@ -100,13 +100,17 @@ export function SetupScreen({ onStart }: { onStart: (hero: Hero, difficulty: str
             <h3 className="rs-title text-2xl mb-6 text-center border-b border-[#6b4f1a] pb-2">The Quest</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="space-y-2">
-                <Label className="text-lg text-[#e8d5a3] font-sans uppercase tracking-wide">Math Difficulty</Label>
+                <Label className="text-lg text-[#e8d5a3] font-sans uppercase tracking-wide">Challenge Level</Label>
                 <Select value={difficulty} onValueChange={setDifficulty}>
                   <SelectTrigger className="h-14 text-lg bg-[#0d0a07] border-[#6b4f1a] text-[#e8d5a3] rounded-sm font-sans" data-testid="select-difficulty">
                     <SelectValue placeholder="Select difficulty" />
                   </SelectTrigger>
                   <SelectContent className="bg-[#1c1208] border-[#6b4f1a] text-[#e8d5a3]">
-                    {DIFFICULTIES.map(d => <SelectItem key={d} value={d} className="focus:bg-[#3b2a1a] focus:text-[#f0c040] font-sans text-lg">{d}</SelectItem>)}
+                    {DIFFICULTY_OPTIONS.map(d => (
+                      <SelectItem key={d.key} value={d.value} className="focus:bg-[#3b2a1a] focus:text-[#f0c040] font-sans text-lg">
+                        {d.label}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>

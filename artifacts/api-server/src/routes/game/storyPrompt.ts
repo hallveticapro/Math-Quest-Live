@@ -110,6 +110,37 @@ const ADVENTURE_SEEDS: Record<string, { setting: string; objective: string; help
 const RANDOM_SEEDS = Object.keys(ADVENTURE_SEEDS);
 export const ALLOWED_ADVENTURE_SEEDS = ["Random", ...RANDOM_SEEDS] as const;
 
+const DIFFICULTY_READING_GUIDANCE: Record<string, { gradeBand: 3 | 4 | 5; guidance: string; sceneWords: string; endingWords: string }> = {
+  easy: {
+    gradeBand: 3,
+    guidance: "Use shorter scenes, simpler vocabulary, concrete action, and 60-100 words.",
+    sceneWords: "60-100 words",
+    endingWords: "90-120 words",
+  },
+  medium: {
+    gradeBand: 4,
+    guidance: "Use moderate scenes, clear middle-grade vocabulary, and 90-140 words.",
+    sceneWords: "90-140 words",
+    endingWords: "110-150 words",
+  },
+  hard: {
+    gradeBand: 5,
+    guidance: "Use richer scenes, Grade 5-friendly vocabulary, and 120-180 words.",
+    sceneWords: "120-180 words",
+    endingWords: "130-180 words",
+  },
+  extreme: {
+    gradeBand: 5,
+    guidance: "Use 120-180 words, still kid-friendly, with slightly more complex vocabulary. Do not go beyond elementary classroom tone.",
+    sceneWords: "120-180 words",
+    endingWords: "130-180 words",
+  },
+};
+
+function getReadingGuidance(difficulty: string) {
+  return DIFFICULTY_READING_GUIDANCE[difficulty.trim().toLowerCase()] ?? DIFFICULTY_READING_GUIDANCE.medium;
+}
+
 function resolveSeed(adventureSeed: string) {
   if (adventureSeed === "Random") {
     const picked = RANDOM_SEEDS[Math.floor(Math.random() * RANDOM_SEEDS.length)];
@@ -156,6 +187,7 @@ IMPORTANT RULES:
 export function buildStartPrompt(data: StartGameData): string {
   const seed = resolveSeed(data.adventureSeed);
   const hero = data.hero;
+  const reading = getReadingGuidance(data.difficulty);
 
   return `${SYSTEM_PROMPT}
 
@@ -170,8 +202,10 @@ Class: ${hero.className}
 Ancestry/Species: ${hero.ancestry}
 Pronouns: ${hero.pronouns}
 Difficulty: ${data.difficulty}
+Reading guidance: ${reading.guidance}
+Math alignment: Florida B.E.S.T. Mathematics Grade ${reading.gradeBand} band. Use this only to tune reading complexity. Do not mention the student's grade level in the story.
 
-This is the OPENING SCENE — it must be longer than all other scenes (200-260 words).
+This is the OPENING SCENE. Write ${reading.sceneWords}.
 
 Your task: Write a vivid, immersive opening that does THREE things:
 1. Introduces ${hero.name} as a character — give them personality, a brief backstory hint, and a reason why they are the right hero for this quest. Use their class and ancestry to flavor their appearance and style (appearance only, never personality or ability).
@@ -183,7 +217,7 @@ Make the student feel like they are stepping into the pages of a fantasy story. 
 Respond ONLY with valid JSON in this exact format:
 {
   "sceneTitle": "short dramatic scene title",
-  "storyText": "200-260 words of vivid, exciting opening story text",
+  "storyText": "${reading.sceneWords} of vivid, exciting opening story text",
   "choices": [
     { "id": "A", "label": "clear action under 90 chars" },
     { "id": "B", "label": "clear action under 90 chars" },
@@ -198,6 +232,7 @@ export function buildTurnPrompt(data: TurnData): string {
   const seed = resolveSeed(data.adventureSeed);
   const hero = data.hero;
   const turnsLeft = data.maxTurns - data.turn;
+  const reading = getReadingGuidance(data.difficulty);
 
   return `${SYSTEM_PROMPT}
 
@@ -212,18 +247,20 @@ Class: ${hero.className}
 Ancestry/Species: ${hero.ancestry}
 Pronouns: ${hero.pronouns}
 Difficulty: ${data.difficulty}
+Reading guidance: ${reading.guidance}
+Math alignment: Florida B.E.S.T. Mathematics Grade ${reading.gradeBand} band. Use this only to tune reading complexity. Do not mention the student's grade level in the story.
 
 STORY SO FAR: ${data.storySummary}
 
 The student chose: "${data.chosenAction}"
 Math result: ${data.mathResult}
 
-Continue the adventure from where we left off. ${hero.name} solved the math challenge and can now act. Write 120-160 words of exciting story. ${turnsLeft <= 2 ? "The adventure is nearing its climax — build urgently toward a satisfying resolution!" : turnsLeft <= 4 ? "The adventure is at its midpoint — raise the stakes and introduce a new complication." : "Keep the adventure moving forward with new discoveries."} End with exactly 3 new safe action choices.
+Continue the adventure from where we left off. ${hero.name} solved the math challenge and can now act. Write ${reading.sceneWords} of exciting story. ${turnsLeft <= 2 ? "The adventure is nearing its climax — build urgently toward a satisfying resolution!" : turnsLeft <= 4 ? "The adventure is at its midpoint — raise the stakes and introduce a new complication." : "Keep the adventure moving forward with new discoveries."} End with exactly 3 new safe action choices.
 
 Respond ONLY with valid JSON in this exact format:
 {
   "sceneTitle": "short dramatic scene title",
-  "storyText": "120-160 words of exciting, safe story text",
+  "storyText": "${reading.sceneWords} of exciting, safe story text",
   "choices": [
     { "id": "A", "label": "clear action under 90 chars" },
     { "id": "B", "label": "clear action under 90 chars" },
@@ -236,6 +273,7 @@ Respond ONLY with valid JSON in this exact format:
 
 export function buildEndingPrompt(data: EndingData): string {
   const hero = data.hero;
+  const reading = getReadingGuidance(data.difficulty);
 
   return `${SYSTEM_PROMPT}
 
@@ -245,6 +283,8 @@ Class: ${hero.className}
 Ancestry/Species: ${hero.ancestry}
 Pronouns: ${hero.pronouns}
 Difficulty: ${data.difficulty}
+Reading guidance: ${reading.guidance}
+Math alignment: Florida B.E.S.T. Mathematics Grade ${reading.gradeBand} band. Use this only to tune reading complexity. Do not mention the student's grade level in the story.
 Math challenges solved: ${data.mathSolved} of ${data.maxTurns}
 
 STORY SO FAR: ${data.storySummary}
@@ -255,12 +295,12 @@ Write a triumphant, emotionally satisfying ending to this adventure! ${hero.name
 - Feel like the final page of a great fantasy story
 - Give the hero a unique, creative badge name that reflects their specific adventure
 
-Write 150-200 words of triumphant, joyful ending.
+Write ${reading.endingWords} of triumphant, joyful ending.
 
 Respond ONLY with valid JSON in this exact format:
 {
   "endingTitle": "dramatic ending title",
-  "endingText": "150-200 words of triumphant, safe ending story",
+  "endingText": "${reading.endingWords} of triumphant, safe ending story",
   "badge": "Creative Badge Name (2-4 words)",
   "safetyRating": "kid_safe"
 }`;

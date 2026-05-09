@@ -13,6 +13,7 @@ import { TitleScreen } from "./pages/TitleScreen";
 import { SetupScreen } from "./pages/SetupScreen";
 import { GameScreen } from "./pages/GameScreen";
 import { EndingScreen } from "./pages/EndingScreen";
+import { AppInfoDialog } from "./components/AppInfoDialog";
 
 const queryClient = new QueryClient();
 
@@ -228,6 +229,7 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <GameApp />
+        <AppInfoDialog />
         <Toaster />
       </TooltipProvider>
     </QueryClientProvider>
