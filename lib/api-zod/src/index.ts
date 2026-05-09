@@ -6,6 +6,7 @@ export type {
   HeroInfo,
   StartGameBody as StartGameBodyType,
   StoryChoice,
+  StoryImage,
   StoryTurnResponse,
   TakeTurnBody as TakeTurnBodyType,
 } from "./generated/types";

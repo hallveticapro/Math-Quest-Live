@@ -10,7 +10,8 @@
     "start": "NODE_ENV=${NODE_ENV:-production} PORT=${PORT:-3000} STATIC_DIR=${STATIC_DIR:-artifacts/mathquest-live/dist/public} node --enable-source-maps artifacts/api-server/dist/index.mjs",
     "typecheck:libs": "tsc --build --force",
     "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck",
-    "validate:math": "pnpm --filter @workspace/scripts exec tsx ../artifacts/mathquest-live/src/validateMath.ts"
+    "validate:math": "pnpm --filter @workspace/scripts exec tsx ../artifacts/mathquest-live/src/validateMath.ts",
+    "validate:images": "pnpm --filter @workspace/scripts exec tsx ../artifacts/api-server/src/images/validateImages.ts"
   },
   "private": true,
   "devDependencies": {

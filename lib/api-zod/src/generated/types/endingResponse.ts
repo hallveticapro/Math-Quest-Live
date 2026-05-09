@@ -5,10 +5,12 @@
  * MathQuest Live API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { StoryImage } from "./storyImage";
 
 export interface EndingResponse {
   endingTitle: string;
   endingText: string;
   badge: string;
   safetyRating: string;
+  image?: StoryImage;
 }

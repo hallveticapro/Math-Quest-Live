@@ -21,12 +21,23 @@ export interface StoryChoice {
   label: string;
 }
 
+export interface StoryImage {
+  enabled: true;
+  status: "ready";
+  imageId: string;
+  url: string;
+  alt: string;
+  provider: string;
+  model: string;
+}
+
 export interface StoryTurnResponse {
   sceneTitle: string;
   storyText: string;
   choices: StoryChoice[];
   storySummary: string;
   safetyRating: string;
+  image?: StoryImage;
 }
 
 export interface EndingResponse {
@@ -34,6 +45,7 @@ export interface EndingResponse {
   endingText: string;
   badge: string;
   safetyRating: string;
+  image?: StoryImage;
 }
 
 export interface StartGameBody {

@@ -6,6 +6,8 @@ MathQuest Live is a classroom-safe AI math adventure game for elementary student
 
 The MVP does not require student accounts, login, a database, saved progress, rosters, or stored student data. Game state lives in browser memory and resets on refresh.
 
+Students begin with a step-by-step Chronicler setup flow instead of a single form. During setup they choose preset hero details, challenge level, adventure theme, and a session-only color scheme. Color schemes preview live while students choose them and remain active through the current game session. They affect visual appearance only; they do not affect difficulty, standards alignment, math content, AI safety rules, story outcome, or saved data. Refreshing the page resets the MVP session.
+
 ## Environment Variables
 
 Required:
@@ -22,6 +24,15 @@ Optional:
 - `HOST` - Vite dev server host. Defaults to `127.0.0.1`.
 - `BASE_PATH` - Vite base path. Defaults to `/`.
 - `API_PROXY_TARGET` - Vite dev proxy target for `/api`. Defaults to `http://localhost:8080`.
+- `ENABLE_IMAGE_GENERATION` - Enables backend-only generated illustrations when set to `true`. Defaults to `false`.
+- `IMAGE_MODE` - Image generation mode. Valid values are `off`, `cover`, `milestones`, and `every_scene`. Defaults to `milestones`.
+- `IMAGE_PROVIDER` - Image provider. Defaults to `openai`. Unsupported providers log a warning and disable images.
+- `IMAGE_MODEL` - Image model. Defaults to `gpt-image-1-mini`.
+- `IMAGE_QUALITY` - Image quality. Valid values are `low`, `medium`, and `high`. Defaults to `medium`.
+- `IMAGE_SIZE` - Generated image size. Defaults to `1024x1024`.
+- `IMAGE_STYLE` - Image prompt style. Defaults to `cartoon-fantasy`.
+- `IMAGE_TIMEOUT_MS` - Maximum time the backend will wait for an image before continuing without one. Defaults to `45000`.
+- `IMAGE_STORAGE_MODE` - Temporary image storage mode. Currently `memory`.
 
 Copy `.env.example` to `.env` for local use and fill in your real key:
 
@@ -95,6 +106,49 @@ npm run validate:math
 ```
 
 The validator samples all four difficulty levels and checks that every generated problem has benchmark metadata, a difficulty, a grade band, four unique answer choices, and the correct answer in the choices.
+
+## Optional AI Image Generation
+
+Generated illustrations are backend-only and off by default. Set `ENABLE_IMAGE_GENERATION=true` to allow the Express server to request temporary OpenAI images. The frontend never receives the OpenAI API key.
+
+The default mode is:
+
+```text
+IMAGE_MODE=milestones
+IMAGE_PROVIDER=openai
+IMAGE_MODEL=gpt-image-1-mini
+IMAGE_QUALITY=medium
+IMAGE_STYLE=cartoon-fantasy
+```
+
+Image modes:
+
+- `off` - Never generate images.
+- `cover` - Generate only the intro/cover image.
+- `milestones` - Generate intro, midpoint, and ending images.
+- `every_scene` - Attempt an image for each generated scene and ending.
+
+Images can increase cost and latency. `every_scene` should be used cautiously. Image generation failure, rate limits, timeouts, or unsupported providers do not stop gameplay; the app continues with the story text and math challenge.
+
+After the intro, the app starts preparing the next scene as soon as the student chooses an action. The student solves the required math challenge while the backend generates the next story text and any eligible image. The prepared scene is only revealed after a correct math answer, so the math gate remains required.
+
+Generated images are stored temporarily in server memory and are disposable. They are not written to permanent storage and are lost when the server restarts or when the image expires. No student freeform input is used in image prompts. Prompts use controlled game metadata and generic style language such as cartoon fantasy/storybook; they avoid living artists, studios, brands, and franchise-specific styles.
+
+Run the lightweight image-mode validator:
+
+```sh
+npm run validate:images
+```
+
+Manual image checks:
+
+- `ENABLE_IMAGE_GENERATION=false`: gameplay should behave like the text-only app.
+- `ENABLE_IMAGE_GENERATION=true` and `IMAGE_MODE=cover`: intro image only.
+- `ENABLE_IMAGE_GENERATION=true` and `IMAGE_MODE=milestones`: intro, midpoint, and ending images.
+- `ENABLE_IMAGE_GENERATION=true` and `IMAGE_MODE=every_scene`: images attempted for each scene.
+- Invalid `IMAGE_PROVIDER`: server logs a warning and gameplay continues without images.
+- Provider failure or timeout: gameplay continues without showing technical errors to students.
+- Confirm `OPENAI_API_KEY` appears only in backend environment configuration, not frontend code.
 
 ## Production Build
 
@@ -191,6 +245,15 @@ ghcr.io/YOUR_GITHUB_USERNAME_OR_ORG/YOUR_REPO_NAME:latest
    - `PORT=3000`
    - `NODE_ENV=production`
    - `OPENAI_MODEL=gpt-4.1-mini`
+   - `ENABLE_IMAGE_GENERATION=false`
+   - `IMAGE_MODE=milestones`
+   - `IMAGE_PROVIDER=openai`
+   - `IMAGE_MODEL=gpt-image-1-mini`
+   - `IMAGE_QUALITY=medium`
+   - `IMAGE_SIZE=1024x1024`
+   - `IMAGE_STYLE=cartoon-fantasy`
+   - `IMAGE_TIMEOUT_MS=45000`
+   - `IMAGE_STORAGE_MODE=memory`
 7. Set a restart policy if your Unraid UI/template supports it.
 8. Apply/start the container.
 
@@ -199,6 +262,17 @@ Visit:
 ```text
 http://UNRAID_SERVER_IP:3000
 ```
+
+To test optional images on Unraid, start with:
+
+```text
+ENABLE_IMAGE_GENERATION=true
+IMAGE_MODE=milestones
+IMAGE_MODEL=gpt-image-1-mini
+IMAGE_QUALITY=medium
+```
+
+Use `every_scene` only if you are comfortable with the additional image cost and latency.
 
 ## NGINX Proxy Manager Notes
 

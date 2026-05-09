@@ -12,6 +12,8 @@ tags:
     description: Health operations
   - name: game
     description: MathQuest Live game operations
+  - name: images
+    description: Temporary generated image operations
 paths:
   /healthz:
     get:
@@ -67,6 +69,46 @@ paths:
               schema:
                 $ref: "#/components/schemas/StoryTurnResponse"
 
+  /game/prepare:
+    post:
+      operationId: prepareGameStep
+      tags: [game]
+      summary: Prepare the next story step while math is being solved
+      description: Starts background generation for the next scene or ending after a student chooses an action
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PrepareGameStepBody"
+      responses:
+        "200":
+          description: Prepared step handle
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PrepareGameStepResponse"
+
+  /game/resolve:
+    post:
+      operationId: resolvePreparedGameStep
+      tags: [game]
+      summary: Resolve a prepared story step after math is solved
+      description: Returns the prepared scene or ending once the student has solved the math challenge
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResolvePreparedGameStepBody"
+      responses:
+        "200":
+          description: Prepared story step
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResolvePreparedGameStepResponse"
+
   /game/ending:
     post:
       operationId: getEnding
@@ -86,6 +128,29 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/EndingResponse"
+
+  /images/{imageId}:
+    get:
+      operationId: getImage
+      tags: [images]
+      summary: Get a temporary generated scene image
+      description: Returns an in-memory generated image if it has not expired
+      parameters:
+        - name: imageId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Temporary generated image
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+        "404":
+          description: Image not found or expired
 
 components:
   schemas:
@@ -125,6 +190,35 @@ components:
         - id
         - label
 
+    StoryImage:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          const: true
+        status:
+          type: string
+          enum:
+            - ready
+        imageId:
+          type: string
+        url:
+          type: string
+        alt:
+          type: string
+        provider:
+          type: string
+        model:
+          type: string
+      required:
+        - enabled
+        - status
+        - imageId
+        - url
+        - alt
+        - provider
+        - model
+
     StoryTurnResponse:
       type: object
       properties:
@@ -140,6 +234,8 @@ components:
           type: string
         safetyRating:
           type: string
+        image:
+          $ref: "#/components/schemas/StoryImage"
       required:
         - sceneTitle
         - storyText
@@ -158,6 +254,8 @@ components:
           type: string
         safetyRating:
           type: string
+        image:
+          $ref: "#/components/schemas/StoryImage"
       required:
         - endingTitle
         - endingText
@@ -209,6 +307,94 @@ components:
         - storySummary
         - chosenAction
         - mathResult
+
+    PrepareGameStepBody:
+      type: object
+      properties:
+        kind:
+          type: string
+          enum:
+            - turn
+            - ending
+        hero:
+          $ref: "#/components/schemas/HeroInfo"
+        difficulty:
+          type: string
+        adventureSeed:
+          type: string
+        turn:
+          type: integer
+        maxTurns:
+          type: integer
+        storySummary:
+          type: string
+        chosenAction:
+          type: string
+        mathSolved:
+          type: integer
+      required:
+        - kind
+        - hero
+        - difficulty
+        - adventureSeed
+        - turn
+        - maxTurns
+        - storySummary
+        - chosenAction
+
+    PrepareGameStepResponse:
+      type: object
+      properties:
+        pendingId:
+          type: string
+        kind:
+          type: string
+          enum:
+            - turn
+            - ending
+        turn:
+          type: integer
+      required:
+        - pendingId
+        - kind
+        - turn
+
+    ResolvePreparedGameStepBody:
+      type: object
+      properties:
+        pendingId:
+          type: string
+      required:
+        - pendingId
+
+    ResolvePreparedGameStepResponse:
+      oneOf:
+        - type: object
+          properties:
+            kind:
+              type: string
+              const: turn
+            turn:
+              type: integer
+            data:
+              $ref: "#/components/schemas/StoryTurnResponse"
+          required:
+            - kind
+            - turn
+            - data
+        - type: object
+          properties:
+            kind:
+              type: string
+              const: ending
+            turn:
+              type: integer
+            data:
+              $ref: "#/components/schemas/EndingResponse"
+          required:
+            - kind
+            - turn
+            - data
 
     GetEndingBody:
       type: object

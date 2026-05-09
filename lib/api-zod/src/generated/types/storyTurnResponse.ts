@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { StoryChoice } from "./storyChoice";
+import type { StoryImage } from "./storyImage";
 
 export interface StoryTurnResponse {
   sceneTitle: string;
@@ -13,4 +14,5 @@ export interface StoryTurnResponse {
   choices: StoryChoice[];
   storySummary: string;
   safetyRating: string;
+  image?: StoryImage;
 }

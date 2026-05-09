@@ -12,5 +12,6 @@ export * from "./healthStatus";
 export * from "./heroInfo";
 export * from "./startGameBody";
 export * from "./storyChoice";
+export * from "./storyImage";
 export * from "./storyTurnResponse";
 export * from "./takeTurnBody";

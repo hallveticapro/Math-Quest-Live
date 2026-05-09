@@ -42,6 +42,15 @@ export const StartGameResponse = zod.object({
   ),
   storySummary: zod.string(),
   safetyRating: zod.string(),
+  image: zod.object({
+    enabled: zod.literal(true),
+    status: zod.literal("ready"),
+    imageId: zod.string(),
+    url: zod.string(),
+    alt: zod.string(),
+    provider: zod.string(),
+    model: zod.string(),
+  }).optional(),
 });
 
 /**
@@ -75,6 +84,15 @@ export const TakeTurnResponse = zod.object({
   ),
   storySummary: zod.string(),
   safetyRating: zod.string(),
+  image: zod.object({
+    enabled: zod.literal(true),
+    status: zod.literal("ready"),
+    imageId: zod.string(),
+    url: zod.string(),
+    alt: zod.string(),
+    provider: zod.string(),
+    model: zod.string(),
+  }).optional(),
 });
 
 /**
@@ -101,4 +119,13 @@ export const GetEndingResponse = zod.object({
   endingText: zod.string(),
   badge: zod.string(),
   safetyRating: zod.string(),
+  image: zod.object({
+    enabled: zod.literal(true),
+    status: zod.literal("ready"),
+    imageId: zod.string(),
+    url: zod.string(),
+    alt: zod.string(),
+    provider: zod.string(),
+    model: zod.string(),
+  }).optional(),
 });
