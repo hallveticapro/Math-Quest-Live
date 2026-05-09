@@ -1,10 +1,10 @@
 # MathQuest Live Project Audit
 
-This audit is based on a read-only inspection of the newly exported Replit project. No app code, package files, or dependencies were changed.
+This audit is based on a read-only inspection of the newly exported legacy hosted platform project. No app code, package files, or dependencies were changed.
 
 ## Project Structure
 
-The repository is a pnpm workspace with separate frontend, backend, generated API packages, and Replit scaffolding.
+The repository is a pnpm workspace with separate frontend, backend, generated API packages, and legacy hosted platform scaffolding.
 
 Main application folders:
 
@@ -13,9 +13,9 @@ Main application folders:
 - `lib/api-spec/` - OpenAPI contract used for generated clients and schemas.
 - `lib/api-client-react/` - generated React Query API client.
 - `lib/api-zod/` - generated Zod schemas and TypeScript types.
-- `artifacts/mockup-sandbox/` - Replit/mockup preview app, not part of the main game flow.
+- `artifacts/mockup-sandbox/` - legacy hosted platform/mockup preview app, not part of the main game flow.
 - `lib/db/` - database scaffold using Drizzle/Postgres, but not used by the MathQuest MVP flow.
-- `lib/integrations-openai-ai-*` and `lib/integrations/openai_ai_integrations/` - Replit/OpenAI integration scaffolding, not the active game OpenAI path.
+- `lib/integrations-openai-ai-*` and `lib/integrations/openai_ai_integrations/` - legacy hosted platform/OpenAI integration scaffolding, not the active game OpenAI path.
 
 Important files:
 
@@ -69,12 +69,12 @@ Current local run requirements:
 - Frontend Vite config requires `PORT`.
 - Frontend Vite config requires `BASE_PATH`.
 
-Expected Replit ports:
+Expected legacy hosted platform ports:
 
 - API server: `8080`
 - Frontend: `18567`
 
-Local development caveat: the frontend generated API client calls relative paths such as `/api/game/start`. The Vite config currently does not define a dev proxy to the backend. Outside Replit routing, browser requests to `localhost:18567/api/...` will hit the Vite dev server instead of the Express server unless a proxy or API base URL is added.
+Local development caveat: the frontend generated API client calls relative paths such as `/api/game/start`. The Vite config currently does not define a dev proxy to the backend. Outside legacy hosted platform routing, browser requests to `localhost:18567/api/...` will hit the Vite dev server instead of the Express server unless a proxy or API base URL is added.
 
 ## Security Findings
 
@@ -90,8 +90,8 @@ Risks and gaps:
 
 - `.env` is not listed in `.gitignore`.
 - `.env.example` does not exist.
-- `replit.md` says required OpenAI env vars are `AI_INTEGRATIONS_OPENAI_BASE_URL` and `AI_INTEGRATIONS_OPENAI_API_KEY`, but the active game server actually requires `OPENAI_API_KEY`.
-- Unused/scaffolded OpenAI integration packages reference Replit-specific OpenAI integration env vars, which may confuse local and Docker setup.
+- `legacy-hosted-platform-notes.md` says required OpenAI env vars are `LEGACY_OPENAI_BASE_URL` and `LEGACY_OPENAI_API_KEY`, but the active game server actually requires `OPENAI_API_KEY`.
+- Unused/scaffolded OpenAI integration packages reference legacy hosted platform-specific OpenAI integration env vars, which may confuse local and Docker setup.
 - `app.use(cors())` allows all origins. That is acceptable during early local development, but should be restricted for production.
 - The backend accepts client-provided game fields such as `hero`, `difficulty`, `adventureSeed`, `maxTurns`, `storySummary`, and `chosenAction` with minimal constraints.
 - There is no API rate limiting.
@@ -215,23 +215,23 @@ Risks and gaps:
 - There is no retry policy.
 - There is no moderation API or classifier layer.
 
-## Replit-Specific Issues
+## legacy hosted platform-Specific Issues
 
-Replit-specific files/config:
+legacy hosted platform-specific files/config:
 
-- `.replit`
-- `.replitignore`
-- `artifacts/*/.replit-artifact/artifact.toml`
-- Replit Vite plugins in `artifacts/mathquest-live/vite.config.ts`
+- `legacy-platform-config`
+- `legacy-ignore`
+- `artifacts/*/legacy-artifact/artifact.toml`
+- legacy hosted platform Vite plugins in `artifacts/mathquest-live/vite.config.ts`
 - Required `PORT` and `BASE_PATH` in Vite config
-- Replit route mapping likely makes `/api` and `/` work together in preview.
+- legacy hosted platform route mapping likely makes `/api` and `/` work together in preview.
 
 Portability concerns:
 
 - Local development needs an explicit frontend-to-backend proxy or base URL.
-- The app currently depends on Replit-style environment injection for frontend `PORT` and `BASE_PATH`.
-- `replit.md` contains stale OpenAI environment documentation.
-- Generated/scaffolded DB and Replit OpenAI integration packages add noise for an MVP that should have no database and a simple backend-only OpenAI key.
+- The app currently depends on legacy hosted platform-style environment injection for frontend `PORT` and `BASE_PATH`.
+- `legacy-hosted-platform-notes.md` contains stale OpenAI environment documentation.
+- Generated/scaffolded DB and legacy hosted platform OpenAI integration packages add noise for an MVP that should have no database and a simple backend-only OpenAI key.
 - Docker/Unraid deployment will need clear routing:
   - `/api/*` to Express backend.
   - `/` to static frontend.
@@ -260,10 +260,10 @@ Portability concerns:
 ### Nice To Have
 
 - Remove or clearly document unused database scaffolding.
-- Remove or isolate unused Replit OpenAI integration scaffolding.
+- Remove or isolate unused legacy hosted platform OpenAI integration scaffolding.
 - Add OpenAI timeout handling.
 - Add API rate limiting.
-- Improve `index.html` metadata, which still says "built on Replit."
+- Improve `index.html` metadata, which still says "built on legacy hosted platform."
 - Add production health and deployment notes for Unraid.
 
 ## Recommended Next Steps

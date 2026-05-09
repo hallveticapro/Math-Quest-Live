@@ -11,7 +11,7 @@ A student chooses a hero setup, then plays an 8-turn adventure. Each turn:
 5. The student must answer correctly to continue.
 6. After 8 successful turns, the AI generates a short ending.
 
-The app should be portable and not tied to Replit-specific deployment. Build it as a normal Vite frontend + Node/Express backend that can later be Dockerized and deployed on an Unraid server behind NGINX Proxy Manager.
+The app should be portable and not tied to legacy hosted platform-specific deployment. Build it as a normal Vite frontend + Node/Express backend that can later be Dockerized and deployed on an Unraid server behind NGINX Proxy Manager.
 
 Use this stack:
 - Frontend: Vite + vanilla JavaScript
