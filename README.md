@@ -1,98 +1,198 @@
 # MathQuest Live
 
-MathQuest Live is a classroom-safe AI math adventure game. The app has a Vite/React frontend and a Node/Express backend.
+## Overview
 
-## Requirements
+MathQuest Live is a classroom-safe AI math adventure game for elementary students. Students choose from preset hero and story options, solve code-generated math challenges, and advance through short AI-written adventure scenes.
 
-- Node.js 24
-- pnpm
-- An OpenAI API key for the backend
+The MVP does not require student accounts, login, a database, saved progress, rosters, or stored student data. Game state lives in browser memory and resets on refresh.
 
-This workspace intentionally uses pnpm. Do not use `npm install` for dependencies.
+## Environment Variables
 
-## Install
+Required:
 
-```sh
-pnpm install --frozen-lockfile
-```
-
-## Environment
-
-The OpenAI API key is read only by the backend from server environment variables. Do not put the key in frontend code.
-
-Required for the API server:
-
-```sh
-export OPENAI_API_KEY="your_api_key_here"
-```
+- `OPENAI_API_KEY` - Server-side OpenAI API key used by the Express backend. Keep this secret. Never put it in frontend code and never commit it.
 
 Optional:
 
-```sh
-export OPENAI_MODEL="gpt-4.1-mini"
-export PORT="8080"
-```
+- `OPENAI_MODEL` - Story model used by the backend. Defaults to `gpt-4.1-mini`.
+- `PORT` - Port used by the production Express server. Defaults to `3000`.
+- `NODE_ENV` - Use `production` for Docker/Unraid production serving.
+- `STATIC_DIR` - Directory containing the built frontend files. Docker sets this to `/app/public`.
+- `FRONTEND_PORT` - Vite dev server port. Defaults to `18567`.
+- `HOST` - Vite dev server host. Defaults to `127.0.0.1`.
+- `BASE_PATH` - Vite base path. Defaults to `/`.
+- `API_PROXY_TARGET` - Vite dev proxy target for `/api`. Defaults to `http://localhost:8080`.
 
-Frontend local defaults:
-
-- `FRONTEND_PORT=18567`
-- `HOST=127.0.0.1`
-- `BASE_PATH=/`
-- `API_PROXY_TARGET=http://localhost:8080`
-
-The frontend calls relative `/api` routes. During local development, Vite proxies `/api` to the backend.
-
-## Run Locally
-
-Start both the backend and frontend from the repo root:
+Copy `.env.example` to `.env` for local use and fill in your real key:
 
 ```sh
-OPENAI_API_KEY="your_api_key_here" pnpm run dev
+cp .env.example .env
 ```
 
-Then open:
+Do not commit `.env`.
+
+## Local Development
+
+This repository is a pnpm workspace. `npm install` is intentionally not the dependency installer for this project.
+
+```sh
+# Do not use this for this pnpm workspace:
+npm install
+
+# Use this instead:
+pnpm install --frozen-lockfile
+```
+
+Start both frontend and backend from the repo root:
+
+```sh
+npm run dev
+```
+
+Open:
 
 ```text
 http://localhost:18567
 ```
 
-You can also run each side separately.
-
-Backend:
+Run each side separately if needed:
 
 ```sh
-OPENAI_API_KEY="your_api_key_here" pnpm --filter @workspace/api-server run dev
-```
-
-Frontend:
-
-```sh
+pnpm --filter @workspace/api-server run dev
 pnpm --filter @workspace/mathquest-live run dev
 ```
 
-API health check:
+The frontend calls relative `/api` routes. During local Vite development, `/api` is proxied to the backend.
 
-```text
-http://localhost:8080/api/healthz
-```
+## Production Build
 
-## Build And Typecheck
+Build everything:
 
 ```sh
-pnpm run typecheck
-pnpm run build
+npm run build
 ```
 
-## Project Layout
+Start the production Express server after building:
 
-- `artifacts/mathquest-live/` - Vite/React frontend.
-- `artifacts/api-server/` - Express backend and OpenAI story routes.
-- `lib/api-spec/` - OpenAPI source spec.
-- `lib/api-client-react/` - generated frontend API client.
-- `lib/api-zod/` - generated backend validation schemas.
+```sh
+npm start
+```
 
-## Notes
+Production Express serves:
 
-- No OpenAI API key is used by the frontend.
-- Frontend API calls use `/api/...` routes.
-- Game state is in browser memory and resets on refresh.
+- `/api/*` from the backend routes.
+- Built frontend static files from `artifacts/mathquest-live/dist/public` by default when started from the repo root.
+- `index.html` fallback for non-API routes so client-side routing can work.
+
+## Docker Local Testing
+
+Create a local `.env` first:
+
+```sh
+cp .env.example .env
+```
+
+Set `OPENAI_API_KEY` in `.env`, then run:
+
+```sh
+docker compose up --build
+```
+
+The app will be available at:
+
+```text
+http://localhost:3000
+```
+
+Equivalent Docker commands:
+
+```sh
+docker build -t mathquest-live .
+docker run --env-file .env -p 3000:3000 mathquest-live
+```
+
+## GitHub Actions Image Build
+
+Workflow file:
+
+```text
+.github/workflows/docker-publish.yml
+```
+
+Pushing to `main` builds and publishes a Docker image to GitHub Container Registry.
+
+Pushing a semantic version tag publishes versioned tags:
+
+```sh
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+Images are published to GHCR using this format:
+
+```text
+ghcr.io/YOUR_GITHUB_USERNAME_OR_ORG/YOUR_REPO_NAME:latest
+```
+
+The workflow also publishes git SHA tags and semantic version tags when applicable.
+
+GitHub package visibility may need to be set to public if you want Unraid to pull without authentication. If the package is private, Unraid must authenticate to GHCR with a GitHub token that has package read permissions.
+
+## Unraid Deployment Notes
+
+In Unraid:
+
+1. Go to the Docker tab.
+2. Select Add Container.
+3. Set Repository/image to:
+
+```text
+ghcr.io/YOUR_GITHUB_USERNAME_OR_ORG/YOUR_REPO_NAME:latest
+```
+
+4. Set Network Type to `Bridge` for most setups.
+5. Add a port mapping:
+   - Host port: `3000`
+   - Container port: `3000`
+6. Add environment variables:
+   - `OPENAI_API_KEY=your_real_openai_api_key`
+   - `PORT=3000`
+   - `NODE_ENV=production`
+   - `OPENAI_MODEL=gpt-4.1-mini`
+7. Set a restart policy if your Unraid UI/template supports it.
+8. Apply/start the container.
+
+Visit:
+
+```text
+http://UNRAID_SERVER_IP:3000
+```
+
+## NGINX Proxy Manager Notes
+
+Use NGINX Proxy Manager to forward your chosen domain or subdomain to the Unraid server IP and host port.
+
+Use:
+
+- Scheme: `http`
+- Forward hostname/IP: your Unraid server IP
+- Forward port: the host port mapped to the container, for example `3000`
+
+The container does not handle HTTPS directly. Let NGINX Proxy Manager handle SSL certificates and HTTPS termination.
+
+Do not hardcode domain names in the app.
+
+## Updating On Unraid
+
+1. Push changes to GitHub.
+2. GitHub Actions builds and publishes a new GHCR image.
+3. In Unraid, pull/recreate/update the container.
+4. If using `latest`, make sure Unraid actually pulls the new image instead of reusing the cached local image.
+
+## Security Notes
+
+- Do not expose `OPENAI_API_KEY` to frontend code.
+- Do not commit `.env`.
+- Do not store student personal data in the MVP.
+- Keep the app behind NGINX Proxy Manager, Cloudflare, or equivalent controls if exposing it publicly.
+- Consider authentication later only if adding teacher dashboards, saved progress, rosters, admin settings, or other persistent classroom management features.

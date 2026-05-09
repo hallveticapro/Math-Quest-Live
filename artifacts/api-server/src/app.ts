@@ -1,3 +1,5 @@
+import fs from "node:fs";
+import path from "node:path";
 import express, { type Express } from "express";
 import cors from "cors";
 import pinoHttp from "pino-http";
@@ -30,5 +32,22 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api", router);
+
+if (process.env.NODE_ENV === "production") {
+  const staticDir = process.env.STATIC_DIR ?? path.resolve(process.cwd(), "public");
+  const indexPath = path.join(staticDir, "index.html");
+
+  if (fs.existsSync(indexPath)) {
+    app.use(express.static(staticDir, { index: false }));
+
+    app.get(/^(?!\/api(?:\/|$)).*/, (_req, res, next) => {
+      res.sendFile(indexPath, (err) => {
+        if (err) next(err);
+      });
+    });
+  } else {
+    logger.warn({ staticDir }, "Production static frontend not found");
+  }
+}
 
 export default app;
