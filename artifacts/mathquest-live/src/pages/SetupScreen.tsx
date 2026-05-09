@@ -72,10 +72,10 @@ function getStepNumber(step: SetupStep) {
 
 function optionClass(isSelected: boolean) {
   return [
-    "mq-focus relative flex min-h-20 w-full flex-col justify-center border-2 p-4 text-left transition-all duration-150",
+    "mq-focus relative flex min-h-16 w-full flex-col justify-center border-2 p-3 text-left transition-all duration-150 md:p-4",
     "bg-[var(--mq-surface-strong)] text-[var(--mq-text)] hover:border-[var(--mq-border-strong)] hover:bg-[var(--mq-button-hover)]",
     isSelected
-      ? "border-[var(--mq-border-strong)] shadow-[0_0_24px_color-mix(in_srgb,var(--mq-primary)_45%,transparent)]"
+      ? "border-[var(--mq-border-strong)] pb-4 pr-3 pt-12 shadow-[0_0_24px_color-mix(in_srgb,var(--mq-primary)_45%,transparent)] sm:pr-32 sm:pt-4"
       : "border-[var(--mq-border)]",
   ].join(" ");
 }
@@ -83,7 +83,7 @@ function optionClass(isSelected: boolean) {
 function SelectionMark({ selected }: { selected: boolean }) {
   if (!selected) return null;
   return (
-    <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-sm border border-[var(--mq-border-strong)] bg-[var(--mq-background)] px-2 py-1 text-xs font-bold uppercase tracking-wider text-[var(--mq-heading)]">
+    <span className="absolute right-2 top-2 inline-flex items-center gap-1 rounded-sm border border-[var(--mq-border-strong)] bg-[var(--mq-background)] px-2 py-1 text-[0.68rem] font-bold uppercase tracking-wider text-[var(--mq-heading)] md:right-3 md:top-3 md:text-xs">
       <Check className="h-3.5 w-3.5" aria-hidden="true" />
       Selected
     </span>
@@ -330,36 +330,36 @@ export function SetupScreen({
   }
 
   return (
-    <div className="min-h-[100dvh] w-full flex flex-col p-4 md:p-8 animate-in fade-in duration-500">
-      <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6">
+    <div className="min-h-[100dvh] w-full flex flex-col p-4 md:p-5 xl:p-6 animate-in fade-in duration-500">
+      <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-4 xl:gap-5">
         {topControls && (
           <div className="flex items-center justify-end gap-3 px-1 pt-[env(safe-area-inset-top)]">
             {topControls}
           </div>
         )}
 
-        <header className="text-center space-y-4">
-          <p className="text-sm font-bold uppercase tracking-[0.35em] text-[var(--mq-secondary)]">
+        <header className="text-center space-y-3">
+          <p className="text-xs font-bold uppercase tracking-[0.35em] text-[var(--mq-secondary)] md:text-sm">
             The Chronicler
           </p>
-          <h2 className="rs-title text-4xl md:text-6xl font-bold">
+          <h2 className="rs-title text-4xl font-bold md:text-5xl xl:text-6xl">
             Open the Chronicle
           </h2>
           <div className="rs-hr max-w-lg mx-auto"></div>
           {stepNumber && (
-            <div className="flex flex-col items-center gap-3">
-              <p className="text-sm font-bold uppercase tracking-widest text-[var(--mq-text-muted)]">
+            <div className="flex flex-col items-center gap-2">
+              <p className="text-xs font-bold uppercase tracking-widest text-[var(--mq-text-muted)] md:text-sm">
                 Step {stepNumber} of {DECISION_STEPS.length}
               </p>
               <div
-                className="flex gap-2"
+                className="flex gap-1.5 md:gap-2"
                 aria-label={`Step ${stepNumber} of ${DECISION_STEPS.length}`}
               >
                 {DECISION_STEPS.map((decisionStep, index) => (
                   <span
                     key={decisionStep}
                     className={[
-                      "h-3 w-3 rounded-full border transition-all",
+                      "h-2.5 w-2.5 rounded-full border transition-all md:h-3 md:w-3",
                       index + 1 <= stepNumber
                         ? "border-[var(--mq-heading)] bg-[var(--mq-heading)] shadow-[0_0_12px_var(--mq-heading)]"
                         : "border-[var(--mq-border)] bg-[var(--mq-surface-strong)]",
@@ -373,7 +373,7 @@ export function SetupScreen({
 
         <main
           className={[
-            "rs-panel setup-stage flex-1 p-5 md:p-8",
+            "rs-panel setup-stage flex-1 p-4 md:p-6 xl:p-7",
             isStageTransitioning ? "setup-stage-exit" : "setup-stage-enter",
           ].join(" ")}
         >
@@ -382,14 +382,14 @@ export function SetupScreen({
           )}
 
           {mode === "question" && step === "intro" && (
-            <section className="mx-auto max-w-3xl text-center space-y-8 animate-in fade-in slide-in-from-bottom-3 duration-300">
-              <div className="text-6xl" aria-hidden="true">
+            <section className="mx-auto max-w-3xl text-center space-y-5 md:space-y-6 animate-in fade-in slide-in-from-bottom-3 duration-300">
+              <div className="text-4xl md:text-5xl" aria-hidden="true">
                 ✦
               </div>
-              <h3 className="rs-title text-3xl md:text-5xl">
+              <h3 className="rs-title text-3xl md:text-4xl xl:text-5xl">
                 A candle flickers to life.
               </h3>
-              <p className="story-text text-xl md:text-2xl">
+              <p className="story-text text-lg md:text-xl">
                 An ancient book opens on its own, and a glowing quill hovers
                 above the first blank page.
               </p>
@@ -412,7 +412,7 @@ export function SetupScreen({
                     data-testid={`button-name-${option}`}
                   >
                     <SelectionMark selected={name === option} />
-                    <span className="text-2xl font-serif text-[var(--mq-heading)]">
+                    <span className="text-xl font-serif text-[var(--mq-heading)] md:text-2xl">
                       {option}
                     </span>
                   </button>
@@ -434,7 +434,7 @@ export function SetupScreen({
                     data-testid={`button-pronouns-${option}`}
                   >
                     <SelectionMark selected={pronouns === option} />
-                    <span className="text-2xl font-serif text-[var(--mq-heading)]">
+                    <span className="text-xl font-serif text-[var(--mq-heading)] md:text-2xl">
                       {option}
                     </span>
                   </button>
@@ -496,13 +496,13 @@ export function SetupScreen({
                     data-testid={`button-difficulty-${option.key}`}
                   >
                     <SelectionMark selected={difficulty === option.value} />
-                    <span className="text-2xl font-serif text-[var(--mq-heading)]">
+                    <span className="text-xl font-serif text-[var(--mq-heading)] md:text-2xl">
                       {option.label}
                     </span>
-                    <span className="mt-2 text-base text-[var(--mq-text)]">
+                    <span className="mt-2 text-sm text-[var(--mq-text)] md:text-base">
                       {option.description}
                     </span>
-                    <span className="mt-1 text-sm text-[var(--mq-text-muted)]">
+                    <span className="mt-1 text-xs text-[var(--mq-text-muted)] md:text-sm">
                       {option.studentSummary}
                     </span>
                   </button>
@@ -522,13 +522,13 @@ export function SetupScreen({
                     data-testid={`button-quest-length-${option.id}`}
                   >
                     <SelectionMark selected={maxTurns === option.maxTurns} />
-                    <span className="text-2xl font-serif text-[var(--mq-heading)]">
+                    <span className="text-xl font-serif text-[var(--mq-heading)] md:text-2xl">
                       {option.label}
                     </span>
-                    <span className="mt-2 text-base text-[var(--mq-text)]">
+                    <span className="mt-2 text-sm text-[var(--mq-text)] md:text-base">
                       {option.description}
                     </span>
-                    <span className="mt-1 text-sm text-[var(--mq-text-muted)]">
+                    <span className="mt-1 text-xs text-[var(--mq-text-muted)] md:text-sm">
                       {option.maxTurns} successful math challenges
                     </span>
                   </button>
@@ -574,10 +574,10 @@ export function SetupScreen({
                       data-testid={`button-color-scheme-${scheme.id}`}
                     >
                       <SelectionMark selected={selected} />
-                      <span className="text-2xl font-serif text-[var(--mq-heading)]">
+                      <span className="text-xl font-serif text-[var(--mq-heading)] md:text-2xl">
                         {scheme.name}
                       </span>
-                      <span className="mt-2 text-base text-[var(--mq-text)]">
+                      <span className="mt-2 text-sm text-[var(--mq-text)] md:text-base">
                         {scheme.description}
                       </span>
                       <span className="mt-4 flex gap-2" aria-hidden="true">
@@ -633,7 +633,7 @@ export function SetupScreen({
             <>
               <span aria-hidden="true" />
               <button
-                className="mq-focus rs-button px-8 py-4 text-xl"
+                className="mq-focus rs-button px-7 py-3 text-lg md:px-8 md:py-4 md:text-xl"
                 onClick={continueAfterConfirmation}
                 data-testid="button-confirmation-continue"
               >
@@ -643,7 +643,7 @@ export function SetupScreen({
           ) : (
             <>
               <button
-                className="mq-focus rs-button px-8 py-4 text-lg !bg-[var(--mq-background)]"
+                className="mq-focus rs-button px-7 py-3 text-base !bg-[var(--mq-background)] md:px-8 md:py-4 md:text-lg"
                 onClick={goBack}
                 data-testid="button-setup-back"
               >
@@ -651,7 +651,7 @@ export function SetupScreen({
               </button>
 
               <button
-                className="mq-focus rs-button px-8 py-4 text-xl disabled:cursor-not-allowed disabled:opacity-50"
+                className="mq-focus rs-button px-7 py-3 text-lg disabled:cursor-not-allowed disabled:opacity-50 md:px-8 md:py-4 md:text-xl"
                 onClick={step === "intro" ? goNext : showConfirmation}
                 disabled={!canContinue}
                 data-testid="button-setup-next"
@@ -668,12 +668,12 @@ export function SetupScreen({
 
 function Question({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <section className="setup-question-view space-y-6 animate-in fade-in slide-in-from-bottom-3 duration-300">
-      <div className="mx-auto max-w-3xl text-center space-y-4">
-        <p className="text-sm font-bold uppercase tracking-[0.3em] text-[var(--mq-secondary)]">
+    <section className="setup-question-view space-y-5 animate-in fade-in slide-in-from-bottom-3 duration-300 md:space-y-6">
+      <div className="mx-auto max-w-3xl text-center space-y-3 md:space-y-4">
+        <p className="text-xs font-bold uppercase tracking-[0.3em] text-[var(--mq-secondary)] md:text-sm">
           The glowing quill asks
         </p>
-        <h3 className="rs-title text-3xl md:text-5xl">{title}</h3>
+        <h3 className="rs-title text-3xl md:text-4xl xl:text-5xl">{title}</h3>
       </div>
       {children}
     </section>
@@ -709,6 +709,8 @@ function ChoiceGrid({
         : "sm:grid-cols-2 lg:grid-cols-3";
 
   return (
-    <div className={`grid grid-cols-1 gap-4 ${columnClass}`}>{children}</div>
+    <div className={`grid grid-cols-1 gap-3 md:gap-4 ${columnClass}`}>
+      {children}
+    </div>
   );
 }

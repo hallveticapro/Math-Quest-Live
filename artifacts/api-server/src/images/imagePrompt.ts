@@ -31,7 +31,8 @@ export function buildImagePrompt(context: ImageRequestContext) {
   return [
     "Create a colorful cartoon fantasy storybook illustration for upper elementary students.",
     "Bright, whimsical, adventurous, classroom-safe, clean shapes, expressive characters, magical lighting.",
-    "Not photorealistic. No readable text, letters, numbers, logos, captions, signs, or UI.",
+    "Not photorealistic. ABSOLUTELY NO readable text, letters, words, numbers, math symbols, labels, logos, captions, signs, or UI should appear anywhere in the image.",
+    "Decorative unreadable magical glyphs, abstract runes, and ornamental markings are allowed only if they do not form real letters, words, or numbers.",
     "No gore, injuries, death, horror, romance, frightening realism, or realistic weapons harming people.",
     "No stereotypes tied to ancestry, species, gender, or class. No real people. No student likenesses.",
     `Adventure: ${cleanText(context.adventureSeed, "a magical quest")}.`,

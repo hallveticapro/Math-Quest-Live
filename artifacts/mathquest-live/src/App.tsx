@@ -236,12 +236,12 @@ function GameApp() {
       });
   };
 
-  const handleQuickStart = () => {
+  const handleQuickStart = (difficulty: string) => {
     if (quickStartLockRef.current) return;
 
     quickStartLockRef.current = true;
     setIsQuickStarting(true);
-    const session = buildQuickStartSession(lastQuickStartRef.current);
+    const session = buildQuickStartSession(difficulty, lastQuickStartRef.current);
     lastQuickStartRef.current = session;
     applyColorScheme(session.colorSchemeId);
 

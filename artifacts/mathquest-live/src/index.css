@@ -219,7 +219,7 @@
 }
 
 .setup-stage {
-  min-height: clamp(560px, 62dvh, 760px);
+  min-height: clamp(420px, 50dvh, 640px);
   transition:
     opacity 160ms ease,
     transform 160ms ease,
@@ -228,7 +228,7 @@
 
 .setup-question-view,
 .setup-confirmation-view {
-  min-height: clamp(420px, 52dvh, 620px);
+  min-height: clamp(300px, 38dvh, 500px);
 }
 
 .setup-stage-enter {
@@ -243,7 +243,7 @@
 }
 
 .setup-footer {
-  min-height: 76px;
+  min-height: 64px;
 }
 
 .quest-stage {

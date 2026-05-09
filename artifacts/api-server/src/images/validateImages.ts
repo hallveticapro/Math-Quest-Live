@@ -61,7 +61,8 @@ function validatePromptSafety() {
   });
 
   assert(prompt.includes("cartoon fantasy storybook"), "Prompt should use generic cartoon fantasy storybook style");
-  assert(/No readable text, letters, numbers, logos, captions, signs, or UI/i.test(prompt), "Prompt should ban generated text and UI");
+  assert(/ABSOLUTELY NO readable text, letters, words, numbers/i.test(prompt), "Prompt should strongly ban generated text and numbers");
+  assert(/Decorative unreadable magical glyphs/i.test(prompt), "Prompt should allow only unreadable decorative glyphs");
   assert(/No gore/i.test(prompt), "Prompt should include classroom safety exclusions");
   assert(!/Disney|Pixar|Studio Ghibli|Harry Potter|anime/i.test(prompt), "Prompt should not reference brands, studios, franchises, or anime style");
   assert(!/[<>]/.test(prompt), "Prompt should strip angle brackets from controlled context");
