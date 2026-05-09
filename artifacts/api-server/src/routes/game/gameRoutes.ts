@@ -1,6 +1,17 @@
 import { Router } from "express";
 import { StartGameBody, TakeTurnBody, GetEndingBody } from "@workspace/api-zod";
-import { buildStartPrompt, buildTurnPrompt, buildEndingPrompt } from "./storyPrompt.js";
+import {
+  ALLOWED_ADVENTURE_SEEDS,
+  ALLOWED_ANCESTRIES,
+  ALLOWED_CLASSES,
+  ALLOWED_DIFFICULTIES,
+  ALLOWED_HERO_NAMES,
+  ALLOWED_MAX_TURNS,
+  ALLOWED_PRONOUNS,
+  buildStartPrompt,
+  buildTurnPrompt,
+  buildEndingPrompt,
+} from "./storyPrompt.js";
 import { checkStoryTurnSafety, checkEndingSafety } from "./safety.js";
 import { openai, STORY_MODEL } from "../../lib/openaiClient.js";
 
@@ -56,9 +67,39 @@ function parseJSON(text: string): unknown {
   }
 }
 
+function isAllowedString(value: string, allowed: readonly string[]) {
+  return allowed.includes(value);
+}
+
+function validateCommonGameInput(data: {
+  hero: {
+    name: string;
+    pronouns: string;
+    ancestry: string;
+    className: string;
+  };
+  difficulty: string;
+  adventureSeed: string;
+  maxTurns: number;
+}) {
+  return (
+    isAllowedString(data.hero.name, ALLOWED_HERO_NAMES) &&
+    isAllowedString(data.hero.pronouns, ALLOWED_PRONOUNS) &&
+    isAllowedString(data.hero.ancestry, ALLOWED_ANCESTRIES) &&
+    isAllowedString(data.hero.className, ALLOWED_CLASSES) &&
+    isAllowedString(data.difficulty, ALLOWED_DIFFICULTIES) &&
+    isAllowedString(data.adventureSeed, ALLOWED_ADVENTURE_SEEDS) &&
+    (ALLOWED_MAX_TURNS as readonly number[]).includes(data.maxTurns)
+  );
+}
+
+function isValidStoryStateText(value: string, maxLength: number) {
+  return value.trim().length > 0 && value.length <= maxLength;
+}
+
 router.post("/start", async (req, res) => {
   const parsed = StartGameBody.safeParse(req.body);
-  if (!parsed.success) {
+  if (!parsed.success || !validateCommonGameInput(parsed.data)) {
     res.status(400).json({ error: "Invalid request body" });
     return;
   }
@@ -83,7 +124,16 @@ router.post("/start", async (req, res) => {
 
 router.post("/turn", async (req, res) => {
   const parsed = TakeTurnBody.safeParse(req.body);
-  if (!parsed.success) {
+  if (
+    !parsed.success ||
+    !validateCommonGameInput(parsed.data) ||
+    !Number.isInteger(parsed.data.turn) ||
+    parsed.data.turn < 1 ||
+    parsed.data.turn > parsed.data.maxTurns ||
+    !isValidStoryStateText(parsed.data.storySummary, 600) ||
+    !isValidStoryStateText(parsed.data.chosenAction, 90) ||
+    !isValidStoryStateText(parsed.data.mathResult, 160)
+  ) {
     res.status(400).json({ error: "Invalid request body" });
     return;
   }
@@ -108,7 +158,17 @@ router.post("/turn", async (req, res) => {
 
 router.post("/ending", async (req, res) => {
   const parsed = GetEndingBody.safeParse(req.body);
-  if (!parsed.success) {
+  if (
+    !parsed.success ||
+    !validateCommonGameInput(parsed.data) ||
+    !Number.isInteger(parsed.data.turn) ||
+    parsed.data.turn < 1 ||
+    parsed.data.turn > parsed.data.maxTurns ||
+    !Number.isInteger(parsed.data.mathSolved) ||
+    parsed.data.mathSolved < 0 ||
+    parsed.data.mathSolved > parsed.data.maxTurns ||
+    !isValidStoryStateText(parsed.data.storySummary, 600)
+  ) {
     res.status(400).json({ error: "Invalid request body" });
     return;
   }

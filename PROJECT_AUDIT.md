@@ -13,7 +13,6 @@ Main application folders:
 - `lib/api-spec/` - OpenAPI contract used for generated clients and schemas.
 - `lib/api-client-react/` - generated React Query API client.
 - `lib/api-zod/` - generated Zod schemas and TypeScript types.
-- `artifacts/mockup-sandbox/` - legacy hosted platform/mockup preview app, not part of the main game flow.
 - `lib/db/` - database scaffold using Drizzle/Postgres, but not used by the MathQuest MVP flow.
 - `lib/integrations-openai-ai-*` and `lib/integrations/openai_ai_integrations/` - legacy hosted platform/OpenAI integration scaffolding, not the active game OpenAI path.
 

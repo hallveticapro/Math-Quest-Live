@@ -25,6 +25,13 @@ interface EndingData extends StartGameData {
   mathSolved: number;
 }
 
+export const ALLOWED_HERO_NAMES = ["Astra", "Kael", "Nova", "Mira", "Jax", "Luna", "Orion", "Sage", "Zara", "Theo", "Elara", "Milo"] as const;
+export const ALLOWED_PRONOUNS = ["she/her", "he/him", "they/them"] as const;
+export const ALLOWED_ANCESTRIES = ["Human", "Elf", "Dwarf", "Dragonborn", "Fae", "Robot", "Merfolk", "Beastfolk", "Starborn"] as const;
+export const ALLOWED_CLASSES = ["Wizard", "Warrior", "Explorer", "Rogue", "Inventor", "Healer", "Beast Tamer", "Elementalist"] as const;
+export const ALLOWED_DIFFICULTIES = ["Easy", "Medium", "Hard", "Extreme"] as const;
+export const ALLOWED_MAX_TURNS = [8, 11, 15] as const;
+
 const ADVENTURE_SEEDS: Record<string, { setting: string; objective: string; helpers: string; avoid: string }> = {
   "The Sky Temple": {
     setting: "A floating temple above the clouds",
@@ -101,6 +108,7 @@ const ADVENTURE_SEEDS: Record<string, { setting: string; objective: string; help
 };
 
 const RANDOM_SEEDS = Object.keys(ADVENTURE_SEEDS);
+export const ALLOWED_ADVENTURE_SEEDS = ["Random", ...RANDOM_SEEDS] as const;
 
 function resolveSeed(adventureSeed: string) {
   if (adventureSeed === "Random") {
@@ -122,9 +130,13 @@ const SYSTEM_PROMPT = `You are the story engine for MathQuest Live, a classroom-
 
 IMPORTANT RULES:
 - This is for a 4th grade classroom. All content must be safe and appropriate.
-- No gore, graphic violence, death, romance, profanity, horror, realistic weapons harming people
-- No bullying, stereotypes, real-world politics, religion, drugs, alcohol, smoking, sexual content
-- No self-harm, no asking for personal information
+- No gore, graphic violence, death, romance, profanity, horror, or realistic weapons harming people
+- No bullying or stereotypes
+- No real-world politics or religion
+- No drugs, alcohol, smoking, or vaping
+- No sexual content
+- No self-harm
+- No asking for names, addresses, phone numbers, emails, school names, locations, or any personal information
 - Allowed: cartoon adventure danger, puzzles, magical obstacles, friendly creatures, storms, locked doors, mysteries
 - Problems resolved through: math, observation, kindness, creativity, teamwork, courage
 - Ancestry/species only affects appearance and fantasy flavor — never implies intelligence or ability
