@@ -19,12 +19,14 @@ const MAX_STORY_LENGTH = 2000;
 const MAX_SUMMARY_LENGTH = 600;
 const MAX_ENDING_LENGTH = 2200;
 const MAX_BADGE_LENGTH = 60;
+const HTML_TAG_PATTERN = /<\/?[a-z][^>]*>/i;
 
 function isSafeString(value: unknown, maxLength: number): value is string {
   if (typeof value !== "string") return false;
   const trimmed = value.trim();
   if (!trimmed) return false;
   if (trimmed.length > maxLength) return false;
+  if (HTML_TAG_PATTERN.test(trimmed)) return false;
   return checkSafety(trimmed);
 }
 
