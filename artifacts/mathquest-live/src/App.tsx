@@ -36,6 +36,10 @@ import {
   DEFAULT_COLOR_SCHEME_ID,
   type ColorSchemeId,
 } from "./colorSchemes";
+import {
+  buildQuickStartSession,
+  type QuickStartSession,
+} from "./quickStart";
 
 const queryClient = new QueryClient();
 
@@ -99,6 +103,9 @@ function GameApp() {
     promise: Promise<StoryTurnResponse | null>;
   } | null>(null);
   const usedProblemSignaturesRef = useRef<Set<string>>(new Set());
+  const lastQuickStartRef = useRef<QuickStartSession | null>(null);
+  const quickStartLockRef = useRef(false);
+  const [isQuickStarting, setIsQuickStarting] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -227,6 +234,28 @@ function GameApp() {
           storySummary: FALLBACK_SCENE.storySummary,
         }));
       });
+  };
+
+  const handleQuickStart = () => {
+    if (quickStartLockRef.current) return;
+
+    quickStartLockRef.current = true;
+    setIsQuickStarting(true);
+    const session = buildQuickStartSession(lastQuickStartRef.current);
+    lastQuickStartRef.current = session;
+    applyColorScheme(session.colorSchemeId);
+
+    window.setTimeout(() => {
+      handleStart(
+        session.hero,
+        session.difficulty,
+        session.adventureSeed,
+        session.maxTurns,
+        session.colorSchemeId,
+      );
+      setIsQuickStarting(false);
+      quickStartLockRef.current = false;
+    }, 650);
   };
 
   const handleChoiceSelect = (choiceId: string, choiceLabel: string) => {
@@ -461,8 +490,12 @@ function GameApp() {
           onBegin={() => {
             playTransition();
             applyColorScheme(DEFAULT_COLOR_SCHEME_ID);
+            setIsQuickStarting(false);
+            quickStartLockRef.current = false;
             setState((s) => ({ ...INITIAL_STATE, screen: "setup" }));
           }}
+          onQuickStart={handleQuickStart}
+          isQuickStarting={isQuickStarting}
         />
       )}
       {state.screen === "setup" && (
@@ -470,24 +503,29 @@ function GameApp() {
           onStart={handleStart}
           onPrepareStart={prepareStart}
           onCancel={handleExitToTitle}
+          topControls={<AppInfoDialog variant="inline" />}
         />
       )}
       {state.screen === "game" && (
-        <>
-          <QuestSettingsDialog
-            colorSchemeId={state.colorSchemeId}
-            difficulty={state.difficulty}
-            isMathActive={Boolean(state.currentMathProblem)}
-            onColorSchemeChange={handleColorSchemeChange}
-            onDifficultyChange={handleDifficultyChange}
-          />
-          <GameScreen
-            state={state}
-            onChoiceSelect={handleChoiceSelect}
-            onMathAnswer={handleMathAnswer}
-            onExitToTitle={handleExitToTitle}
-          />
-        </>
+        <GameScreen
+          state={state}
+          onChoiceSelect={handleChoiceSelect}
+          onMathAnswer={handleMathAnswer}
+          onExitToTitle={handleExitToTitle}
+          topControls={
+            <>
+              <QuestSettingsDialog
+                colorSchemeId={state.colorSchemeId}
+                difficulty={state.difficulty}
+                isMathActive={Boolean(state.currentMathProblem)}
+                onColorSchemeChange={handleColorSchemeChange}
+                onDifficultyChange={handleDifficultyChange}
+                variant="inline"
+              />
+              <AppInfoDialog variant="inline" />
+            </>
+          }
+        />
       )}
       {state.screen === "ending" && (
         <EndingScreen
@@ -500,6 +538,9 @@ function GameApp() {
           }}
         />
       )}
+      {(state.screen === "title" || state.screen === "ending") && (
+        <AppInfoDialog />
+      )}
     </div>
   );
 }
@@ -509,7 +550,6 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <GameApp />
-        <AppInfoDialog />
         <Toaster />
       </TooltipProvider>
     </QueryClientProvider>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { Check, Sparkles } from "lucide-react";
 import { Hero } from "../types";
@@ -13,58 +13,14 @@ import {
   DEFAULT_QUEST_LENGTH,
   QUEST_LENGTH_OPTIONS,
 } from "../questLengths";
-
-const NAMES = [
-  "Astra",
-  "Kael",
-  "Nova",
-  "Mira",
-  "Jax",
-  "Luna",
-  "Orion",
-  "Sage",
-  "Zara",
-  "Theo",
-  "Elara",
-  "Milo",
-];
-const PRONOUNS = ["she/her", "he/him", "they/them"];
-const ANCESTRIES = [
-  "Human",
-  "Elf",
-  "Dwarf",
-  "Dragonborn",
-  "Fae",
-  "Robot",
-  "Merfolk",
-  "Beastfolk",
-  "Starborn",
-];
-const CLASSES = [
-  "Wizard",
-  "Warrior",
-  "Explorer",
-  "Rogue",
-  "Inventor",
-  "Healer",
-  "Beast Tamer",
-  "Elementalist",
-];
-const SEEDS = [
-  "Random",
-  "The Sky Temple",
-  "The Crystal Forest",
-  "The Clockwork Volcano",
-  "The Moonlit Library",
-  "The Lost Reef City",
-  "The Floating Market",
-  "The Dragon Egg Rescue",
-  "The Puzzle Pyramid",
-  "The Candy Comet",
-  "The Tiny Giant's Garden",
-  "The Museum After Midnight",
-  "The Friendly Ghost Lighthouse",
-];
+import { resetScrollForTransition } from "../lib/scroll";
+import {
+  ADVENTURE_SEEDS,
+  HERO_ANCESTRIES,
+  HERO_CLASSES,
+  HERO_NAMES,
+  HERO_PRONOUNS,
+} from "../adventureOptions";
 type SetupStep =
   | "intro"
   | "name"
@@ -88,6 +44,8 @@ const DECISION_STEPS: SetupStep[] = [
 ];
 const STEP_ORDER: SetupStep[] = ["intro", ...DECISION_STEPS];
 const WRITING_TRANSITION_MS = 1900;
+const SETUP_TRANSITION_OUT_MS = 140;
+const SETUP_TRANSITION_IN_MS = 180;
 
 type SetupScreenProps = {
   onStart: (
@@ -104,6 +62,7 @@ type SetupScreenProps = {
     maxTurns: number,
   ) => void;
   onCancel: () => void;
+  topControls?: ReactNode;
 };
 
 function getStepNumber(step: SetupStep) {
@@ -179,6 +138,7 @@ export function SetupScreen({
   onStart,
   onPrepareStart,
   onCancel,
+  topControls,
 }: SetupScreenProps) {
   const [step, setStep] = useState<SetupStep>("intro");
   const [mode, setMode] = useState<"question" | "confirmation">("question");
@@ -194,9 +154,31 @@ export function SetupScreen({
     DEFAULT_COLOR_SCHEME_ID,
   );
   const [isWriting, setIsWriting] = useState(false);
+  const [isStageTransitioning, setIsStageTransitioning] = useState(false);
+  const transitionTimersRef = useRef<Array<ReturnType<typeof setTimeout>>>([]);
 
   const currentIndex = STEP_ORDER.indexOf(step);
   const stepNumber = getStepNumber(step);
+
+  useEffect(() => {
+    return () => {
+      transitionTimersRef.current.forEach(clearTimeout);
+    };
+  }, []);
+
+  const runSetupTransition = (update: () => void) => {
+    transitionTimersRef.current.forEach(clearTimeout);
+    setIsStageTransitioning(true);
+    transitionTimersRef.current = [
+      setTimeout(() => {
+        resetScrollForTransition();
+        update();
+      }, SETUP_TRANSITION_OUT_MS),
+      setTimeout(() => {
+        setIsStageTransitioning(false);
+      }, SETUP_TRANSITION_OUT_MS + SETUP_TRANSITION_IN_MS),
+    ];
+  };
 
   const goToStep = (target: SetupStep) => {
     setMode("question");
@@ -209,19 +191,17 @@ export function SetupScreen({
 
   const goNext = () => {
     const next = STEP_ORDER[Math.min(currentIndex + 1, STEP_ORDER.length - 1)];
-    goToStep(next);
+    runSetupTransition(() => goToStep(next));
   };
 
   const goBack = () => {
-    setMode("question");
-    setConfirmationText("");
     if (step === "intro") {
       applyColorScheme(DEFAULT_COLOR_SCHEME_ID);
       onCancel();
       return;
     }
     const previous = STEP_ORDER[Math.max(currentIndex - 1, 0)];
-    goToStep(previous);
+    runSetupTransition(() => goToStep(previous));
   };
 
   const handleSchemePreview = (schemeId: ColorSchemeId) => {
@@ -278,8 +258,10 @@ export function SetupScreen({
       return;
     }
 
-    setConfirmationText(text);
-    setMode("confirmation");
+    runSetupTransition(() => {
+      setConfirmationText(text);
+      setMode("confirmation");
+    });
   };
 
   const continueAfterConfirmation = () => {
@@ -293,17 +275,21 @@ export function SetupScreen({
     }
 
     if (step === "colors") {
+      resetScrollForTransition();
       handleBeginStory();
       return;
     }
 
     const next = STEP_ORDER[Math.min(currentIndex + 1, STEP_ORDER.length - 1)];
-    setConfirmationText("");
-    setMode("question");
-    goToStep(next);
+    runSetupTransition(() => {
+      setConfirmationText("");
+      setMode("question");
+      goToStep(next);
+    });
   };
 
   const handleBeginStory = () => {
+    resetScrollForTransition();
     setIsWriting(true);
     setTimeout(() => {
       onStart(
@@ -346,6 +332,12 @@ export function SetupScreen({
   return (
     <div className="min-h-[100dvh] w-full flex flex-col p-4 md:p-8 animate-in fade-in duration-500">
       <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6">
+        {topControls && (
+          <div className="flex items-center justify-end gap-3 px-1 pt-[env(safe-area-inset-top)]">
+            {topControls}
+          </div>
+        )}
+
         <header className="text-center space-y-4">
           <p className="text-sm font-bold uppercase tracking-[0.35em] text-[var(--mq-secondary)]">
             The Chronicler
@@ -379,7 +371,12 @@ export function SetupScreen({
           )}
         </header>
 
-        <main className="rs-panel setup-stage flex-1 p-5 md:p-8">
+        <main
+          className={[
+            "rs-panel setup-stage flex-1 p-5 md:p-8",
+            isStageTransitioning ? "setup-stage-exit" : "setup-stage-enter",
+          ].join(" ")}
+        >
           {mode === "confirmation" && (
             <ConfirmationView text={confirmationText} />
           )}
@@ -407,7 +404,7 @@ export function SetupScreen({
           {mode === "question" && step === "name" && (
             <Question title="First, brave traveler, what name shall be written in the Chronicle?">
               <ChoiceGrid>
-                {NAMES.map((option) => (
+                {HERO_NAMES.map((option) => (
                   <button
                     key={option}
                     className={optionClass(name === option)}
@@ -429,7 +426,7 @@ export function SetupScreen({
               title={`And how shall the Chronicle speak of ${name || "the hero"}?`}
             >
               <ChoiceGrid columns="three">
-                {PRONOUNS.map((option) => (
+                {HERO_PRONOUNS.map((option) => (
                   <button
                     key={option}
                     className={optionClass(pronouns === option)}
@@ -451,7 +448,7 @@ export function SetupScreen({
               title={`Every hero carries a spark of origin. What is ${name || "your hero"}'s ancestry?`}
             >
               <ChoiceGrid>
-                {ANCESTRIES.map((option) => (
+                {HERO_ANCESTRIES.map((option) => (
                   <button
                     key={option}
                     className={optionClass(ancestry === option)}
@@ -471,7 +468,7 @@ export function SetupScreen({
           {mode === "question" && step === "class" && (
             <Question title={`What path does ${name || "the hero"} walk?`}>
               <ChoiceGrid>
-                {CLASSES.map((option) => (
+                {HERO_CLASSES.map((option) => (
                   <button
                     key={option}
                     className={optionClass(className === option)}
@@ -543,7 +540,7 @@ export function SetupScreen({
           {mode === "question" && step === "seed" && (
             <Question title="Where shall the Chronicle open?">
               <ChoiceGrid>
-                {SEEDS.map((option) => (
+                {ADVENTURE_SEEDS.map((option) => (
                   <button
                     key={option}
                     className={optionClass(seed === option)}

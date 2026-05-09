@@ -9,13 +9,25 @@ import {
 } from "@/components/ui/dialog";
 import { DIFFICULTY_OPTIONS } from "../math/floridaBestMath";
 
-export function AppInfoDialog() {
+type AppInfoDialogProps = {
+  variant?: "floating" | "inline";
+};
+
+const triggerBaseClass =
+  "mq-focus flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 border-[var(--mq-border)] bg-[var(--mq-background)]/90 text-[var(--mq-text)] shadow-lg transition-colors hover:border-[var(--mq-border-strong)] hover:text-[var(--mq-primary-hover)]";
+
+export function AppInfoDialog({ variant = "floating" }: AppInfoDialogProps) {
+  const triggerClass =
+    variant === "floating"
+      ? `${triggerBaseClass} fixed right-[max(1rem,env(safe-area-inset-right))] top-[max(1rem,env(safe-area-inset-top))] z-40`
+      : triggerBaseClass;
+
   return (
     <Dialog>
       <DialogTrigger asChild>
         <button
-          aria-label="About MathQuest Live"
-          className="mq-focus fixed right-4 top-4 z-40 flex h-11 w-11 items-center justify-center rounded-full border-2 border-[var(--mq-border)] bg-[var(--mq-background)]/90 text-[var(--mq-text)] shadow-lg transition-colors hover:border-[var(--mq-border-strong)] hover:text-[var(--mq-primary-hover)]"
+          aria-label="Open information"
+          className={triggerClass}
           data-testid="button-app-info"
         >
           <Info className="h-6 w-6" aria-hidden="true" />

@@ -220,11 +220,26 @@
 
 .setup-stage {
   min-height: clamp(560px, 62dvh, 760px);
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease,
+    min-height 180ms ease;
 }
 
 .setup-question-view,
 .setup-confirmation-view {
   min-height: clamp(420px, 52dvh, 620px);
+}
+
+.setup-stage-enter {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.setup-stage-exit {
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
 }
 
 .setup-footer {
@@ -317,6 +332,11 @@
 
   .setup-question-view,
   .setup-confirmation-view {
-    min-height: 360px;
+    min-height: min(420px, 56dvh);
+  }
+
+  .story-text {
+    font-size: 1rem;
+    line-height: 1.65;
   }
 }

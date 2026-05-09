@@ -20,7 +20,11 @@ type QuestSettingsDialogProps = {
   isMathActive: boolean;
   onColorSchemeChange: (schemeId: ColorSchemeId) => void;
   onDifficultyChange: (difficulty: string) => void;
+  variant?: "floating" | "inline";
 };
+
+const triggerBaseClass =
+  "mq-focus flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 border-[var(--mq-border)] bg-[var(--mq-background)]/90 text-[var(--mq-text)] shadow-lg transition-colors hover:border-[var(--mq-border-strong)] hover:text-[var(--mq-primary-hover)]";
 
 export function QuestSettingsDialog({
   colorSchemeId,
@@ -28,15 +32,20 @@ export function QuestSettingsDialog({
   isMathActive,
   onColorSchemeChange,
   onDifficultyChange,
+  variant = "floating",
 }: QuestSettingsDialogProps) {
   const activeScheme = getColorScheme(colorSchemeId);
+  const triggerClass =
+    variant === "floating"
+      ? `${triggerBaseClass} fixed right-[calc(max(1rem,env(safe-area-inset-right))+3.75rem)] top-[max(1rem,env(safe-area-inset-top))] z-40`
+      : triggerBaseClass;
 
   return (
     <Dialog>
       <DialogTrigger asChild>
         <button
           aria-label="Open settings"
-          className="mq-focus fixed right-[4.75rem] top-4 z-40 flex h-11 w-11 items-center justify-center rounded-full border-2 border-[var(--mq-border)] bg-[var(--mq-background)]/90 text-[var(--mq-text)] shadow-lg transition-colors hover:border-[var(--mq-border-strong)] hover:text-[var(--mq-primary-hover)]"
+          className={triggerClass}
           data-testid="button-quest-settings"
         >
           <Settings className="h-6 w-6" aria-hidden="true" />

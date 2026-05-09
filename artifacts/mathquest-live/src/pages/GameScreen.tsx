@@ -4,12 +4,15 @@ import { GameState } from "../types";
 import { playClick } from "../lib/sounds";
 import { SceneImage } from "../components/SceneImage";
 import { getQuestLengthByTurns } from "../questLengths";
+import { resetScrollForTransition } from "../lib/scroll";
+import type { ReactNode } from "react";
 
 interface GameScreenProps {
   state: GameState;
   onChoiceSelect: (choiceId: string, choiceLabel: string) => void;
   onMathAnswer: (answer: string) => void;
   onExitToTitle: () => void;
+  topControls?: ReactNode;
 }
 
 const QUEST_TRANSITION_OUT_MS = 180;
@@ -20,6 +23,7 @@ export function GameScreen({
   onChoiceSelect,
   onMathAnswer,
   onExitToTitle,
+  topControls,
 }: GameScreenProps) {
   const {
     hero,
@@ -54,6 +58,7 @@ export function GameScreen({
     transitionTimersRef.current.forEach(clearTimeout);
     transitionTimersRef.current = [
       setTimeout(() => {
+        resetScrollForTransition();
         advance();
       }, QUEST_TRANSITION_OUT_MS),
       setTimeout(() => {
@@ -112,23 +117,34 @@ export function GameScreen({
 
   return (
     <div className="min-h-[100dvh] w-full flex flex-col p-4 md:p-6 max-w-4xl mx-auto space-y-6 animate-in fade-in duration-500">
-      <header className="rs-panel p-4 flex flex-col md:flex-row items-center justify-between shadow-lg">
-        <div className="flex items-center space-x-4">
-          <div className="border-2 border-[var(--mq-border-strong)] p-1 bg-[var(--mq-background)]">
-            <div className="w-12 h-12 bg-[var(--mq-button)] flex items-center justify-center font-serif text-2xl rs-title shadow-inner">
-              {hero.name.charAt(0)}
+      <header className="rs-panel p-4 shadow-lg">
+        <div className="flex w-full flex-col gap-4">
+          <div className="flex w-full items-start justify-between gap-3">
+            <div className="flex min-w-0 items-center space-x-4">
+              <div className="shrink-0 border-2 border-[var(--mq-border-strong)] bg-[var(--mq-background)] p-1">
+                <div className="flex h-12 w-12 items-center justify-center bg-[var(--mq-button)] font-serif text-2xl shadow-inner rs-title">
+                  {hero.name.charAt(0)}
+                </div>
+              </div>
+              <div className="min-w-0">
+                <h3 className="rs-title truncate text-xl tracking-wide">
+                  {hero.name}
+                </h3>
+                <p className="text-sm uppercase tracking-wider text-[var(--mq-text-muted)]">
+                  {hero.ancestry} {hero.className}
+                </p>
+              </div>
             </div>
-          </div>
-          <div>
-            <h3 className="rs-title text-xl tracking-wide">{hero.name}</h3>
-            <p className="text-sm text-[var(--mq-text-muted)] uppercase tracking-wider">
-              {hero.ancestry} {hero.className}
-            </p>
-          </div>
-        </div>
 
-        <div className="mt-4 md:mt-0 flex items-center gap-6">
-          <div className="w-full min-w-[220px] max-w-xs space-y-2 text-center md:text-right">
+            {topControls && (
+              <div className="flex shrink-0 items-center gap-2">
+                {topControls}
+              </div>
+            )}
+          </div>
+
+          <div className="flex w-full flex-col gap-3 md:flex-row md:items-end md:justify-between">
+            <div className="w-full min-w-0 max-w-none space-y-2 text-left md:max-w-md">
             <div className="text-lg font-bold text-[var(--mq-heading)] uppercase tracking-wider">
               Math Challenges:{" "}
               <span className="text-[var(--mq-primary-hover)]">
@@ -153,36 +169,37 @@ export function GameScreen({
             </div>
           </div>
 
-          {!confirmExit ? (
-            <button
-              onClick={handleExitClick}
-              className="mq-focus text-[var(--mq-text-muted)] hover:text-[var(--mq-heading)] border border-[var(--mq-border)] hover:border-[var(--mq-border-strong)] bg-[var(--mq-background)] px-3 py-2 text-xs uppercase tracking-widest font-sans transition-colors duration-150 rounded-sm whitespace-nowrap"
-              data-testid="button-exit-quest"
-            >
-              ← Exit Quest
-            </button>
-          ) : (
-            <div className="flex items-center gap-2 border border-[var(--mq-danger)] bg-[var(--mq-background)] px-3 py-2 rounded-sm">
-              <span className="text-[var(--mq-text)] text-xs uppercase tracking-wider font-sans">
-                Exit?
-              </span>
+            {!confirmExit ? (
               <button
-                onClick={handleExitConfirm}
-                className="mq-focus text-[var(--mq-danger)] hover:text-[var(--mq-warning)] font-bold text-xs uppercase tracking-wider font-sans px-2 transition-colors"
-                data-testid="button-exit-confirm"
+                onClick={handleExitClick}
+                className="mq-focus w-full rounded-sm border border-[var(--mq-border)] bg-[var(--mq-background)] px-3 py-3 font-sans text-xs font-bold uppercase tracking-widest text-[var(--mq-text-muted)] transition-colors duration-150 hover:border-[var(--mq-border-strong)] hover:text-[var(--mq-heading)] sm:w-auto"
+                data-testid="button-exit-quest"
               >
-                Yes
+                ← Exit Quest
               </button>
-              <span className="text-[var(--mq-border)]">|</span>
-              <button
-                onClick={handleExitCancel}
-                className="mq-focus text-[var(--mq-secondary)] hover:text-[var(--mq-primary-hover)] font-bold text-xs uppercase tracking-wider font-sans px-2 transition-colors"
-                data-testid="button-exit-cancel"
-              >
-                No
-              </button>
-            </div>
-          )}
+            ) : (
+              <div className="flex w-full items-center justify-center gap-2 rounded-sm border border-[var(--mq-danger)] bg-[var(--mq-background)] px-3 py-3 sm:w-auto">
+                <span className="font-sans text-xs uppercase tracking-wider text-[var(--mq-text)]">
+                  Exit?
+                </span>
+                <button
+                  onClick={handleExitConfirm}
+                  className="mq-focus px-2 font-sans text-xs font-bold uppercase tracking-wider text-[var(--mq-danger)] transition-colors hover:text-[var(--mq-warning)]"
+                  data-testid="button-exit-confirm"
+                >
+                  Yes
+                </button>
+                <span className="text-[var(--mq-border)]">|</span>
+                <button
+                  onClick={handleExitCancel}
+                  className="mq-focus px-2 font-sans text-xs font-bold uppercase tracking-wider text-[var(--mq-secondary)] transition-colors hover:text-[var(--mq-primary-hover)]"
+                  data-testid="button-exit-cancel"
+                >
+                  No
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </header>
 
