@@ -30,7 +30,17 @@ export const ALLOWED_PRONOUNS = ["she/her", "he/him", "they/them"] as const;
 export const ALLOWED_ANCESTRIES = ["Human", "Elf", "Dwarf", "Dragonborn", "Fae", "Robot", "Merfolk", "Beastfolk", "Starborn"] as const;
 export const ALLOWED_CLASSES = ["Wizard", "Warrior", "Explorer", "Rogue", "Inventor", "Healer", "Beast Tamer", "Elementalist"] as const;
 export const ALLOWED_DIFFICULTIES = ["Easy", "Medium", "Hard", "Extreme"] as const;
-export const ALLOWED_MAX_TURNS = [8, 11, 15] as const;
+export const ALLOWED_MAX_TURNS = [5, 8, 10] as const;
+
+const QUEST_LENGTH_LABELS: Record<number, string> = {
+  5: "Quick Quest",
+  8: "Standard Quest",
+  10: "Full Quest",
+};
+
+function getQuestLengthLabel(maxTurns: number) {
+  return QUEST_LENGTH_LABELS[maxTurns] ?? "Custom Quest";
+}
 
 const ADVENTURE_SEEDS: Record<string, { setting: string; objective: string; helpers: string; avoid: string }> = {
   "The Sky Temple": {
@@ -204,6 +214,7 @@ Pronouns: ${hero.pronouns}
 Difficulty: ${data.difficulty}
 Reading guidance: ${reading.guidance}
 Math alignment: Florida B.E.S.T. Mathematics Grade ${reading.gradeBand} band. Use this only to tune reading complexity. Do not mention the student's grade level in the story.
+Quest length: ${getQuestLengthLabel(data.maxTurns)} with ${data.maxTurns} successful math challenges. The opening scene is not a math turn.
 
 This is the OPENING SCENE. Write ${reading.sceneWords}.
 
@@ -249,6 +260,8 @@ Pronouns: ${hero.pronouns}
 Difficulty: ${data.difficulty}
 Reading guidance: ${reading.guidance}
 Math alignment: Florida B.E.S.T. Mathematics Grade ${reading.gradeBand} band. Use this only to tune reading complexity. Do not mention the student's grade level in the story.
+Quest length: ${getQuestLengthLabel(data.maxTurns)} with ${data.maxTurns} successful math challenges.
+Current story beat: ${data.turn} of ${data.maxTurns}. This number refers to successful math-gated turns, not the intro.
 
 STORY SO FAR: ${data.storySummary}
 
@@ -285,6 +298,7 @@ Pronouns: ${hero.pronouns}
 Difficulty: ${data.difficulty}
 Reading guidance: ${reading.guidance}
 Math alignment: Florida B.E.S.T. Mathematics Grade ${reading.gradeBand} band. Use this only to tune reading complexity. Do not mention the student's grade level in the story.
+Quest length: ${getQuestLengthLabel(data.maxTurns)} with ${data.maxTurns} successful math challenges.
 Math challenges solved: ${data.mathSolved} of ${data.maxTurns}
 
 STORY SO FAR: ${data.storySummary}

@@ -1,5 +1,3 @@
-import { Button } from "@/components/ui/button";
-
 export function TitleScreen({ onBegin }: { onBegin: () => void }) {
   return (
     <div className="min-h-[100dvh] w-full flex flex-col items-center justify-center p-6 text-center space-y-12 animate-in fade-in duration-1000">
@@ -18,7 +16,7 @@ export function TitleScreen({ onBegin }: { onBegin: () => void }) {
       </div>
       
       <button 
-        className="rs-button text-2xl px-16 py-6 tracking-wider w-full max-w-md"
+        className="mq-focus rs-button text-2xl px-16 py-6 tracking-wider w-full max-w-md"
         onClick={onBegin}
         data-testid="button-begin-quest"
       >

@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from "react";
+import { CheckCircle2, Lightbulb } from "lucide-react";
 import { GameState } from "../types";
 import { playClick } from "../lib/sounds";
 import { SceneImage } from "../components/SceneImage";
+import { getQuestLengthByTurns } from "../questLengths";
 
 interface GameScreenProps {
   state: GameState;
@@ -23,6 +25,7 @@ export function GameScreen({
     hero,
     difficulty,
     mathSolved,
+    maxTurns,
     sceneTitle,
     storyText,
     illustration,
@@ -35,6 +38,8 @@ export function GameScreen({
   const [confirmExit, setConfirmExit] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const transitionTimersRef = useRef<Array<ReturnType<typeof setTimeout>>>([]);
+  const questLength = getQuestLengthByTurns(maxTurns);
+  const progressPercent = Math.min(100, Math.round((mathSolved / maxTurns) * 100));
 
   useEffect(() => {
     return () => {
@@ -90,6 +95,20 @@ export function GameScreen({
     : currentMathProblem
       ? `math-${currentMathProblem.prompt}-${wrongAttempts}-${showHint}`
       : `story-${state.turn}-${sceneTitle}-${storyText}`;
+  const activeHint =
+    currentMathProblem && (wrongAttempts > 0 || showHint)
+      ? showHint
+        ? currentMathProblem.secondHint || currentMathProblem.hint
+        : currentMathProblem.hint
+      : null;
+  const loadingTitle =
+    mathSolved > 0
+      ? "Correct! The path opens."
+      : "The Chronicler is writing your opening chapter...";
+  const loadingDetail =
+    mathSolved > 0
+      ? "Preparing the next story beat and challenge..."
+      : "A new chapter is taking shape...";
 
   return (
     <div className="min-h-[100dvh] w-full flex flex-col p-4 md:p-6 max-w-4xl mx-auto space-y-6 animate-in fade-in duration-500">
@@ -109,15 +128,28 @@ export function GameScreen({
         </div>
 
         <div className="mt-4 md:mt-0 flex items-center gap-6">
-          <div className="text-center md:text-right">
+          <div className="w-full min-w-[220px] max-w-xs space-y-2 text-center md:text-right">
             <div className="text-lg font-bold text-[var(--mq-heading)] uppercase tracking-wider">
-              Challenges Overcome:{" "}
+              Math Challenges:{" "}
               <span className="text-[var(--mq-primary-hover)]">
-                {mathSolved}
+                {mathSolved} / {maxTurns}
               </span>
             </div>
             <div className="text-xs font-bold uppercase tracking-widest text-[var(--mq-text-muted)]">
-              Challenge: {difficulty}
+              {questLength.label} · Challenge: {difficulty}
+            </div>
+            <div
+              className="h-3 overflow-hidden rounded-full border border-[var(--mq-border)] bg-[var(--mq-background)]"
+              role="progressbar"
+              aria-label="Math challenge progress"
+              aria-valuemin={0}
+              aria-valuemax={maxTurns}
+              aria-valuenow={mathSolved}
+            >
+              <div
+                className="h-full rounded-full bg-[linear-gradient(90deg,var(--mq-primary),var(--mq-heading))] shadow-[0_0_16px_color-mix(in_srgb,var(--mq-primary)_55%,transparent)] transition-all duration-300"
+                style={{ width: `${progressPercent}%` }}
+              />
             </div>
           </div>
 
@@ -164,9 +196,20 @@ export function GameScreen({
         {isLoading ? (
           <div className="flex-1 flex flex-col items-center justify-center space-y-8 pt-12">
             <div className="w-16 h-16 border-4 border-[var(--mq-border)] border-t-[var(--mq-heading)] border-b-[var(--mq-secondary)] rounded-sm animate-spin"></div>
-            <p className="story-text text-xl italic animate-pulse">
-              The chronicler is writing the next chapter...
-            </p>
+            <div className="max-w-xl space-y-3 text-center" role="status">
+              {mathSolved > 0 && (
+                <CheckCircle2
+                  className="mx-auto h-10 w-10 text-[var(--mq-success)]"
+                  aria-hidden="true"
+                />
+              )}
+              <p className="story-text text-xl italic animate-pulse">
+                {loadingTitle}
+              </p>
+              <p className="text-sm font-bold uppercase tracking-widest text-[var(--mq-text-muted)]">
+                {loadingDetail}
+              </p>
+            </div>
           </div>
         ) : (
           <div className="flex-1 flex flex-col space-y-6">
@@ -183,7 +226,7 @@ export function GameScreen({
                 {choices.map((choice) => (
                   <button
                     key={choice.id}
-                    className="rs-button h-auto py-5 px-6 text-left justify-start text-lg w-full flex items-center disabled:pointer-events-none disabled:opacity-70"
+                    className="mq-focus rs-button h-auto py-5 px-6 text-left justify-start text-lg w-full flex items-center disabled:pointer-events-none disabled:opacity-70"
                     onClick={() => handleChoiceClick(choice.id, choice.label)}
                     disabled={isTransitioning}
                     data-testid={`button-choice-${choice.id}`}
@@ -208,17 +251,27 @@ export function GameScreen({
                   </h3>
 
                   {wrongAttempts > 0 && (
-                    <div className="text-[var(--mq-danger)] font-bold text-xl uppercase tracking-wider animate-in shake">
-                      Incorrect. Try again!
+                    <div
+                      className="inline-flex items-center justify-center gap-2 text-[var(--mq-warning)] font-bold text-xl uppercase tracking-wider animate-in shake"
+                      role="status"
+                    >
+                      <Lightbulb className="h-6 w-6" aria-hidden="true" />
+                      Almost. Check the strategy and try again.
                     </div>
                   )}
-                  {showHint && (
-                    <div className="border border-[var(--mq-secondary)] bg-[var(--mq-background)] p-4 text-[var(--mq-text)] font-serif text-lg text-center max-w-lg mx-auto">
-                      <span className="text-[var(--mq-secondary)] font-bold mr-2 uppercase">
-                        Hint:
-                      </span>
-                      Take your time. We've simplified the problem to help you
-                      move forward.
+                  {activeHint && (
+                    <div className="border border-[var(--mq-secondary)] bg-[var(--mq-background)] p-4 text-[var(--mq-text)] font-serif text-lg text-center max-w-lg mx-auto shadow-[0_0_20px_color-mix(in_srgb,var(--mq-secondary)_25%,transparent)]">
+                      <div className="mb-2 inline-flex items-center justify-center gap-2 text-[var(--mq-secondary)] font-bold uppercase">
+                        <Lightbulb className="h-5 w-5" aria-hidden="true" />
+                        {showHint ? "Support Hint" : "Hint"}
+                      </div>
+                      <p>{activeHint}</p>
+                      {showHint && (
+                        <p className="mt-3 text-base text-[var(--mq-text-muted)]">
+                          Good effort. This support challenge is here to help
+                          you keep the quest moving.
+                        </p>
+                      )}
                     </div>
                   )}
                 </div>
@@ -229,7 +282,7 @@ export function GameScreen({
                     return (
                       <button
                         key={idx}
-                        className="rs-button !border-[var(--mq-secondary)] hover:!border-[var(--mq-primary-hover)] hover:!text-[var(--mq-text)] h-24 text-2xl md:text-3xl w-full flex items-center justify-center disabled:pointer-events-none disabled:opacity-70"
+                        className="mq-focus rs-button !border-[var(--mq-secondary)] hover:!border-[var(--mq-primary-hover)] hover:!text-[var(--mq-text)] h-24 text-2xl md:text-3xl w-full flex items-center justify-center disabled:pointer-events-none disabled:opacity-70"
                         onClick={() => handleMathClick(ans)}
                         disabled={isTransitioning}
                         data-testid={`button-math-answer-${idx}`}

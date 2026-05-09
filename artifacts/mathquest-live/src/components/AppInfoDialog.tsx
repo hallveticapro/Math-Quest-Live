@@ -15,7 +15,7 @@ export function AppInfoDialog() {
       <DialogTrigger asChild>
         <button
           aria-label="About MathQuest Live"
-          className="fixed right-4 top-4 z-40 flex h-11 w-11 items-center justify-center rounded-full border-2 border-[var(--mq-border)] bg-[var(--mq-background)]/90 text-[var(--mq-text)] shadow-lg transition-colors hover:border-[var(--mq-border-strong)] hover:text-[var(--mq-primary-hover)] focus:outline-none focus:ring-2 focus:ring-[var(--mq-primary-hover)] focus:ring-offset-2 focus:ring-offset-[var(--mq-background)]"
+          className="mq-focus fixed right-4 top-4 z-40 flex h-11 w-11 items-center justify-center rounded-full border-2 border-[var(--mq-border)] bg-[var(--mq-background)]/90 text-[var(--mq-text)] shadow-lg transition-colors hover:border-[var(--mq-border-strong)] hover:text-[var(--mq-primary-hover)]"
           data-testid="button-app-info"
         >
           <Info className="h-6 w-6" aria-hidden="true" />

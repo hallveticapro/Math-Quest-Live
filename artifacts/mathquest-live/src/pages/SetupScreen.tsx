@@ -9,6 +9,10 @@ import {
   DEFAULT_COLOR_SCHEME_ID,
   type ColorSchemeId,
 } from "../colorSchemes";
+import {
+  DEFAULT_QUEST_LENGTH,
+  QUEST_LENGTH_OPTIONS,
+} from "../questLengths";
 
 const NAMES = [
   "Astra",
@@ -61,8 +65,6 @@ const SEEDS = [
   "The Museum After Midnight",
   "The Friendly Ghost Lighthouse",
 ];
-const DEFAULT_MAX_TURNS = 8;
-
 type SetupStep =
   | "intro"
   | "name"
@@ -70,6 +72,7 @@ type SetupStep =
   | "ancestry"
   | "class"
   | "difficulty"
+  | "length"
   | "seed"
   | "colors";
 
@@ -79,6 +82,7 @@ const DECISION_STEPS: SetupStep[] = [
   "ancestry",
   "class",
   "difficulty",
+  "length",
   "seed",
   "colors",
 ];
@@ -184,6 +188,7 @@ export function SetupScreen({
   const [ancestry, setAncestry] = useState("");
   const [className, setClassName] = useState("");
   const [difficulty, setDifficulty] = useState("");
+  const [maxTurns, setMaxTurns] = useState(DEFAULT_QUEST_LENGTH.maxTurns);
   const [seed, setSeed] = useState("");
   const [colorSchemeId, setColorSchemeId] = useState<ColorSchemeId>(
     DEFAULT_COLOR_SCHEME_ID,
@@ -249,6 +254,12 @@ export function SetupScreen({
         });
       case "difficulty":
         return "The challenge is set.";
+      case "length": {
+        const questLength =
+          QUEST_LENGTH_OPTIONS.find((option) => option.maxTurns === maxTurns) ??
+          DEFAULT_QUEST_LENGTH;
+        return `${questLength.label} it is. The Chronicle prepares ${questLength.maxTurns} math challenges.`;
+      }
       case "seed":
         return seed === "Random"
           ? "The Chronicle chooses a surprising path."
@@ -277,7 +288,7 @@ export function SetupScreen({
         { name, pronouns, ancestry, className },
         difficulty,
         seed,
-        DEFAULT_MAX_TURNS,
+        maxTurns,
       );
     }
 
@@ -299,7 +310,7 @@ export function SetupScreen({
         { name, pronouns, ancestry, className },
         difficulty,
         seed,
-        DEFAULT_MAX_TURNS,
+        maxTurns,
         colorSchemeId,
       );
     }, WRITING_TRANSITION_MS);
@@ -312,6 +323,7 @@ export function SetupScreen({
     (step === "ancestry" && Boolean(ancestry)) ||
     (step === "class" && Boolean(className)) ||
     (step === "difficulty" && Boolean(difficulty)) ||
+    (step === "length" && Boolean(maxTurns)) ||
     (step === "seed" && Boolean(seed)) ||
     (step === "colors" && Boolean(colorSchemeId));
 
@@ -502,6 +514,32 @@ export function SetupScreen({
             </Question>
           )}
 
+          {mode === "question" && step === "length" && (
+            <Question title="How long shall this quest be?">
+              <ChoiceGrid columns="three">
+                {QUEST_LENGTH_OPTIONS.map((option) => (
+                  <button
+                    key={option.id}
+                    className={optionClass(maxTurns === option.maxTurns)}
+                    onClick={() => setMaxTurns(option.maxTurns)}
+                    data-testid={`button-quest-length-${option.id}`}
+                  >
+                    <SelectionMark selected={maxTurns === option.maxTurns} />
+                    <span className="text-2xl font-serif text-[var(--mq-heading)]">
+                      {option.label}
+                    </span>
+                    <span className="mt-2 text-base text-[var(--mq-text)]">
+                      {option.description}
+                    </span>
+                    <span className="mt-1 text-sm text-[var(--mq-text-muted)]">
+                      {option.maxTurns} successful math challenges
+                    </span>
+                  </button>
+                ))}
+              </ChoiceGrid>
+            </Question>
+          )}
+
           {mode === "question" && step === "seed" && (
             <Question title="Where shall the Chronicle open?">
               <ChoiceGrid>
@@ -598,7 +636,7 @@ export function SetupScreen({
             <>
               <span aria-hidden="true" />
               <button
-                className="rs-button px-8 py-4 text-xl"
+                className="mq-focus rs-button px-8 py-4 text-xl"
                 onClick={continueAfterConfirmation}
                 data-testid="button-confirmation-continue"
               >
@@ -608,7 +646,7 @@ export function SetupScreen({
           ) : (
             <>
               <button
-                className="rs-button px-8 py-4 text-lg !bg-[var(--mq-background)]"
+                className="mq-focus rs-button px-8 py-4 text-lg !bg-[var(--mq-background)]"
                 onClick={goBack}
                 data-testid="button-setup-back"
               >
@@ -616,7 +654,7 @@ export function SetupScreen({
               </button>
 
               <button
-                className="rs-button px-8 py-4 text-xl disabled:cursor-not-allowed disabled:opacity-50"
+                className="mq-focus rs-button px-8 py-4 text-xl disabled:cursor-not-allowed disabled:opacity-50"
                 onClick={step === "intro" ? goNext : showConfirmation}
                 disabled={!canContinue}
                 data-testid="button-setup-next"

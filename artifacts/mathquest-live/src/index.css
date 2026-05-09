@@ -181,8 +181,12 @@
 }
 
 .rs-button:focus-visible {
-  outline: 3px solid var(--mq-primary-hover);
-  outline-offset: 3px;
+  outline: 4px solid var(--mq-heading);
+  outline-offset: 4px;
+  box-shadow:
+    0 0 0 7px color-mix(in srgb, var(--mq-primary) 38%, transparent),
+    0 0 28px color-mix(in srgb, var(--mq-heading) 48%, transparent),
+    inset 0 1px 1px rgba(255, 255, 255, 0.12);
 }
 
 .rs-button:active {
@@ -286,8 +290,13 @@
 }
 
 .mq-focus:focus-visible {
-  outline: 3px solid var(--mq-primary-hover);
-  outline-offset: 3px;
+  outline: 4px solid var(--mq-heading);
+  outline-offset: 4px;
+  box-shadow:
+    0 0 0 7px color-mix(in srgb, var(--mq-primary) 38%, transparent),
+    0 0 28px color-mix(in srgb, var(--mq-heading) 48%, transparent);
+  position: relative;
+  z-index: 1;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -53,14 +53,14 @@ export function EndingScreen({ state, onPlayAgain, onNewHero }: EndingScreenProp
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-6">
           <button
-            className="rs-button w-full sm:w-auto text-xl px-12 py-6"
+            className="mq-focus rs-button w-full sm:w-auto text-xl px-12 py-6"
             onClick={onPlayAgain}
             data-testid="button-play-again"
           >
             Quest Again
           </button>
           <button
-            className="rs-button w-full sm:w-auto text-xl px-12 py-6 !bg-[var(--mq-background)] !text-[var(--mq-text-muted)] !border-[var(--mq-border)]"
+            className="mq-focus rs-button w-full sm:w-auto text-xl px-12 py-6 !bg-[var(--mq-background)] !text-[var(--mq-text-muted)] !border-[var(--mq-border)]"
             onClick={onNewHero}
             data-testid="button-new-hero"
           >

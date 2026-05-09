@@ -13,7 +13,11 @@ import {
   type StoryTurnResponse,
 } from "@workspace/api-client-react";
 import { GameState, INITIAL_STATE, Hero } from "./types";
-import { generateMathProblem, generateRecoveryProblem } from "./mathEngine";
+import {
+  generateUniqueMathProblem,
+  generateUniqueRecoveryProblem,
+  type MathProblem,
+} from "./mathEngine";
 import {
   playCorrect,
   playWrong,
@@ -94,6 +98,7 @@ function GameApp() {
     key: string;
     promise: Promise<StoryTurnResponse | null>;
   } | null>(null);
+  const usedProblemSignaturesRef = useRef<Set<string>>(new Set());
   const { toast } = useToast();
 
   useEffect(() => {
@@ -130,6 +135,24 @@ function GameApp() {
     };
   };
 
+  const rememberMathProblem = (problem: MathProblem) => {
+    usedProblemSignaturesRef.current.add(problem.signature);
+    return problem;
+  };
+
+  const generateSessionMathProblem = (difficulty: string) =>
+    rememberMathProblem(
+      generateUniqueMathProblem(difficulty, usedProblemSignaturesRef.current),
+    );
+
+  const generateSessionRecoveryProblem = (difficulty: string) =>
+    rememberMathProblem(
+      generateUniqueRecoveryProblem(
+        difficulty,
+        usedProblemSignaturesRef.current,
+      ),
+    );
+
   const handleStart = (
     hero: Hero,
     difficulty: string,
@@ -138,6 +161,7 @@ function GameApp() {
     colorSchemeId = DEFAULT_COLOR_SCHEME_ID,
   ) => {
     playTransition();
+    usedProblemSignaturesRef.current = new Set();
     setState((s) => ({
       ...s,
       hero,
@@ -145,6 +169,21 @@ function GameApp() {
       adventureSeed,
       maxTurns,
       colorSchemeId,
+      turn: 1,
+      mathSolved: 0,
+      storySummary: "",
+      sceneTitle: "",
+      storyText: "",
+      illustration: null,
+      choices: [],
+      currentMathProblem: null,
+      chosenAction: null,
+      endingTitle: "",
+      endingText: "",
+      badge: "",
+      wrongAttempts: 0,
+      showHint: false,
+      recoveryMode: false,
       isLoading: true,
       screen: "game",
     }));
@@ -211,10 +250,11 @@ function GameApp() {
       return null;
     });
 
+    const mathProblem = generateSessionMathProblem(state.difficulty);
     setState((s) => ({
       ...s,
       chosenAction: choiceLabel,
-      currentMathProblem: generateMathProblem(s.difficulty),
+      currentMathProblem: mathProblem,
     }));
   };
 
@@ -381,12 +421,13 @@ function GameApp() {
       playWrong();
       const attempts = state.wrongAttempts + 1;
       if (attempts >= 2 && !state.recoveryMode) {
+        const recoveryProblem = generateSessionRecoveryProblem(prob.difficulty);
         setState((s) => ({
           ...s,
           wrongAttempts: 0,
           showHint: true,
           recoveryMode: true,
-          currentMathProblem: generateRecoveryProblem(prob.difficulty),
+          currentMathProblem: recoveryProblem,
         }));
       } else {
         setState((s) => ({ ...s, wrongAttempts: attempts }));
@@ -408,6 +449,7 @@ function GameApp() {
     playTransition();
     pendingPreparationRef.current = null;
     pendingStartRef.current = null;
+    usedProblemSignaturesRef.current = new Set();
     applyColorScheme(DEFAULT_COLOR_SCHEME_ID);
     setState(INITIAL_STATE);
   };
@@ -453,6 +495,7 @@ function GameApp() {
           onPlayAgain={handlePlayAgain}
           onNewHero={() => {
             playTransition();
+            usedProblemSignaturesRef.current = new Set();
             setState(INITIAL_STATE);
           }}
         />
