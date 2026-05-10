@@ -324,12 +324,30 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
         ...benchmarkMetadata("MA.5.NSO.2.3"),
       },
       {
+        id: "g5_decimal_subtraction",
+        benchmark: "MA.5.NSO.2.3",
+        description:
+          "Practice decimal subtraction to the thousandths within Grade 5 expectations.",
+        skill: "decimal subtraction",
+        generator: "g5DecimalSubtraction",
+        ...benchmarkMetadata("MA.5.NSO.2.3"),
+      },
+      {
         id: "g5_fraction_unlike_denominators",
         benchmark: "MA.5.FR.2.1",
         description:
           "Practice adding and subtracting fractions with unlike denominators within Grade 5 expectations.",
         skill: "fractions with unlike denominators",
         generator: "g5FractionAddUnlike",
+        ...benchmarkMetadata("MA.5.FR.2.1"),
+      },
+      {
+        id: "g5_fraction_subtract_unlike_denominators",
+        benchmark: "MA.5.FR.2.1",
+        description:
+          "Practice subtracting fractions with unlike denominators within Grade 5 expectations.",
+        skill: "subtracting fractions with unlike denominators",
+        generator: "g5FractionSubtractUnlike",
         ...benchmarkMetadata("MA.5.FR.2.1"),
       },
       {
@@ -348,6 +366,15 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
         skill: "volume of rectangular prisms",
         generator: "g5Volume",
         ...benchmarkMetadata("MA.5.GR.3.2"),
+      },
+      {
+        id: "g5_coordinate_point",
+        benchmark: "MA.5.GR.4.2",
+        description:
+          "Practice representing first-quadrant locations as ordered pairs in a real-world context.",
+        skill: "coordinate plane ordered pairs",
+        generator: "g5CoordinatePoint",
+        ...benchmarkMetadata("MA.5.GR.4.2"),
       },
       {
         id: "g5_expressions",

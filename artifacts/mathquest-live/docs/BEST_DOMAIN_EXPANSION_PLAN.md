@@ -84,9 +84,12 @@ Current Hard coverage includes:
 
 - Decimal place-value decomposition to thousandths
 - Decimal addition
+- Decimal subtraction
 - Fraction addition with unlike denominators
+- Fraction subtraction with unlike denominators
 - Fraction multiplied by a whole number in context
 - Volume of right rectangular prisms
+- First-quadrant ordered-pair representation
 - Numerical expressions / order of operations
 
 Current verified benchmark anchors include:
@@ -98,7 +101,7 @@ Current verified benchmark anchors include:
 - `MA.5.GR.3.2`
 - `MA.5.AR.2.2`
 
-Hard is strongest in core Grade 5 arithmetic and volume. It needs more coordinate plane practice, broader multi-digit operations, and mixed decimal/fraction reasoning.
+Hard is strongest in core Grade 5 arithmetic, volume, and first-quadrant coordinate basics. It still needs verified broader multi-digit operations and mixed decimal/fraction reasoning.
 
 ### Extreme / Advanced Grade 5
 
@@ -136,7 +139,6 @@ Extreme correctly stays inside Grade 5. The next expansion should deepen multi-s
 
 ### Hard / Grade 5
 
-- Coordinate plane
 - Multi-digit operations
 - Decimal/fraction mixed reasoning
 
@@ -430,6 +432,11 @@ Implementation status:
 - Notes about CPALMS/FDOE verification:
   - `MA.5.GR.4.2` is verified for plotting/interpreting coordinate values in context.
 
+Implementation status:
+
+- Implemented in the first Hard expansion pass as `g5CoordinatePoint` under verified benchmark `MA.5.GR.4.2`.
+- The generator stays lighter than Extreme by asking for a first-quadrant ordered pair from a direct map context.
+
 ### 9. Hard Multi-Digit Whole-Number Operations
 
 - Difficulty band: Hard
@@ -455,6 +462,10 @@ Implementation status:
   - correctAnswer
 - Notes about CPALMS/FDOE verification:
   - Verify Grade 5 whole-number operation expectations before adding benchmark metadata.
+
+Implementation status:
+
+- Skipped in the first Hard expansion pass because this plan still requires CPALMS/FDOE verification before mapping.
 
 ### 10. Hard Decimal And Fraction Mixed Reasoning
 
@@ -482,6 +493,12 @@ Implementation status:
   - correctAnswer
 - Notes about CPALMS/FDOE verification:
   - Confirm whether the task belongs in decimal operations, fraction operations, or a separate representation benchmark.
+
+Implementation status:
+
+- Decimal subtraction was implemented as `g5DecimalSubtraction` under verified benchmark `MA.5.NSO.2.3`.
+- Unlike-denominator fraction subtraction was implemented as `g5FractionSubtractUnlike` under verified benchmark `MA.5.FR.2.1`.
+- Decimal/fraction mixed-representation problems were skipped because the current reference docs do not provide a clear exact benchmark fit for that task shape.
 
 ### 11. Extreme Unlike-Denominator Fraction Reasoning
 

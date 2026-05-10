@@ -647,6 +647,25 @@ function g5DecimalOperations(): ProblemCore {
   };
 }
 
+function g5DecimalSubtraction(): ProblemCore {
+  const minuend = randInt(2500, 9999) / 1000;
+  const subtrahend = randInt(250, Math.floor(minuend * 1000) - 100) / 1000;
+  const answer = minuend - subtrahend;
+  return {
+    prompt: `A skyship has ${minuend.toFixed(3)} liters of fuel. It uses ${subtrahend.toFixed(3)} liters. How many liters are left?`,
+    correctAnswer: answer.toFixed(3),
+    wrongAnswers: [
+      (minuend + subtrahend).toFixed(3),
+      Math.abs(minuend - Math.round(subtrahend)).toFixed(3),
+      Math.max(0, answer - 0.1).toFixed(3),
+      (answer + 0.1).toFixed(3),
+      ...decimalDistractors(answer, 3, [0.001, 0.01, 0.1]),
+    ],
+    hint: "Line up the decimal points before subtracting. Thousandths line up with thousandths.",
+    secondHint: "Subtract from right to left like whole numbers, then keep the decimal point aligned.",
+  };
+}
+
 function g5FractionAddUnlike(): ProblemCore {
   const d1 = [3, 4, 5, 6, 8][randInt(0, 4)];
   const d2 = [5, 6, 8, 10, 12][randInt(0, 4)];
@@ -664,6 +683,34 @@ function g5FractionAddUnlike(): ProblemCore {
     ],
     hint: "For unlike denominators, first make equivalent fractions with a common denominator.",
     secondHint: "Multiply to make matching denominator sizes, then add the numerators only.",
+  };
+}
+
+function g5FractionSubtractUnlike(): ProblemCore {
+  let d1 = [4, 5, 6, 8, 10, 12][randInt(0, 5)];
+  let d2 = [3, 4, 5, 6, 8, 10][randInt(0, 5)];
+  while (d2 === d1) d2 = [3, 4, 5, 6, 8, 10][randInt(0, 5)];
+  let n1 = randInt(1, d1 - 1);
+  let n2 = randInt(1, d2 - 1);
+
+  if (n1 / d1 <= n2 / d2) {
+    [n1, n2] = [n2, n1];
+    [d1, d2] = [d2, d1];
+  }
+
+  const answer = fraction(n1 * d2 - n2 * d1, d1 * d2);
+  return {
+    prompt: `A lantern is filled ${n1}/${d1} full. The hero uses ${n2}/${d2} of the lantern oil. How much of the lantern remains filled?`,
+    correctAnswer: answer,
+    wrongAnswers: [
+      fraction(Math.abs(n1 - n2), Math.max(d1, d2)),
+      fraction(Math.abs(n1 - n2) || 1, d1 + d2),
+      fraction(n1 * d2 + n2 * d1, d1 * d2),
+      `${Math.abs(n1 - n2) || 1}/${d1}`,
+      fraction(n1 * d2 - n2 * d1 + 1, d1 * d2),
+    ],
+    hint: "For unlike denominators, make equivalent fractions with a common denominator before subtracting.",
+    secondHint: "Use the common denominator, subtract the numerators, and keep the denominator the same.",
   };
 }
 
@@ -702,6 +749,25 @@ function g5Volume(): ProblemCore {
     ].map(String),
     hint: "Volume tells how much space a rectangular prism takes up. Multiply length × width × height.",
     secondHint: "Find the base area first with length × width, then multiply by the height.",
+  };
+}
+
+function g5CoordinatePoint(): ProblemCore {
+  const x = randInt(1, 9);
+  let y = randInt(1, 9);
+  while (y === x) y = randInt(1, 9);
+  return {
+    prompt: `On a quest map, a crystal is ${x} spaces east and ${y} spaces north from camp. Which ordered pair shows the crystal's location?`,
+    correctAnswer: `(${x}, ${y})`,
+    wrongAnswers: [
+      `(${y}, ${x})`,
+      `(${x}, ${x})`,
+      `(${y}, ${y})`,
+      `(${Math.max(0, x - 1)}, ${y})`,
+      `(${x}, ${Math.max(0, y - 1)})`,
+    ],
+    hint: "In an ordered pair, the first number is x and the second number is y.",
+    secondHint: "East matches x. North matches y. Write the point as (x, y).",
   };
 }
 
@@ -843,9 +909,12 @@ const GENERATORS: Record<string, ProblemGenerator> = {
   g4AnglesThreePart,
   g5DecimalPlaceValue,
   g5DecimalOperations,
+  g5DecimalSubtraction,
   g5FractionAddUnlike,
+  g5FractionSubtractUnlike,
   g5FractionTimesWhole,
   g5Volume,
+  g5CoordinatePoint,
   g5Expressions,
   g5ExtremeFractionCombo,
   g5ExtremeDecimalCombo,

@@ -23,10 +23,10 @@ This file documents the benchmarks currently used by MathQuest Live. Benchmark d
 ## Summary
 
 - Unique benchmark codes currently used: 22
-- Total skill entries currently mapped to benchmarks: 30
+- Total skill entries currently mapped to benchmarks: 33
 - Grade 3 / Easy skill entries: 10
 - Grade 4 / Medium skill entries: 9
-- Grade 5 / Hard skill entries: 6
+- Grade 5 / Hard skill entries: 9
 - Advanced Grade 5 / Extreme skill entries: 5
 
 Benchmark codes and descriptions are currently internal metadata on generated math problems. Student-facing setup, settings, and app-info UI show difficulty-level descriptions and skill summaries, but they do not show individual benchmark codes. The README includes a sample metadata object that shows one benchmark code and description.
@@ -92,9 +92,12 @@ This file does not invent official domain names. A future verification pass shou
 | Medium | 4 | MA.4.GR.1.3 | Practice finding unknown whole-number angle measures in multi-part angles within Grade 4 expectations. | multi-part angle measurement | missing angle in a three-part angle | g4AnglesThreePart | Internal metadata; developer validation | Verified from provided source |
 | Hard | 5 | MA.5.NSO.1.3 | Compose and decompose multi-digit numbers with decimals to the thousandths. | decimal place-value decomposition | decimal decomposition by place value | g5DecimalPlaceValue | Internal metadata | Verified from provided source |
 | Hard | 5 | MA.5.NSO.2.3 | Add and subtract decimals to the thousandths. | decimal operations | decimal addition | g5DecimalOperations | Internal metadata | Needs official verification |
+| Hard | 5 | MA.5.NSO.2.3 | Practice decimal subtraction to the thousandths within Grade 5 expectations. | decimal subtraction | decimal subtraction to thousandths | g5DecimalSubtraction | Internal metadata; developer validation | Verified from provided source |
 | Hard | 5 | MA.5.FR.2.1 | Add and subtract fractions with unlike denominators. | fractions with unlike denominators | fraction addition | g5FractionAddUnlike | Internal metadata | Needs official verification |
+| Hard | 5 | MA.5.FR.2.1 | Practice subtracting fractions with unlike denominators within Grade 5 expectations. | subtracting fractions with unlike denominators | fraction subtraction | g5FractionSubtractUnlike | Internal metadata; developer validation | Verified from provided source |
 | Hard | 5 | MA.5.AR.1.2 | Solve real-world problems involving multiplication of fractions. | multiplying fractions by whole numbers | fraction times whole number | g5FractionTimesWhole | Internal metadata | Needs official verification |
 | Hard | 5 | MA.5.GR.3.2 | Find volume of right rectangular prisms with whole-number side lengths. | volume of rectangular prisms | rectangular prism volume | g5Volume | Internal metadata | Needs official verification |
+| Hard | 5 | MA.5.GR.4.2 | Practice representing first-quadrant locations as ordered pairs in a real-world context. | coordinate plane ordered pairs | first-quadrant ordered pair | g5CoordinatePoint | Internal metadata; developer validation | Verified from provided source |
 | Hard | 5 | MA.5.AR.2.2 | Evaluate multi-step numerical expressions using order of operations. | numerical expressions | expression evaluation | g5Expressions | Internal metadata | Needs official verification |
 | Extreme | 5 | MA.5.AR.1.2 | Solve multi-step real-world problems involving fraction operations. | advanced Grade 5 fraction reasoning | fraction addition plus whole number | g5ExtremeFractionCombo | Internal metadata | Needs review |
 | Extreme | 5 | MA.5.NSO.2.3 | Solve multi-step decimal addition and subtraction problems to thousandths. | advanced Grade 5 decimal operations | decimal addition/subtraction to thousandths | g5ExtremeDecimalCombo | Internal metadata | App-internal conservative wording |
@@ -406,6 +409,19 @@ Skipped pending stronger verification before implementation:
 - Current use: internal problem metadata and developer validation.
 - Verification status: Needs official verification.
 
+### MA.5.NSO.2.3
+
+- Current app description: Practice decimal subtraction to the thousandths within Grade 5 expectations.
+- Difficulty band: Hard / Champion
+- Grade band: 5
+- Skill id: `g5_decimal_subtraction`
+- Skill label: decimal subtraction
+- Generator: `g5DecimalSubtraction`
+- Problem type: decimal subtraction to thousandths
+- Example problem shape: A skyship has a decimal amount of fuel and uses a decimal amount; students subtract to find what remains.
+- Current use: internal problem metadata and developer validation.
+- Verification status: Verified from provided source.
+
 ### MA.5.FR.2.1
 
 - Current app description: Add and subtract fractions with unlike denominators.
@@ -418,6 +434,19 @@ Skipped pending stronger verification before implementation:
 - Example problem shape: Students add two fractions with unlike denominators.
 - Current use: internal problem metadata and developer validation.
 - Verification status: Needs official verification.
+
+### MA.5.FR.2.1
+
+- Current app description: Practice subtracting fractions with unlike denominators within Grade 5 expectations.
+- Difficulty band: Hard / Champion
+- Grade band: 5
+- Skill id: `g5_fraction_subtract_unlike_denominators`
+- Skill label: subtracting fractions with unlike denominators
+- Generator: `g5FractionSubtractUnlike`
+- Problem type: fraction subtraction
+- Example problem shape: A lantern starts with one fractional amount and students subtract another fraction with a different denominator.
+- Current use: internal problem metadata and developer validation.
+- Verification status: Verified from provided source.
 
 ### MA.5.AR.1.2
 
@@ -445,6 +474,19 @@ Skipped pending stronger verification before implementation:
 - Current use: internal problem metadata and developer validation.
 - Verification status: Needs official verification.
 
+### MA.5.GR.4.2
+
+- Current app description: Practice representing first-quadrant locations as ordered pairs in a real-world context.
+- Difficulty band: Hard / Champion
+- Grade band: 5
+- Skill id: `g5_coordinate_point`
+- Skill label: coordinate plane ordered pairs
+- Generator: `g5CoordinatePoint`
+- Problem type: first-quadrant ordered pair
+- Example problem shape: A quest-map location is described as spaces east and spaces north; students choose the matching ordered pair.
+- Current use: internal problem metadata and developer validation.
+- Verification status: Verified from provided source.
+
 ### MA.5.AR.2.2
 
 - Current app description: Evaluate multi-step numerical expressions using order of operations.
@@ -457,6 +499,19 @@ Skipped pending stronger verification before implementation:
 - Example problem shape: Students evaluate a multiplication-plus-addition expression.
 - Current use: internal problem metadata and developer validation.
 - Verification status: Needs official verification.
+
+## Hard Expansion Notes
+
+Implemented in the first Hard expansion pass:
+
+- `g5CoordinatePoint` under verified benchmark `MA.5.GR.4.2`.
+- `g5DecimalSubtraction` under verified benchmark `MA.5.NSO.2.3`.
+- `g5FractionSubtractUnlike` under verified benchmark `MA.5.FR.2.1`.
+
+Skipped pending stronger verification before implementation:
+
+- Broader Grade 5 multi-digit whole-number operations.
+- Decimal/fraction mixed-representation problems without a clear verified benchmark fit.
 
 ## Extreme / Advanced Grade 5 Current Usage
 
