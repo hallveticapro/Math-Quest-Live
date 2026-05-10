@@ -28,6 +28,7 @@ type QuestSettingsDialogProps = {
   onBackgroundMusicEnabledChange: (enabled: boolean) => void;
   onBackgroundMusicVolumeChange: (volume: number) => void;
   onSoundEffectsEnabledChange: (enabled: boolean) => void;
+  showChallengeSettings?: boolean;
   variant?: "floating" | "inline";
 };
 
@@ -46,6 +47,7 @@ export function QuestSettingsDialog({
   onBackgroundMusicEnabledChange,
   onBackgroundMusicVolumeChange,
   onSoundEffectsEnabledChange,
+  showChallengeSettings = true,
   variant = "floating",
 }: QuestSettingsDialogProps) {
   const activeScheme = getColorScheme(colorSchemeId);
@@ -207,59 +209,61 @@ export function QuestSettingsDialog({
             </div>
           </section>
 
-          <section className="space-y-3">
-            <div>
-              <h3 className="text-lg font-bold uppercase tracking-wide text-[var(--mq-primary-hover)]">
-                Challenge Level
-              </h3>
-              <p className="text-sm text-[var(--mq-text-muted)]">
-                Changes affect future math challenges only.
-              </p>
-              {isMathActive && (
-                <p className="mt-2 border border-[var(--mq-warning)] bg-[var(--mq-background)] p-3 text-sm text-[var(--mq-text)]">
-                  Challenge changes apply after this question.
+          {showChallengeSettings && (
+            <section className="space-y-3">
+              <div>
+                <h3 className="text-lg font-bold uppercase tracking-wide text-[var(--mq-primary-hover)]">
+                  Challenge Level
+                </h3>
+                <p className="text-sm text-[var(--mq-text-muted)]">
+                  Changes affect future math challenges only.
                 </p>
-              )}
-            </div>
+                {isMathActive && (
+                  <p className="mt-2 border border-[var(--mq-warning)] bg-[var(--mq-background)] p-3 text-sm text-[var(--mq-text)]">
+                    Challenge changes apply after this question.
+                  </p>
+                )}
+              </div>
 
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              {DIFFICULTY_OPTIONS.map((option) => {
-                const selected = option.value === difficulty;
-                return (
-                  <button
-                    key={option.key}
-                    type="button"
-                    onClick={() => {
-                      playClick();
-                      onDifficultyChange(option.value);
-                    }}
-                    aria-pressed={selected}
-                    className={[
-                      "mq-focus relative rounded-sm border-2 p-4 text-left transition-all",
-                      "bg-[var(--mq-surface-strong)] hover:border-[var(--mq-border-strong)] hover:bg-[var(--mq-button-hover)]",
-                      selected
-                        ? "border-[var(--mq-border-strong)] shadow-[0_0_20px_color-mix(in_srgb,var(--mq-primary)_40%,transparent)]"
-                        : "border-[var(--mq-border)]",
-                    ].join(" ")}
-                    data-testid={`button-settings-difficulty-${option.key}`}
-                  >
-                    {selected && <SelectedBadge />}
-                    <div className="pr-24">
-                      <div className="font-serif text-xl text-[var(--mq-heading)]">
-                        {option.label} / {option.displayName}
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                {DIFFICULTY_OPTIONS.map((option) => {
+                  const selected = option.value === difficulty;
+                  return (
+                    <button
+                      key={option.key}
+                      type="button"
+                      onClick={() => {
+                        playClick();
+                        onDifficultyChange(option.value);
+                      }}
+                      aria-pressed={selected}
+                      className={[
+                        "mq-focus relative rounded-sm border-2 p-4 text-left transition-all",
+                        "bg-[var(--mq-surface-strong)] hover:border-[var(--mq-border-strong)] hover:bg-[var(--mq-button-hover)]",
+                        selected
+                          ? "border-[var(--mq-border-strong)] shadow-[0_0_20px_color-mix(in_srgb,var(--mq-primary)_40%,transparent)]"
+                          : "border-[var(--mq-border)]",
+                      ].join(" ")}
+                      data-testid={`button-settings-difficulty-${option.key}`}
+                    >
+                      {selected && <SelectedBadge />}
+                      <div className="pr-24">
+                        <div className="font-serif text-xl text-[var(--mq-heading)]">
+                          {option.label} / {option.displayName}
+                        </div>
+                        <p className="mt-1 text-sm text-[var(--mq-text-muted)]">
+                          {option.description}
+                        </p>
+                        <p className="mt-2 text-sm text-[var(--mq-text)]">
+                          {option.studentSummary}
+                        </p>
                       </div>
-                      <p className="mt-1 text-sm text-[var(--mq-text-muted)]">
-                        {option.description}
-                      </p>
-                      <p className="mt-2 text-sm text-[var(--mq-text)]">
-                        {option.studentSummary}
-                      </p>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </section>
+                    </button>
+                  );
+                })}
+              </div>
+            </section>
+          )}
         </div>
       </DialogContent>
     </Dialog>

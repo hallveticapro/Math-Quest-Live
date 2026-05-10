@@ -398,6 +398,23 @@ function GameApp() {
     setSoundEffectsEnabledState(enabled);
   };
 
+  const settingsDialog = (
+    <QuestSettingsDialog
+      colorSchemeId={state.colorSchemeId}
+      difficulty={state.difficulty}
+      isMathActive={Boolean(state.currentMathProblem)}
+      onColorSchemeChange={handleColorSchemeChange}
+      onDifficultyChange={handleDifficultyChange}
+      backgroundMusicEnabled={backgroundMusicEnabled}
+      backgroundMusicVolume={backgroundMusicVolume}
+      soundEffectsEnabled={soundEffectsEnabled}
+      onBackgroundMusicEnabledChange={handleBackgroundMusicEnabledChange}
+      onBackgroundMusicVolumeChange={handleBackgroundMusicVolumeChange}
+      onSoundEffectsEnabledChange={handleSoundEffectsEnabledChange}
+      variant="inline"
+    />
+  );
+
   const revealEnding = async (newMathSolved: number) => {
     const sessionVersion = sessionVersionRef.current;
     try {
@@ -621,6 +638,7 @@ function GameApp() {
       {state.screen === "title" && (
         <TitleScreen
           onBegin={() => {
+            backgroundMusicManager.unlock();
             playTransition();
             applyColorScheme(DEFAULT_COLOR_SCHEME_ID);
             setIsQuickStarting(false);
@@ -647,24 +665,7 @@ function GameApp() {
           onExitToTitle={handleExitToTitle}
           topControls={
             <>
-              <QuestSettingsDialog
-                colorSchemeId={state.colorSchemeId}
-                difficulty={state.difficulty}
-                isMathActive={Boolean(state.currentMathProblem)}
-                onColorSchemeChange={handleColorSchemeChange}
-                onDifficultyChange={handleDifficultyChange}
-                backgroundMusicEnabled={backgroundMusicEnabled}
-                backgroundMusicVolume={backgroundMusicVolume}
-                soundEffectsEnabled={soundEffectsEnabled}
-                onBackgroundMusicEnabledChange={
-                  handleBackgroundMusicEnabledChange
-                }
-                onBackgroundMusicVolumeChange={
-                  handleBackgroundMusicVolumeChange
-                }
-                onSoundEffectsEnabledChange={handleSoundEffectsEnabledChange}
-                variant="inline"
-              />
+              {settingsDialog}
               <AppInfoDialog variant="inline" />
             </>
           }
@@ -686,7 +687,26 @@ function GameApp() {
           }}
         />
       )}
-      {(state.screen === "title" || state.screen === "ending") && (
+      {state.screen === "title" && (
+        <>
+          <QuestSettingsDialog
+            colorSchemeId={state.colorSchemeId}
+            difficulty={state.difficulty}
+            isMathActive={false}
+            onColorSchemeChange={handleColorSchemeChange}
+            onDifficultyChange={handleDifficultyChange}
+            backgroundMusicEnabled={backgroundMusicEnabled}
+            backgroundMusicVolume={backgroundMusicVolume}
+            soundEffectsEnabled={soundEffectsEnabled}
+            onBackgroundMusicEnabledChange={handleBackgroundMusicEnabledChange}
+            onBackgroundMusicVolumeChange={handleBackgroundMusicVolumeChange}
+            onSoundEffectsEnabledChange={handleSoundEffectsEnabledChange}
+            showChallengeSettings={false}
+          />
+          <AppInfoDialog />
+        </>
+      )}
+      {state.screen === "ending" && (
         <AppInfoDialog />
       )}
     </div>
