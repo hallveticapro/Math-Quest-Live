@@ -23,7 +23,9 @@ import {
   playWrong,
   playClick,
   playTransition,
+  setSoundEffectsEnabled,
 } from "./lib/sounds";
+import { backgroundMusicManager } from "./lib/musicManager";
 
 import { TitleScreen } from "./pages/TitleScreen";
 import { SetupScreen } from "./pages/SetupScreen";
@@ -147,11 +149,26 @@ function GameApp() {
   const mathAnswerLockRef = useRef(false);
   const sessionVersionRef = useRef(0);
   const [isQuickStarting, setIsQuickStarting] = useState(false);
+  const [backgroundMusicEnabled, setBackgroundMusicEnabled] = useState(true);
+  const [backgroundMusicVolume, setBackgroundMusicVolume] = useState(0.5);
+  const [soundEffectsEnabled, setSoundEffectsEnabledState] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
     applyColorScheme(state.colorSchemeId);
   }, [state.colorSchemeId]);
+
+  useEffect(() => {
+    backgroundMusicManager.setEnabled(backgroundMusicEnabled);
+  }, [backgroundMusicEnabled]);
+
+  useEffect(() => {
+    backgroundMusicManager.setVolume(backgroundMusicVolume);
+  }, [backgroundMusicVolume]);
+
+  useEffect(() => {
+    setSoundEffectsEnabled(soundEffectsEnabled);
+  }, [soundEffectsEnabled]);
 
   const getStartKey = (
     hero: Hero,
@@ -210,6 +227,7 @@ function GameApp() {
   ) => {
     if (startLockRef.current) return;
 
+    backgroundMusicManager.unlock();
     startLockRef.current = true;
     actionLockRef.current = false;
     mathAnswerLockRef.current = false;
@@ -297,6 +315,7 @@ function GameApp() {
     if (quickStartLockRef.current) return;
 
     quickStartLockRef.current = true;
+    backgroundMusicManager.unlock();
     setIsQuickStarting(true);
     const session = buildQuickStartSession(
       difficulty,
@@ -364,6 +383,19 @@ function GameApp() {
 
   const handleDifficultyChange = (difficulty: string) => {
     setState((s) => ({ ...s, difficulty }));
+  };
+
+  const handleBackgroundMusicEnabledChange = (enabled: boolean) => {
+    if (enabled) backgroundMusicManager.unlock();
+    setBackgroundMusicEnabled(enabled);
+  };
+
+  const handleBackgroundMusicVolumeChange = (volume: number) => {
+    setBackgroundMusicVolume(volume);
+  };
+
+  const handleSoundEffectsEnabledChange = (enabled: boolean) => {
+    setSoundEffectsEnabledState(enabled);
   };
 
   const revealEnding = async (newMathSolved: number) => {
@@ -572,6 +604,7 @@ function GameApp() {
 
   const handleExitToTitle = () => {
     playTransition();
+    backgroundMusicManager.stop();
     sessionVersionRef.current += 1;
     startLockRef.current = false;
     actionLockRef.current = false;
@@ -620,6 +653,16 @@ function GameApp() {
                 isMathActive={Boolean(state.currentMathProblem)}
                 onColorSchemeChange={handleColorSchemeChange}
                 onDifficultyChange={handleDifficultyChange}
+                backgroundMusicEnabled={backgroundMusicEnabled}
+                backgroundMusicVolume={backgroundMusicVolume}
+                soundEffectsEnabled={soundEffectsEnabled}
+                onBackgroundMusicEnabledChange={
+                  handleBackgroundMusicEnabledChange
+                }
+                onBackgroundMusicVolumeChange={
+                  handleBackgroundMusicVolumeChange
+                }
+                onSoundEffectsEnabledChange={handleSoundEffectsEnabledChange}
                 variant="inline"
               />
               <AppInfoDialog variant="inline" />
@@ -633,6 +676,7 @@ function GameApp() {
           onPlayAgain={handlePlayAgain}
           onNewHero={() => {
             playTransition();
+            backgroundMusicManager.stop();
             sessionVersionRef.current += 1;
             startLockRef.current = false;
             actionLockRef.current = false;

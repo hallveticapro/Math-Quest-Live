@@ -261,7 +261,7 @@ Implemented in Easy expansion passes:
 - `g3MeasurementLength` under verified benchmark `MA.3.M.1.2`.
 - `g3DataInterpretation` under verified benchmark `MA.3.DP.1.2`.
 
-The Grade 3 source reference now lives in `artifacts/mathquest-live/docs/3RD_GRADE_BEST_STANDARDS_REFERENCE.md`.
+The Grade 3 source reference now lives in `references/3RD_GRADE_BEST_STANDARDS_REFERENCE.md`.
 
 ## Medium / Grade 4 Current Usage
 

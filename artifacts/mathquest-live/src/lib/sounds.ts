@@ -1,5 +1,10 @@
 let ctx: AudioContext | null = null;
 let lastClickAt = 0;
+let soundEffectsEnabled = true;
+
+export function setSoundEffectsEnabled(enabled: boolean): void {
+  soundEffectsEnabled = enabled;
+}
 
 function getCtx(): AudioContext {
   if (!ctx) {
@@ -39,6 +44,7 @@ function playTone(
 
 // Correct answer — bright ascending chime (C E G C)
 export function playCorrect(): void {
+  if (!soundEffectsEnabled) return;
   const notes = [523.25, 659.25, 783.99, 1046.5];
   notes.forEach((freq, i) => {
     playTone(freq, i * 0.12, 0.35, 0.18, "sine");
@@ -47,6 +53,7 @@ export function playCorrect(): void {
 
 // Wrong answer — gentle descending "bwop"
 export function playWrong(): void {
+  if (!soundEffectsEnabled) return;
   const ac = getCtx();
   const osc = ac.createOscillator();
   const gainNode = ac.createGain();
@@ -66,6 +73,7 @@ export function playWrong(): void {
 
 // Triumphant ending fanfare — C major arpeggio then big chord
 export function playFanfare(): void {
+  if (!soundEffectsEnabled) return;
   // Rising arpeggio
   const melody = [
     { freq: 523.25, t: 0.0, dur: 0.2 },
@@ -90,6 +98,7 @@ export function playFanfare(): void {
 
 // Soft click for choice selection
 export function playClick(): void {
+  if (!soundEffectsEnabled) return;
   const now = performance.now();
   if (now - lastClickAt < 70) return;
   lastClickAt = now;
@@ -100,6 +109,7 @@ export function playClick(): void {
 
 // Soft page-turn woosh for screen transitions
 export function playTransition(): void {
+  if (!soundEffectsEnabled) return;
   const ac = getCtx();
   const osc = ac.createOscillator();
   const gainNode = ac.createGain();

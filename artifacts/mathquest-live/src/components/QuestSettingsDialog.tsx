@@ -1,4 +1,4 @@
-import { Check, Settings } from "lucide-react";
+import { Check, Music, Settings, Volume2, VolumeX } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -14,6 +14,7 @@ import {
 } from "../colorSchemes";
 import { DIFFICULTY_OPTIONS } from "../math/floridaBestMath";
 import { playClick } from "../lib/sounds";
+import { MUSIC_LIBRARY } from "../lib/musicLibrary";
 
 type QuestSettingsDialogProps = {
   colorSchemeId: ColorSchemeId;
@@ -21,6 +22,12 @@ type QuestSettingsDialogProps = {
   isMathActive: boolean;
   onColorSchemeChange: (schemeId: ColorSchemeId) => void;
   onDifficultyChange: (difficulty: string) => void;
+  backgroundMusicEnabled: boolean;
+  backgroundMusicVolume: number;
+  soundEffectsEnabled: boolean;
+  onBackgroundMusicEnabledChange: (enabled: boolean) => void;
+  onBackgroundMusicVolumeChange: (volume: number) => void;
+  onSoundEffectsEnabledChange: (enabled: boolean) => void;
   variant?: "floating" | "inline";
 };
 
@@ -33,9 +40,16 @@ export function QuestSettingsDialog({
   isMathActive,
   onColorSchemeChange,
   onDifficultyChange,
+  backgroundMusicEnabled,
+  backgroundMusicVolume,
+  soundEffectsEnabled,
+  onBackgroundMusicEnabledChange,
+  onBackgroundMusicVolumeChange,
+  onSoundEffectsEnabledChange,
   variant = "floating",
 }: QuestSettingsDialogProps) {
   const activeScheme = getColorScheme(colorSchemeId);
+  const hasMusicTracks = MUSIC_LIBRARY.length > 0;
   const triggerClass =
     variant === "floating"
       ? `${triggerBaseClass} fixed right-[calc(max(1rem,env(safe-area-inset-right))+3.75rem)] top-[max(1rem,env(safe-area-inset-top))] z-40`
@@ -65,6 +79,73 @@ export function QuestSettingsDialog({
         </DialogHeader>
 
         <div className="space-y-8 font-sans">
+          <section className="space-y-4">
+            <div>
+              <h3 className="text-lg font-bold uppercase tracking-wide text-[var(--mq-primary-hover)]">
+                Audio
+              </h3>
+              <p className="text-sm text-[var(--mq-text-muted)]">
+                Session-only audio choices. Music library:{" "}
+                {MUSIC_LIBRARY.length} track
+                {MUSIC_LIBRARY.length === 1 ? "" : "s"}.
+              </p>
+            </div>
+
+            <div className="grid gap-3 md:grid-cols-2">
+              <AudioToggle
+                enabled={backgroundMusicEnabled && hasMusicTracks}
+                icon={backgroundMusicEnabled ? Music : VolumeX}
+                label="Background Music"
+                detail={
+                  hasMusicTracks
+                    ? "Rotates through local quest music."
+                    : "No music tracks found."
+                }
+                onToggle={() => {
+                  playClick();
+                  onBackgroundMusicEnabledChange(!backgroundMusicEnabled);
+                }}
+                disabled={MUSIC_LIBRARY.length === 0}
+              />
+              <AudioToggle
+                enabled={soundEffectsEnabled}
+                icon={soundEffectsEnabled ? Volume2 : VolumeX}
+                label="Navigation Sound Effects"
+                detail="Controls clicks, transitions, answer chimes, and fanfare."
+                onToggle={() => {
+                  playClick();
+                  onSoundEffectsEnabledChange(!soundEffectsEnabled);
+                }}
+              />
+            </div>
+
+            <label className="block rounded-sm border border-[var(--mq-border)] bg-[var(--mq-surface-strong)] p-4">
+              <span className="flex items-center justify-between gap-3">
+                <span>
+                  <span className="block text-sm font-bold uppercase tracking-widest text-[var(--mq-primary-hover)]">
+                    Background Music Volume
+                  </span>
+                  <span className="text-sm text-[var(--mq-text-muted)]">
+                    {Math.round(backgroundMusicVolume * 100)}%
+                  </span>
+                </span>
+              </span>
+              <input
+                className="mq-focus mt-3 w-full accent-[var(--mq-primary)]"
+                type="range"
+                min="0"
+                max="100"
+                step="5"
+                value={Math.round(backgroundMusicVolume * 100)}
+                onChange={(event) => {
+                  onBackgroundMusicVolumeChange(Number(event.target.value) / 100);
+                }}
+                disabled={!hasMusicTracks}
+                aria-label="Background music volume"
+              />
+            </label>
+          </section>
+
           <section className="space-y-3">
             <div>
               <h3 className="text-lg font-bold uppercase tracking-wide text-[var(--mq-primary-hover)]">
@@ -182,6 +263,54 @@ export function QuestSettingsDialog({
         </div>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function AudioToggle({
+  enabled,
+  icon: Icon,
+  label,
+  detail,
+  onToggle,
+  disabled = false,
+}: {
+  enabled: boolean;
+  icon: typeof Music;
+  label: string;
+  detail: string;
+  onToggle: () => void;
+  disabled?: boolean;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      disabled={disabled}
+      aria-pressed={enabled}
+      className={[
+        "mq-focus flex items-start gap-3 rounded-sm border-2 p-4 text-left transition-all disabled:cursor-not-allowed disabled:opacity-55",
+        "bg-[var(--mq-surface-strong)] hover:border-[var(--mq-border-strong)] hover:bg-[var(--mq-button-hover)]",
+        enabled
+          ? "border-[var(--mq-border-strong)] shadow-[0_0_20px_color-mix(in_srgb,var(--mq-primary)_35%,transparent)]"
+          : "border-[var(--mq-border)]",
+      ].join(" ")}
+    >
+      <Icon
+        className="mt-1 h-5 w-5 shrink-0 text-[var(--mq-heading)]"
+        aria-hidden="true"
+      />
+      <span>
+        <span className="block font-bold uppercase tracking-wide text-[var(--mq-text)]">
+          {label}
+        </span>
+        <span className="mt-1 block text-sm text-[var(--mq-text-muted)]">
+          {detail}
+        </span>
+        <span className="mt-2 inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-[var(--mq-heading)]">
+          {enabled ? "On" : "Off"}
+        </span>
+      </span>
+    </button>
   );
 }
 

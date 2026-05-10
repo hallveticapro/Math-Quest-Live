@@ -103,6 +103,58 @@ pnpm --filter @workspace/mathquest-live run dev
 
 The frontend calls relative `/api` routes. During local Vite development, `/api` is proxied to the backend.
 
+## Developer And Codex Notes
+
+The repo-level agent guide is `AGENTS.md`. Start there for the current project map, commands, constraints, generated files, and task completion checks.
+
+Planning and standards-reference Markdown files live in the root `references/` directory. Put future planning/reference `.md` files there instead of under `artifacts/`.
+
+Common verification commands:
+
+```sh
+npm run build
+npm run validate:math
+npm run validate:images
+```
+
+Targeted checks:
+
+```sh
+pnpm --filter @workspace/mathquest-live run typecheck
+pnpm --filter @workspace/api-server run typecheck
+pnpm --filter @workspace/api-spec run codegen
+```
+
+There is no general lint or unit-test script currently. Do not assume one exists unless a future package manifest adds it.
+
+Generated API files live in `lib/api-client-react/src/generated/` and `lib/api-zod/src/generated/`. If `lib/api-spec/openapi.yaml` changes, regenerate those clients with:
+
+```sh
+pnpm --filter @workspace/api-spec run codegen
+```
+
+Future Codex sessions should preserve the MVP constraints: no student accounts, no database-backed student state, no analytics, no freeform student story input, backend-only OpenAI calls, and code-generated math only.
+
+## Frontend Audio
+
+Background music files live in:
+
+```text
+artifacts/mathquest-live/src/assets/music/
+```
+
+To add more quest music later, drop `.mp3` files into that folder and rebuild the app. The frontend discovers all MP3 files in that folder at build time with Vite, so there is no manually maintained music manifest.
+
+The old root `MUSIC/` folder was only a temporary intake location and should not remain in the repo after files are moved.
+
+Audio settings are session-only and reset on refresh:
+
+- Background music defaults to on.
+- Background music volume defaults to 50%.
+- Navigation sound effects default to on.
+
+Music starts only after a user interaction unlocks browser audio. Tracks rotate through a shuffled playlist, avoid immediate repeats when multiple tracks exist, fade in/out, and transition smoothly between songs. If the music folder is empty, gameplay continues without background music.
+
 ## Difficulty and Florida B.E.S.T. Standards Alignment
 
 Students choose a challenge level, not a grade level. The student-facing labels map to Florida B.E.S.T. Mathematics content bands in code:

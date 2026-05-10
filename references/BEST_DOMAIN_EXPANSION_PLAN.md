@@ -19,9 +19,10 @@ Future implementation should continue the current model:
 
 Current coverage is based on:
 
-- `CURRENT_BEST_BENCHMARK_USAGE.md`
-- `FL_BEST_REFERENCE_USED_BY_APP.md`
-- `BEST_ALIGNMENT_CHANGE_PLAN.md`
+- `references/CURRENT_BEST_BENCHMARK_USAGE.md`
+- `references/3RD_GRADE_BEST_STANDARDS_REFERENCE.md`
+- `references/4TH_GRADE_BEST_STANDARDS_REFERENCE.md`
+- `references/5TH_GRADE_BEST_STANDARDS_REFERENCE.md`
 - `artifacts/mathquest-live/src/math/floridaBestMath.ts`
 - `artifacts/mathquest-live/src/mathEngine.ts`
 
@@ -51,7 +52,7 @@ Current verified or referenced benchmark anchors include:
 - `MA.3.M.2.2`
 - `MA.3.DP.1.2`
 
-Easy currently has useful arithmetic, early geometry, fraction comparison, expanded elapsed-time coverage, and verified generators for place value, measurement, and data interpretation. The full Grade 3 reference now lives in `3RD_GRADE_BEST_STANDARDS_REFERENCE.md`.
+Easy currently has useful arithmetic, early geometry, fraction comparison, expanded elapsed-time coverage, and verified generators for place value, measurement, and data interpretation. The full Grade 3 reference now lives in `references/3RD_GRADE_BEST_STANDARDS_REFERENCE.md`.
 
 ### Medium / Grade 4
 
@@ -76,7 +77,7 @@ Current verified benchmark anchors include:
 - `MA.4.FR.1.2`
 - `MA.4.GR.1.3`
 
-The full Grade 4 reference now lives in `4TH_GRADE_BEST_STANDARDS_REFERENCE.md`.
+The full Grade 4 reference now lives in `references/4TH_GRADE_BEST_STANDARDS_REFERENCE.md`.
 
 Medium has a healthy start, with expanded equivalent-fraction, decimal/fraction, and angle-reasoning variety. The Grade 4 master reference now verifies future anchors for area/perimeter, factors/prime/composite, fraction operations, money, measurement conversion, data, and decimal comparison.
 
@@ -112,7 +113,7 @@ Current verified benchmark anchors include:
 - `MA.5.GR.4.2`
 - `MA.5.AR.2.2`
 
-The full Grade 5 reference now lives in `5TH_GRADE_BEST_STANDARDS_REFERENCE.md`.
+The full Grade 5 reference now lives in `references/5TH_GRADE_BEST_STANDARDS_REFERENCE.md`.
 
 Hard now has broader Grade 5 decimal, fraction, volume, coordinate-plane, and expression coverage. It still intentionally avoids the heavier multi-step load reserved for Extreme.
 
@@ -205,7 +206,7 @@ The order below favors classroom value, low implementation risk, and better play
   - targetPlace
   - correctAnswer
 - Notes about CPALMS/FDOE verification:
-  - Grade 3 place value and rounding benchmarks are now available in `3RD_GRADE_BEST_STANDARDS_REFERENCE.md`.
+  - Grade 3 place value and rounding benchmarks are now available in `references/3RD_GRADE_BEST_STANDARDS_REFERENCE.md`.
 
 Implementation status:
 
@@ -235,7 +236,7 @@ Implementation status:
   - coinCounts or measurementValues
   - correctAnswer
 - Notes about CPALMS/FDOE verification:
-  - Grade 3 measurement benchmarks are now available in `3RD_GRADE_BEST_STANDARDS_REFERENCE.md`.
+  - Grade 3 measurement benchmarks are now available in `references/3RD_GRADE_BEST_STANDARDS_REFERENCE.md`.
 
 Implementation status:
 
@@ -267,7 +268,7 @@ Implementation status:
   - comparisonType
   - correctAnswer
 - Notes about CPALMS/FDOE verification:
-  - Grade 3 data benchmarks are now available in `3RD_GRADE_BEST_STANDARDS_REFERENCE.md`.
+  - Grade 3 data benchmarks are now available in `references/3RD_GRADE_BEST_STANDARDS_REFERENCE.md`.
 
 Implementation status:
 
@@ -747,8 +748,8 @@ Each future generator pass should update:
 - `floridaBestMath.ts`
 - `mathEngine.ts`
 - `validateMath.ts`, if new metadata rules are added
-- `CURRENT_BEST_BENCHMARK_USAGE.md`
-- `FL_BEST_REFERENCE_USED_BY_APP.md`, if new verified benchmarks are added
+- `references/CURRENT_BEST_BENCHMARK_USAGE.md`
+- the relevant grade-level standards reference in `references/`, if new verified benchmarks are added
 - `README.md`, only if public standards wording changes
 
 Each future generator pass should run:
