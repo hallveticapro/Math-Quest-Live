@@ -11,7 +11,7 @@ export type Hero = {
 
 import { MathProblem } from "./mathEngine";
 
-export type SceneImage = {
+export type ReadySceneImage = {
   enabled: true;
   status: "ready";
   imageId: string;
@@ -20,6 +20,27 @@ export type SceneImage = {
   provider: string;
   model: string;
 };
+
+export type PendingSceneImage = {
+  enabled: true;
+  status: "pending";
+  imageId: string;
+  statusUrl: string;
+  alt: string;
+  provider: string;
+  model: string;
+};
+
+export type FailedSceneImage = {
+  enabled: true;
+  status: "failed";
+  error: "image_generation_failed";
+};
+
+export type SceneImage =
+  | ReadySceneImage
+  | PendingSceneImage
+  | FailedSceneImage;
 
 export type GameState = {
   screen: Screen;

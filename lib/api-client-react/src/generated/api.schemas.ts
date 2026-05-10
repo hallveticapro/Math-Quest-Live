@@ -31,13 +31,31 @@ export interface StoryImage {
   model: string;
 }
 
+export interface PendingStoryImage {
+  enabled: true;
+  status: "pending";
+  imageId: string;
+  statusUrl: string;
+  alt: string;
+  provider: string;
+  model: string;
+}
+
+export interface FailedStoryImage {
+  enabled: true;
+  status: "failed";
+  error: "image_generation_failed";
+}
+
+export type StoryImageResult = StoryImage | PendingStoryImage | FailedStoryImage;
+
 export interface StoryTurnResponse {
   sceneTitle: string;
   storyText: string;
   choices: StoryChoice[];
   storySummary: string;
   safetyRating: string;
-  image?: StoryImage;
+  image?: StoryImageResult;
 }
 
 export interface EndingResponse {
@@ -45,7 +63,7 @@ export interface EndingResponse {
   endingText: string;
   badge: string;
   safetyRating: string;
-  image?: StoryImage;
+  image?: StoryImageResult;
 }
 
 export interface StartGameBody {

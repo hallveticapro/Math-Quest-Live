@@ -25,6 +25,11 @@ export const HERO_ANCESTRIES = [
   "Merfolk",
   "Beastfolk",
   "Starborn",
+  "Gnome",
+  "Sprite",
+  "Stonekin",
+  "Cloudling",
+  "Foxfolk",
 ];
 
 export const HERO_CLASSES = [
@@ -36,6 +41,11 @@ export const HERO_CLASSES = [
   "Healer",
   "Beast Tamer",
   "Elementalist",
+  "Guardian",
+  "Cartographer",
+  "Stargazer",
+  "Alchemist",
+  "Puzzle Mage",
 ];
 
 export const ADVENTURE_SEEDS = [

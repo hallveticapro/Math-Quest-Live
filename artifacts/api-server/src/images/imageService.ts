@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import { logger } from "../lib/logger";
 import { getImageConfig } from "./imageConfig";
 import { shouldGenerateImage } from "./imageModes";
@@ -15,6 +16,27 @@ type ImageServiceRequest = {
 };
 
 const inFlightImages = new Map<string, Promise<ImageMetadata | undefined>>();
+const imageJobs = new Map<
+  string,
+  {
+    id: string;
+    expiresAt: number;
+    promise: Promise<ImageMetadata | undefined>;
+    result?: ImageMetadata | undefined;
+  }
+>();
+const IMAGE_JOB_TTL_MS = 45 * 60 * 1000;
+
+function cleanupImageJobs() {
+  const now = Date.now();
+  for (const [id, job] of imageJobs.entries()) {
+    if (job.expiresAt <= now) {
+      imageJobs.delete(id);
+    }
+  }
+}
+
+setInterval(cleanupImageJobs, 5 * 60 * 1000).unref();
 
 function buildImageRequestKey({
   context,
@@ -36,6 +58,10 @@ function buildImageRequestKey({
     isIntro ? "intro" : "",
     isEnding ? "ending" : "",
   ].join("|");
+}
+
+function buildImageJobId(requestKey: string) {
+  return `imgjob_${crypto.createHash("sha256").update(requestKey).digest("hex").slice(0, 24)}`;
 }
 
 async function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T | "timeout"> {
@@ -99,6 +125,93 @@ export async function maybeGenerateSceneImage({
   } finally {
     inFlightImages.delete(requestKey);
   }
+}
+
+export function requestSceneImage({
+  context,
+  turn,
+  maxTurns,
+  isIntro = false,
+  isEnding = false,
+}: ImageServiceRequest): ImageMetadata | undefined {
+  const config = getImageConfig();
+  const shouldGenerate = shouldGenerateImage({
+    enabled: config.enabled,
+    imageMode: config.mode,
+    turn,
+    maxTurns,
+    isIntro,
+    isEnding,
+  });
+
+  if (!shouldGenerate) return undefined;
+
+  cleanupImageJobs();
+  const requestKey = buildImageRequestKey({ context, turn, maxTurns, isIntro, isEnding });
+  const imageJobId = buildImageJobId(requestKey);
+  const existing = imageJobs.get(imageJobId);
+  if (existing?.result) return existing.result;
+  if (existing) {
+    return {
+      enabled: true,
+      status: "pending",
+      imageId: imageJobId,
+      statusUrl: `/api/images/status/${imageJobId}`,
+      alt: buildImageAlt(context),
+      provider: config.provider === "openai" ? "openai" : "unsupported",
+      model: config.model,
+    };
+  }
+
+  const promise = generateAndStoreSceneImage({ context, turn }).then((result) => {
+    const job = imageJobs.get(imageJobId);
+    if (job) job.result = result;
+    return result;
+  });
+
+  imageJobs.set(imageJobId, {
+    id: imageJobId,
+    expiresAt: Date.now() + IMAGE_JOB_TTL_MS,
+    promise,
+  });
+
+  return {
+    enabled: true,
+    status: "pending",
+    imageId: imageJobId,
+    statusUrl: `/api/images/status/${imageJobId}`,
+    alt: buildImageAlt(context),
+    provider: config.provider === "openai" ? "openai" : "unsupported",
+    model: config.model,
+  };
+}
+
+export async function getImageJobStatus(imageJobId: string): Promise<ImageMetadata | undefined> {
+  const job = imageJobs.get(imageJobId);
+  if (!job || job.expiresAt <= Date.now()) {
+    imageJobs.delete(imageJobId);
+    return undefined;
+  }
+
+  if (job.result) return job.result;
+  const result = await Promise.race([
+    job.promise,
+    new Promise<"pending">((resolve) => setTimeout(() => resolve("pending"), 50)),
+  ]);
+
+  if (result === "pending") {
+    return {
+      enabled: true,
+      status: "pending",
+      imageId: imageJobId,
+      statusUrl: `/api/images/status/${imageJobId}`,
+      alt: "",
+      provider: "openai",
+      model: getImageConfig().model,
+    };
+  }
+
+  return result;
 }
 
 async function generateAndStoreSceneImage({

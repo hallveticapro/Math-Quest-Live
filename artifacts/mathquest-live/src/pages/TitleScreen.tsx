@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { DIFFICULTY_OPTIONS } from "../math/floridaBestMath";
+import { playClick } from "../lib/sounds";
 
 export function TitleScreen({
   onBegin,
@@ -31,7 +32,10 @@ export function TitleScreen({
       <div className="flex w-full max-w-md flex-col gap-4">
         <button
           className="mq-focus rs-button text-2xl px-16 py-6 tracking-wider w-full"
-          onClick={onBegin}
+          onClick={() => {
+            playClick();
+            onBegin();
+          }}
           data-testid="button-begin-quest"
         >
           Begin Quest
@@ -39,7 +43,10 @@ export function TitleScreen({
 
         <button
           className="mq-focus rs-button w-full px-8 py-4 text-lg tracking-wider !bg-[var(--mq-background)]"
-          onClick={() => setShowQuickStartChoices((showing) => !showing)}
+          onClick={() => {
+            playClick();
+            setShowQuickStartChoices((showing) => !showing);
+          }}
           disabled={isQuickStarting}
           aria-label="Quick Start Adventure with random safe choices"
           data-testid="button-quick-start"
@@ -56,7 +63,10 @@ export function TitleScreen({
               <button
                 key={option.key}
                 className="mq-focus rounded-sm border-2 border-[var(--mq-border)] bg-[var(--mq-surface-strong)] px-3 py-3 text-left transition-colors hover:border-[var(--mq-border-strong)] hover:bg-[var(--mq-button-hover)] disabled:cursor-not-allowed disabled:opacity-50"
-                onClick={() => onQuickStart(option.value)}
+                onClick={() => {
+                  playClick();
+                  onQuickStart(option.value);
+                }}
                 disabled={isQuickStarting}
                 data-testid={`button-quick-start-${option.key}`}
               >

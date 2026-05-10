@@ -14,6 +14,7 @@ import {
   QUEST_LENGTH_OPTIONS,
 } from "../questLengths";
 import { resetScrollForTransition } from "../lib/scroll";
+import { playClick } from "../lib/sounds";
 import {
   ADVENTURE_SEEDS,
   HERO_ANCESTRIES,
@@ -72,10 +73,10 @@ function getStepNumber(step: SetupStep) {
 
 function optionClass(isSelected: boolean) {
   return [
-    "mq-focus relative flex min-h-16 w-full flex-col justify-center border-2 p-3 text-left transition-all duration-150 md:p-4",
+    "mq-focus flex min-h-14 w-full flex-col justify-center border-2 p-3 text-left transition-all duration-150 md:p-4",
     "bg-[var(--mq-surface-strong)] text-[var(--mq-text)] hover:border-[var(--mq-border-strong)] hover:bg-[var(--mq-button-hover)]",
     isSelected
-      ? "border-[var(--mq-border-strong)] pb-4 pr-3 pt-12 shadow-[0_0_24px_color-mix(in_srgb,var(--mq-primary)_45%,transparent)] sm:pr-32 sm:pt-4"
+      ? "border-[var(--mq-border-strong)] shadow-[0_0_24px_color-mix(in_srgb,var(--mq-primary)_45%,transparent)]"
       : "border-[var(--mq-border)]",
   ].join(" ");
 }
@@ -83,9 +84,24 @@ function optionClass(isSelected: boolean) {
 function SelectionMark({ selected }: { selected: boolean }) {
   if (!selected) return null;
   return (
-    <span className="absolute right-2 top-2 inline-flex items-center gap-1 rounded-sm border border-[var(--mq-border-strong)] bg-[var(--mq-background)] px-2 py-1 text-[0.68rem] font-bold uppercase tracking-wider text-[var(--mq-heading)] md:right-3 md:top-3 md:text-xs">
+    <span className="inline-flex shrink-0 items-center rounded-sm border border-[var(--mq-border-strong)] bg-[var(--mq-background)] px-2 py-1 text-[var(--mq-heading)]">
       <Check className="h-3.5 w-3.5" aria-hidden="true" />
-      Selected
+      <span className="sr-only">Selected</span>
+    </span>
+  );
+}
+
+function OptionHeader({
+  selected,
+  children,
+}: {
+  selected: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <span className="flex w-full items-start justify-between gap-3">
+      <span className="min-w-0 flex-1">{children}</span>
+      <SelectionMark selected={selected} />
     </span>
   );
 }
@@ -129,6 +145,16 @@ function getClassConfirmationText({
       return `Ah yes, ${heroTitle}. Even the wildest companions seem ready to trust ${objectPronoun}.`;
     case "Elementalist":
       return `Ah yes, ${heroTitle}. Wind, water, flame, and stone stir as if greeting ${objectPronoun}.`;
+    case "Guardian":
+      return `Ah yes, ${heroTitle}. When friends need courage, the shield-light gathers around ${objectPronoun}.`;
+    case "Cartographer":
+      return `Ah yes, ${heroTitle}. Blank maps brighten as hidden paths reveal themselves to ${objectPronoun}.`;
+    case "Stargazer":
+      return `Ah yes, ${heroTitle}. Constellations seem to wink whenever ${objectPronoun} looks up for guidance.`;
+    case "Alchemist":
+      return `Ah yes, ${heroTitle}. Bubbles, sparks, and safe little experiments swirl around ${objectPronoun}.`;
+    case "Puzzle Mage":
+      return `Ah yes, ${heroTitle}. Riddles hum softly, as if they are eager to be solved by ${objectPronoun}.`;
     default:
       return `Ah yes, ${heroTitle}. The Chronicle knows a remarkable path awaits ${objectPronoun}.`;
   }
@@ -190,11 +216,13 @@ export function SetupScreen({
   };
 
   const goNext = () => {
+    playClick();
     const next = STEP_ORDER[Math.min(currentIndex + 1, STEP_ORDER.length - 1)];
     runSetupTransition(() => goToStep(next));
   };
 
   const goBack = () => {
+    playClick();
     if (step === "intro") {
       applyColorScheme(DEFAULT_COLOR_SCHEME_ID);
       onCancel();
@@ -213,8 +241,14 @@ export function SetupScreen({
   };
 
   const handleSchemeSelect = (schemeId: ColorSchemeId) => {
+    playClick();
     setColorSchemeId(schemeId);
     applyColorScheme(schemeId);
+  };
+
+  const selectOption = (update: () => void) => {
+    playClick();
+    update();
   };
 
   const getConfirmationText = () => {
@@ -252,6 +286,7 @@ export function SetupScreen({
   };
 
   const showConfirmation = () => {
+    playClick();
     const text = getConfirmationText();
     if (!text) {
       goNext();
@@ -265,6 +300,7 @@ export function SetupScreen({
   };
 
   const continueAfterConfirmation = () => {
+    playClick();
     if (step === "seed") {
       onPrepareStart(
         { name, pronouns, ancestry, className },
@@ -373,7 +409,7 @@ export function SetupScreen({
 
         <main
           className={[
-            "rs-panel setup-stage flex-1 p-4 md:p-6 xl:p-7",
+            "rs-panel setup-stage p-4 md:p-6 xl:p-7",
             isStageTransitioning ? "setup-stage-exit" : "setup-stage-enter",
           ].join(" ")}
         >
@@ -408,13 +444,14 @@ export function SetupScreen({
                   <button
                     key={option}
                     className={optionClass(name === option)}
-                    onClick={() => setName(option)}
+                    onClick={() => selectOption(() => setName(option))}
                     data-testid={`button-name-${option}`}
                   >
-                    <SelectionMark selected={name === option} />
-                    <span className="text-xl font-serif text-[var(--mq-heading)] md:text-2xl">
-                      {option}
-                    </span>
+                    <OptionHeader selected={name === option}>
+                      <span className="text-xl font-serif text-[var(--mq-heading)] md:text-2xl">
+                        {option}
+                      </span>
+                    </OptionHeader>
                   </button>
                 ))}
               </ChoiceGrid>
@@ -430,13 +467,14 @@ export function SetupScreen({
                   <button
                     key={option}
                     className={optionClass(pronouns === option)}
-                    onClick={() => setPronouns(option)}
+                    onClick={() => selectOption(() => setPronouns(option))}
                     data-testid={`button-pronouns-${option}`}
                   >
-                    <SelectionMark selected={pronouns === option} />
-                    <span className="text-xl font-serif text-[var(--mq-heading)] md:text-2xl">
-                      {option}
-                    </span>
+                    <OptionHeader selected={pronouns === option}>
+                      <span className="text-xl font-serif text-[var(--mq-heading)] md:text-2xl">
+                        {option}
+                      </span>
+                    </OptionHeader>
                   </button>
                 ))}
               </ChoiceGrid>
@@ -452,13 +490,14 @@ export function SetupScreen({
                   <button
                     key={option}
                     className={optionClass(ancestry === option)}
-                    onClick={() => setAncestry(option)}
+                    onClick={() => selectOption(() => setAncestry(option))}
                     data-testid={`button-ancestry-${option}`}
                   >
-                    <SelectionMark selected={ancestry === option} />
-                    <span className="text-xl font-serif text-[var(--mq-heading)]">
-                      {option}
-                    </span>
+                    <OptionHeader selected={ancestry === option}>
+                      <span className="text-xl font-serif text-[var(--mq-heading)]">
+                        {option}
+                      </span>
+                    </OptionHeader>
                   </button>
                 ))}
               </ChoiceGrid>
@@ -472,13 +511,14 @@ export function SetupScreen({
                   <button
                     key={option}
                     className={optionClass(className === option)}
-                    onClick={() => setClassName(option)}
+                    onClick={() => selectOption(() => setClassName(option))}
                     data-testid={`button-class-${option}`}
                   >
-                    <SelectionMark selected={className === option} />
-                    <span className="text-xl font-serif text-[var(--mq-heading)]">
-                      {option}
-                    </span>
+                    <OptionHeader selected={className === option}>
+                      <span className="text-xl font-serif text-[var(--mq-heading)]">
+                        {option}
+                      </span>
+                    </OptionHeader>
                   </button>
                 ))}
               </ChoiceGrid>
@@ -492,13 +532,14 @@ export function SetupScreen({
                   <button
                     key={option.key}
                     className={optionClass(difficulty === option.value)}
-                    onClick={() => setDifficulty(option.value)}
+                    onClick={() => selectOption(() => setDifficulty(option.value))}
                     data-testid={`button-difficulty-${option.key}`}
                   >
-                    <SelectionMark selected={difficulty === option.value} />
-                    <span className="text-xl font-serif text-[var(--mq-heading)] md:text-2xl">
-                      {option.label}
-                    </span>
+                    <OptionHeader selected={difficulty === option.value}>
+                      <span className="text-xl font-serif text-[var(--mq-heading)] md:text-2xl">
+                        {option.label}
+                      </span>
+                    </OptionHeader>
                     <span className="mt-2 text-sm text-[var(--mq-text)] md:text-base">
                       {option.description}
                     </span>
@@ -518,13 +559,14 @@ export function SetupScreen({
                   <button
                     key={option.id}
                     className={optionClass(maxTurns === option.maxTurns)}
-                    onClick={() => setMaxTurns(option.maxTurns)}
+                    onClick={() => selectOption(() => setMaxTurns(option.maxTurns))}
                     data-testid={`button-quest-length-${option.id}`}
                   >
-                    <SelectionMark selected={maxTurns === option.maxTurns} />
-                    <span className="text-xl font-serif text-[var(--mq-heading)] md:text-2xl">
-                      {option.label}
-                    </span>
+                    <OptionHeader selected={maxTurns === option.maxTurns}>
+                      <span className="text-xl font-serif text-[var(--mq-heading)] md:text-2xl">
+                        {option.label}
+                      </span>
+                    </OptionHeader>
                     <span className="mt-2 text-sm text-[var(--mq-text)] md:text-base">
                       {option.description}
                     </span>
@@ -544,13 +586,14 @@ export function SetupScreen({
                   <button
                     key={option}
                     className={optionClass(seed === option)}
-                    onClick={() => setSeed(option)}
+                    onClick={() => selectOption(() => setSeed(option))}
                     data-testid={`button-seed-${option.replace(/\W+/g, "-").toLowerCase()}`}
                   >
-                    <SelectionMark selected={seed === option} />
-                    <span className="text-lg font-serif text-[var(--mq-heading)]">
-                      {option}
-                    </span>
+                    <OptionHeader selected={seed === option}>
+                      <span className="text-lg font-serif text-[var(--mq-heading)]">
+                        {option}
+                      </span>
+                    </OptionHeader>
                   </button>
                 ))}
               </ChoiceGrid>
@@ -573,10 +616,11 @@ export function SetupScreen({
                       onMouseLeave={handleSchemePreviewEnd}
                       data-testid={`button-color-scheme-${scheme.id}`}
                     >
-                      <SelectionMark selected={selected} />
-                      <span className="text-xl font-serif text-[var(--mq-heading)] md:text-2xl">
-                        {scheme.name}
-                      </span>
+                      <OptionHeader selected={selected}>
+                        <span className="text-xl font-serif text-[var(--mq-heading)] md:text-2xl">
+                          {scheme.name}
+                        </span>
+                      </OptionHeader>
                       <span className="mt-2 text-sm text-[var(--mq-text)] md:text-base">
                         {scheme.description}
                       </span>
@@ -628,7 +672,12 @@ export function SetupScreen({
           )}
         </main>
 
-        <footer className="setup-footer flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <footer
+          className={[
+            "setup-footer flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between",
+            isStageTransitioning ? "setup-stage-exit" : "setup-stage-enter",
+          ].join(" ")}
+        >
           {mode === "confirmation" ? (
             <>
               <span aria-hidden="true" />

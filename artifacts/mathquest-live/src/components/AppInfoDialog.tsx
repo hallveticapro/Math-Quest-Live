@@ -1,4 +1,4 @@
-import { Info } from "lucide-react";
+import { ExternalLink, Heart, Info } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -57,11 +57,36 @@ export function AppInfoDialog({ variant = "floating" }: AppInfoDialogProps) {
             </p>
           </section>
 
-          <section className="space-y-2">
-            <h3 className="text-lg font-bold uppercase tracking-wide text-[var(--mq-primary-hover)]">Support</h3>
-            <p>
-              A Ko-fi donation link for server costs will be added later.
-            </p>
+          <section className="space-y-4 rounded-sm border border-[var(--mq-border-strong)] bg-[var(--mq-background)] p-4 shadow-[0_0_24px_color-mix(in_srgb,var(--mq-primary)_25%,transparent)]">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h3 className="text-lg font-bold uppercase tracking-wide text-[var(--mq-heading)]">
+                  Enjoying MathQuest Live?
+                </h3>
+                <p className="text-sm text-[var(--mq-text-muted)]">
+                  Support server costs and classroom-friendly updates.
+                </p>
+              </div>
+              <a
+                href="https://buymeacoffee.com/hallveticapro"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mq-focus rs-button inline-flex shrink-0 items-center gap-2 px-4 py-3 text-sm"
+              >
+                Buy Me a Coffee
+                <ExternalLink className="h-4 w-4" aria-hidden="true" />
+              </a>
+            </div>
+          </section>
+
+          <section className="space-y-3">
+            <h3 className="text-lg font-bold uppercase tracking-wide text-[var(--mq-primary-hover)]">Project Links</h3>
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+              <InfoLink href="https://github.com/hallveticapro/math-quest-live" label="GitHub" />
+              <InfoLink href="https://www.threads.net/@hallveticapro" label="Threads" />
+              <InfoLink href="https://www.instagram.com/hallveticapro" label="Instagram" />
+              <InfoLink href="https://www.tiktok.com/@hallveticapro" label="TikTok" />
+            </div>
           </section>
 
           <section className="space-y-3">
@@ -83,8 +108,31 @@ export function AppInfoDialog({ variant = "floating" }: AppInfoDialogProps) {
               Students use preset buttons only. The MVP does not require accounts, logins, rosters, ads, analytics, or saved student progress.
             </p>
           </section>
+
+          <footer className="border-t border-[var(--mq-border)] pt-4 text-center text-sm text-[var(--mq-text-muted)]">
+            <p className="inline-flex items-center justify-center gap-1">
+              Made for educators with love by Andrew Hall
+              <Heart className="h-4 w-4 fill-[var(--mq-danger)] text-[var(--mq-danger)]" aria-hidden="true" />
+            </p>
+            <p className="mt-1">© 2026 MathQuest Live</p>
+          </footer>
         </div>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function InfoLink({ href, label }: { href: string; label: string }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="mq-focus flex items-center justify-between rounded-sm border border-[var(--mq-border)] bg-[var(--mq-background)] px-3 py-2 text-[var(--mq-text)] transition-colors hover:border-[var(--mq-border-strong)] hover:text-[var(--mq-heading)]"
+      aria-label={`Open ${label} in a new tab`}
+    >
+      <span>{label}</span>
+      <ExternalLink className="h-4 w-4" aria-hidden="true" />
+    </a>
   );
 }

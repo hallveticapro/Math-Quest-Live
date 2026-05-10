@@ -8,6 +8,18 @@ The MVP does not require student accounts, login, a database, saved progress, ro
 
 Students begin with a step-by-step Chronicler setup flow instead of a single form. During setup they choose preset hero details, challenge level, quest length, adventure theme, and a session-only color scheme. Color schemes preview live while students choose them and remain active through the current game session. They affect visual appearance only; they do not affect difficulty, standards alignment, math content, AI safety rules, story outcome, or saved data. Refreshing the page resets the MVP session.
 
+Core features include preset-only student choices, deterministic app-generated math, Florida B.E.S.T. standards-band challenge levels, skill-specific hints, repeated-question prevention within a quest, session-only color themes, optional backend-only AI images, and a Quick Start path for faster classroom launch.
+
+Made for educators with love by Andrew Hall ❤️
+
+- Support: [Buy Me a Coffee](https://buymeacoffee.com/hallveticapro)
+- GitHub: [hallveticapro/math-quest-live](https://github.com/hallveticapro/math-quest-live)
+- Threads: [@hallveticapro](https://www.threads.net/@hallveticapro)
+- Instagram: [@hallveticapro](https://www.instagram.com/hallveticapro)
+- TikTok: [@hallveticapro](https://www.tiktok.com/@hallveticapro)
+
+© 2026 MathQuest Live
+
 ## Quest Lengths
 
 Quest length is measured by successful math challenges, not setup, intro text, wrong-answer retries, or the ending screen.
@@ -27,6 +39,12 @@ Required:
 Optional:
 
 - `OPENAI_MODEL` - Story model used by the backend. Defaults to `gpt-4.1-mini`.
+- `STORY_TIMEOUT_MS` - Maximum time the backend waits for AI story text before returning safe fallback content. Defaults to `30000`.
+- `RATE_LIMIT_ENABLED` - Enables simple in-memory rate protection for AI-cost endpoints. Defaults to `true`.
+- `RATE_LIMIT_WINDOW_MS` - Rate-limit window length. Defaults to `60000`.
+- `RATE_LIMIT_MAX_REQUESTS` - Maximum game/story API requests per window. Defaults to `60`.
+- `IMAGE_RATE_LIMIT_MAX_REQUESTS` - Maximum image-status polling requests per window. Defaults to `20`.
+- `CORS_ORIGIN` - Allowed CORS origin for the API. Defaults to `*`.
 - `PORT` - Port used by the production Express server. Defaults to `3000`.
 - `NODE_ENV` - Use `production` for Docker/Unraid production serving.
 - `STATIC_DIR` - Directory containing the built frontend files. Docker sets this to `/app/public`.
@@ -124,6 +142,18 @@ npm run validate:math
 
 The validator samples all four difficulty levels and checks that every generated problem has benchmark metadata, a difficulty, a grade band, a signature, four unique answer choices, the correct answer in the choices, and no duplicate signatures within the sample batch.
 
+## Public Deployment Cost Protection
+
+MathQuest Live includes simple, portable, in-memory rate protection for AI-cost routes. It does not add accounts, analytics, a database, or saved student tracking. For public deployments, keep `RATE_LIMIT_ENABLED=true` and tune:
+
+```text
+RATE_LIMIT_WINDOW_MS=60000
+RATE_LIMIT_MAX_REQUESTS=60
+IMAGE_RATE_LIMIT_MAX_REQUESTS=20
+```
+
+When the limit is reached, the API returns a friendly `429` response asking the user to wait briefly.
+
 ## Optional AI Image Generation
 
 Generated illustrations are backend-only and off by default. Set `ENABLE_IMAGE_GENERATION=true` to allow the Express server to request temporary OpenAI images. The frontend never receives the OpenAI API key.
@@ -145,7 +175,7 @@ Image modes:
 - `milestones` - Generate intro, midpoint, and ending images.
 - `every_scene` - Attempt an image for each generated scene and ending.
 
-Images can increase cost and latency. `every_scene` should be used cautiously. Image generation failure, rate limits, timeouts, or unsupported providers do not stop gameplay; the app continues with the story text and math challenge.
+Images can increase cost and latency. `every_scene` should be used cautiously. Image generation is non-blocking: story text returns first, and eligible images appear later if they finish in time. Image generation failure, rate limits, timeouts, or unsupported providers do not stop gameplay; the app continues with the story text and math challenge.
 
 After the intro, the app starts preparing the next scene as soon as the student chooses an action. The student solves the required math challenge while the backend generates the next story text and any eligible image. The prepared scene is only revealed after a correct math answer, so the math gate remains required.
 
@@ -262,6 +292,12 @@ ghcr.io/YOUR_GITHUB_USERNAME_OR_ORG/YOUR_REPO_NAME:latest
    - `PORT=3000`
    - `NODE_ENV=production`
    - `OPENAI_MODEL=gpt-4.1-mini`
+   - `STORY_TIMEOUT_MS=30000`
+   - `RATE_LIMIT_ENABLED=true`
+   - `RATE_LIMIT_WINDOW_MS=60000`
+   - `RATE_LIMIT_MAX_REQUESTS=60`
+   - `IMAGE_RATE_LIMIT_MAX_REQUESTS=20`
+   - `CORS_ORIGIN=*`
    - `ENABLE_IMAGE_GENERATION=false`
    - `IMAGE_MODE=milestones`
    - `IMAGE_PROVIDER=openai`

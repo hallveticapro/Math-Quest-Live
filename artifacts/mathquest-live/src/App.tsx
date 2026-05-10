@@ -105,6 +105,10 @@ function GameApp() {
   const usedProblemSignaturesRef = useRef<Set<string>>(new Set());
   const lastQuickStartRef = useRef<QuickStartSession | null>(null);
   const quickStartLockRef = useRef(false);
+  const startLockRef = useRef(false);
+  const actionLockRef = useRef(false);
+  const mathAnswerLockRef = useRef(false);
+  const sessionVersionRef = useRef(0);
   const [isQuickStarting, setIsQuickStarting] = useState(false);
   const { toast } = useToast();
 
@@ -167,6 +171,13 @@ function GameApp() {
     maxTurns: number,
     colorSchemeId = DEFAULT_COLOR_SCHEME_ID,
   ) => {
+    if (startLockRef.current) return;
+
+    startLockRef.current = true;
+    actionLockRef.current = false;
+    mathAnswerLockRef.current = false;
+    sessionVersionRef.current += 1;
+    const sessionVersion = sessionVersionRef.current;
     playTransition();
     usedProblemSignaturesRef.current = new Set();
     setState((s) => ({
@@ -204,10 +215,12 @@ function GameApp() {
 
     preparedStart
       .then(async (res) => {
+        if (sessionVersion !== sessionVersionRef.current) return;
         const startResult =
           res ??
           (await startGame({ hero, difficulty, adventureSeed, maxTurns }));
 
+        if (sessionVersion !== sessionVersionRef.current) return;
         setState((s) => ({
           ...s,
           isLoading: false,
@@ -219,6 +232,7 @@ function GameApp() {
         }));
       })
       .catch(() => {
+        if (sessionVersion !== sessionVersionRef.current) return;
         toast({
           variant: "destructive",
           title: "Connection fading...",
@@ -233,6 +247,11 @@ function GameApp() {
           choices: FALLBACK_SCENE.choices,
           storySummary: FALLBACK_SCENE.storySummary,
         }));
+      })
+      .finally(() => {
+        if (sessionVersion === sessionVersionRef.current) {
+          startLockRef.current = false;
+        }
       });
   };
 
@@ -259,6 +278,15 @@ function GameApp() {
   };
 
   const handleChoiceSelect = (choiceId: string, choiceLabel: string) => {
+    if (
+      actionLockRef.current ||
+      state.isLoading ||
+      Boolean(state.currentMathProblem)
+    ) {
+      return;
+    }
+
+    actionLockRef.current = true;
     playClick();
     const isEnding = state.turn >= state.maxTurns;
     pendingPreparationRef.current = prepareGameStep({
@@ -296,6 +324,7 @@ function GameApp() {
   };
 
   const revealEnding = async (newMathSolved: number) => {
+    const sessionVersion = sessionVersionRef.current;
     try {
       const prepared = await pendingPreparationRef.current;
       pendingPreparationRef.current = null;
@@ -309,6 +338,7 @@ function GameApp() {
       }
 
       const res = resolved.data;
+      if (sessionVersion !== sessionVersionRef.current) return;
       setState((s) => ({
         ...s,
         isLoading: false,
@@ -329,6 +359,7 @@ function GameApp() {
           storySummary: state.storySummary,
           mathSolved: newMathSolved,
         });
+        if (sessionVersion !== sessionVersionRef.current) return;
         setState((s) => ({
           ...s,
           isLoading: false,
@@ -339,6 +370,7 @@ function GameApp() {
           badge: res.badge,
         }));
       } catch {
+        if (sessionVersion !== sessionVersionRef.current) return;
         setState((s) => ({
           ...s,
           isLoading: false,
@@ -350,6 +382,10 @@ function GameApp() {
           badge: "Star of Logic",
         }));
       }
+    } finally {
+      if (sessionVersion === sessionVersionRef.current) {
+        mathAnswerLockRef.current = false;
+      }
     }
   };
 
@@ -357,6 +393,7 @@ function GameApp() {
     newMathSolved: number,
     mathDifficulty: string,
   ) => {
+    const sessionVersion = sessionVersionRef.current;
     const nextTurn = state.turn + 1;
     try {
       const prepared = await pendingPreparationRef.current;
@@ -371,6 +408,7 @@ function GameApp() {
       }
 
       const res = resolved.data;
+      if (sessionVersion !== sessionVersionRef.current) return;
       setState((s) => ({
         ...s,
         isLoading: false,
@@ -393,6 +431,7 @@ function GameApp() {
           chosenAction: state.chosenAction || "",
           mathResult: `Solved a ${state.recoveryMode ? "recovery" : "standard"} ${mathDifficulty} problem.`,
         });
+        if (sessionVersion !== sessionVersionRef.current) return;
         setState((s) => ({
           ...s,
           isLoading: false,
@@ -404,6 +443,7 @@ function GameApp() {
           storySummary: res.storySummary,
         }));
       } catch {
+        if (sessionVersion !== sessionVersionRef.current) return;
         toast({
           variant: "destructive",
           title: "Connection fading...",
@@ -420,14 +460,21 @@ function GameApp() {
           storySummary: FALLBACK_SCENE.storySummary,
         }));
       }
+    } finally {
+      if (sessionVersion === sessionVersionRef.current) {
+        actionLockRef.current = false;
+        mathAnswerLockRef.current = false;
+      }
     }
   };
 
   const handleMathAnswer = (answer: string) => {
+    if (mathAnswerLockRef.current) return;
     const prob = state.currentMathProblem;
     if (!prob) return;
 
     if (answer === prob.correctAnswer) {
+      mathAnswerLockRef.current = true;
       playCorrect();
       const newMathSolved = state.mathSolved + 1;
 
@@ -447,6 +494,7 @@ function GameApp() {
         void revealNextTurn(newMathSolved, prob.difficulty);
       }
     } else {
+      mathAnswerLockRef.current = true;
       playWrong();
       const attempts = state.wrongAttempts + 1;
       if (attempts >= 2 && !state.recoveryMode) {
@@ -461,6 +509,7 @@ function GameApp() {
       } else {
         setState((s) => ({ ...s, wrongAttempts: attempts }));
       }
+      mathAnswerLockRef.current = false;
     }
   };
 
@@ -476,6 +525,10 @@ function GameApp() {
 
   const handleExitToTitle = () => {
     playTransition();
+    sessionVersionRef.current += 1;
+    startLockRef.current = false;
+    actionLockRef.current = false;
+    mathAnswerLockRef.current = false;
     pendingPreparationRef.current = null;
     pendingStartRef.current = null;
     usedProblemSignaturesRef.current = new Set();
@@ -533,6 +586,10 @@ function GameApp() {
           onPlayAgain={handlePlayAgain}
           onNewHero={() => {
             playTransition();
+            sessionVersionRef.current += 1;
+            startLockRef.current = false;
+            actionLockRef.current = false;
+            mathAnswerLockRef.current = false;
             usedProblemSignaturesRef.current = new Set();
             setState(INITIAL_STATE);
           }}

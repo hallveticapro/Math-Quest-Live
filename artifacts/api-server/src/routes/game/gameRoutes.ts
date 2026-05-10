@@ -15,7 +15,7 @@ import {
 } from "./storyPrompt.js";
 import { checkStoryTurnSafety, checkEndingSafety } from "./safety.js";
 import { openai, STORY_MODEL } from "../../lib/openaiClient.js";
-import { maybeGenerateSceneImage } from "../../images/imageService.js";
+import { requestSceneImage } from "../../images/imageService.js";
 import type { ImageMetadata } from "../../images/imageTypes.js";
 
 const router = Router();
@@ -54,9 +54,24 @@ type PendingTurn = {
   expiresAt: number;
   promise: Promise<PreparedTurnResult>;
 };
+type SafeMathSkillMetadata = {
+  skillLabel: string;
+  problemType: string;
+  difficulty: string;
+  gradeBand: number;
+  storyFlavor: string;
+};
 
 const PENDING_TURN_TTL_MS = 10 * 60 * 1000;
 const pendingTurns = new Map<string, PendingTurn>();
+
+function readStoryTimeoutMs() {
+  const parsed = Number(process.env.STORY_TIMEOUT_MS ?? "30000");
+  if (!Number.isFinite(parsed) || parsed < 1000 || parsed > 120000) {
+    return 30000;
+  }
+  return parsed;
+}
 
 function cleanupPendingTurns() {
   const now = Date.now();
@@ -75,19 +90,35 @@ function withOptionalImage<T extends object>(data: T, image: ImageMetadata | und
 }
 
 async function callOpenAI(prompt: string): Promise<string> {
-  const response = await openai.chat.completions.create({
-    model: STORY_MODEL,
-    max_completion_tokens: 1024,
-    messages: [
-      {
-        role: "user",
-        content: prompt,
-      },
-    ],
-    response_format: { type: "json_object" },
-  });
+  const controller = new AbortController();
+  const timeoutMs = readStoryTimeoutMs();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
 
-  return response.choices[0]?.message?.content ?? "";
+  try {
+    const response = await openai.chat.completions.create(
+      {
+        model: STORY_MODEL,
+        max_completion_tokens: 1024,
+        messages: [
+          {
+            role: "user",
+            content: prompt,
+          },
+        ],
+        response_format: { type: "json_object" },
+      },
+      { signal: controller.signal },
+    );
+
+    return response.choices[0]?.message?.content ?? "";
+  } catch (err) {
+    if (controller.signal.aborted) {
+      throw new Error("story_generation_timeout");
+    }
+    throw err;
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 function parseJSON(text: string): unknown {
@@ -148,6 +179,28 @@ function isHeroInfo(value: unknown): value is {
   );
 }
 
+function parseSafeMathSkill(value: unknown): SafeMathSkillMetadata | undefined {
+  if (!value || typeof value !== "object") return undefined;
+  const data = value as Record<string, unknown>;
+  if (
+    typeof data.skillLabel !== "string" ||
+    typeof data.problemType !== "string" ||
+    typeof data.difficulty !== "string" ||
+    typeof data.storyFlavor !== "string" ||
+    !Number.isInteger(data.gradeBand)
+  ) {
+    return undefined;
+  }
+
+  return {
+    skillLabel: data.skillLabel.slice(0, 80),
+    problemType: data.problemType.slice(0, 80),
+    difficulty: data.difficulty.slice(0, 20),
+    gradeBand: data.gradeBand as number,
+    storyFlavor: data.storyFlavor.slice(0, 120),
+  };
+}
+
 function parsePrepareBody(body: unknown) {
   if (!body || typeof body !== "object") return null;
   const data = body as Record<string, unknown>;
@@ -174,6 +227,7 @@ function parsePrepareBody(body: unknown) {
     maxTurns: data.maxTurns as number,
     storySummary: data.storySummary,
     chosenAction: data.chosenAction,
+    lastMathSkill: parseSafeMathSkill(data.lastMathSkill),
     mathSolved: Number.isInteger(data.mathSolved) ? (data.mathSolved as number) : undefined,
   };
 }
@@ -219,7 +273,7 @@ async function generatePreparedTurn(data: NonNullable<ReturnType<typeof parsePre
     }
 
     const endingData = parsed as EndingData;
-    const image = await maybeGenerateSceneImage({
+    const image = requestSceneImage({
       context: {
         kind: "ending",
         hero: data.hero,
@@ -247,6 +301,7 @@ async function generatePreparedTurn(data: NonNullable<ReturnType<typeof parsePre
     storySummary: data.storySummary,
     chosenAction: data.chosenAction,
     mathResult: "The student selected this action and is solving the required math challenge before the next scene is shown.",
+    lastMathSkill: data.lastMathSkill,
   });
   const raw = await callOpenAI(prompt);
   const parsed = parseJSON(raw);
@@ -255,7 +310,7 @@ async function generatePreparedTurn(data: NonNullable<ReturnType<typeof parsePre
   }
 
   const turnData = parsed as StoryTurnData;
-  const image = await maybeGenerateSceneImage({
+  const image = requestSceneImage({
     context: {
       kind: data.turn === Math.ceil(data.maxTurns / 2) ? "milestone" : "scene",
       hero: data.hero,
@@ -344,7 +399,7 @@ router.post("/start", async (req, res) => {
     }
 
     const turnData = data as StoryTurnData;
-    const image = await maybeGenerateSceneImage({
+    const image = requestSceneImage({
       context: {
         kind: "intro",
         hero: parsed.data.hero,
@@ -393,7 +448,7 @@ router.post("/turn", async (req, res) => {
     }
 
     const turnData = data as StoryTurnData;
-    const image = await maybeGenerateSceneImage({
+    const image = requestSceneImage({
       context: {
         kind: parsed.data.turn === Math.ceil(parsed.data.maxTurns / 2) ? "milestone" : "scene",
         hero: parsed.data.hero,
@@ -444,7 +499,7 @@ router.post("/ending", async (req, res) => {
     }
 
     const endingData = data as EndingData;
-    const image = await maybeGenerateSceneImage({
+    const image = requestSceneImage({
       context: {
         kind: "ending",
         hero: parsed.data.hero,

@@ -13,6 +13,7 @@ import {
   type ColorSchemeId,
 } from "../colorSchemes";
 import { DIFFICULTY_OPTIONS } from "../math/floridaBestMath";
+import { playClick } from "../lib/sounds";
 
 type QuestSettingsDialogProps = {
   colorSchemeId: ColorSchemeId;
@@ -81,7 +82,10 @@ export function QuestSettingsDialog({
                   <button
                     key={scheme.id}
                     type="button"
-                    onClick={() => onColorSchemeChange(scheme.id)}
+                    onClick={() => {
+                      playClick();
+                      onColorSchemeChange(scheme.id);
+                    }}
                     aria-pressed={selected}
                     className={[
                       "mq-focus relative rounded-sm border-2 p-4 text-left transition-all",
@@ -144,7 +148,10 @@ export function QuestSettingsDialog({
                   <button
                     key={option.key}
                     type="button"
-                    onClick={() => onDifficultyChange(option.value)}
+                    onClick={() => {
+                      playClick();
+                      onDifficultyChange(option.value);
+                    }}
                     aria-pressed={selected}
                     className={[
                       "mq-focus relative rounded-sm border-2 p-4 text-left transition-all",

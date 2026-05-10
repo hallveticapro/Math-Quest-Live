@@ -17,6 +17,13 @@ interface TurnData extends StartGameData {
   storySummary: string;
   chosenAction: string;
   mathResult: string;
+  lastMathSkill?: {
+    skillLabel: string;
+    problemType: string;
+    difficulty: string;
+    gradeBand: number;
+    storyFlavor: string;
+  };
 }
 
 interface EndingData extends StartGameData {
@@ -27,8 +34,8 @@ interface EndingData extends StartGameData {
 
 export const ALLOWED_HERO_NAMES = ["Astra", "Kael", "Nova", "Mira", "Jax", "Luna", "Orion", "Sage", "Zara", "Theo", "Elara", "Milo"] as const;
 export const ALLOWED_PRONOUNS = ["she/her", "he/him", "they/them"] as const;
-export const ALLOWED_ANCESTRIES = ["Human", "Elf", "Dwarf", "Dragonborn", "Fae", "Robot", "Merfolk", "Beastfolk", "Starborn"] as const;
-export const ALLOWED_CLASSES = ["Wizard", "Warrior", "Explorer", "Rogue", "Inventor", "Healer", "Beast Tamer", "Elementalist"] as const;
+export const ALLOWED_ANCESTRIES = ["Human", "Elf", "Dwarf", "Dragonborn", "Fae", "Robot", "Merfolk", "Beastfolk", "Starborn", "Gnome", "Sprite", "Stonekin", "Cloudling", "Foxfolk"] as const;
+export const ALLOWED_CLASSES = ["Wizard", "Warrior", "Explorer", "Rogue", "Inventor", "Healer", "Beast Tamer", "Elementalist", "Guardian", "Cartographer", "Stargazer", "Alchemist", "Puzzle Mage"] as const;
 export const ALLOWED_DIFFICULTIES = ["Easy", "Medium", "Hard", "Extreme"] as const;
 export const ALLOWED_MAX_TURNS = [5, 8, 10] as const;
 
@@ -267,6 +274,7 @@ STORY SO FAR: ${data.storySummary}
 
 The student chose: "${data.chosenAction}"
 Math result: ${data.mathResult}
+${data.lastMathSkill ? `Math skill flavor: The student just practiced ${data.lastMathSkill.skillLabel} (${data.lastMathSkill.storyFlavor}). You may echo this only as light story flavor, such as maps, gates, patterns, measures, or clever planning. Do not mention benchmark codes. Do not generate, solve, check, or explain math.` : ""}
 
 Continue the adventure from where we left off. ${hero.name} solved the math challenge and can now act. Write ${reading.sceneWords} of exciting story. ${turnsLeft <= 2 ? "The adventure is nearing its climax — build urgently toward a satisfying resolution!" : turnsLeft <= 4 ? "The adventure is at its midpoint — raise the stakes and introduce a new complication." : "Keep the adventure moving forward with new discoveries."} End with exactly 3 new safe action choices.
 

@@ -1,4 +1,5 @@
 let ctx: AudioContext | null = null;
+let lastClickAt = 0;
 
 function getCtx(): AudioContext {
   if (!ctx) {
@@ -89,6 +90,10 @@ export function playFanfare(): void {
 
 // Soft click for choice selection
 export function playClick(): void {
+  const now = performance.now();
+  if (now - lastClickAt < 70) return;
+  lastClickAt = now;
+
   playTone(880, 0, 0.06, 0.07, "sine", 0);
   playTone(1100, 0.03, 0.06, 0.04, "sine", 0);
 }

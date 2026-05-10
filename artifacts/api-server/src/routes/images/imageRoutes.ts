@@ -1,7 +1,24 @@
 import { Router } from "express";
+import { getImageJobStatus } from "../../images/imageService";
 import { getStoredImage } from "../../images/imageStore";
 
 const router = Router();
+
+router.get("/status/:imageJobId", async (req, res) => {
+  const imageJobId = req.params.imageJobId;
+  if (!imageJobId || !imageJobId.startsWith("imgjob_")) {
+    res.status(404).json({ error: "Image not found" });
+    return;
+  }
+
+  const image = await getImageJobStatus(imageJobId);
+  if (!image) {
+    res.status(404).json({ error: "Image not found" });
+    return;
+  }
+
+  res.json(image);
+});
 
 router.get("/:imageId", (req, res) => {
   const imageId = req.params.imageId;

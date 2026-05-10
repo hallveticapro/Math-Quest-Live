@@ -219,16 +219,16 @@
 }
 
 .setup-stage {
-  min-height: clamp(420px, 50dvh, 640px);
+  min-height: 0;
   transition:
     opacity 160ms ease,
     transform 160ms ease,
-    min-height 180ms ease;
+    padding 180ms ease;
 }
 
 .setup-question-view,
 .setup-confirmation-view {
-  min-height: clamp(300px, 38dvh, 500px);
+  min-height: 0;
 }
 
 .setup-stage-enter {
@@ -243,7 +243,7 @@
 }
 
 .setup-footer {
-  min-height: 64px;
+  min-height: 58px;
 }
 
 .quest-stage {
@@ -338,5 +338,11 @@
   .story-text {
     font-size: 1rem;
     line-height: 1.65;
+  }
+}
+
+@media (max-height: 820px) and (min-width: 768px) {
+  .setup-footer {
+    min-height: 52px;
   }
 }
