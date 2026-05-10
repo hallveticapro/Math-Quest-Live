@@ -14,6 +14,8 @@ export interface TakeTurnBody {
   turn: number;
   maxTurns: number;
   storySummary: string;
+  storyHistory?: string;
+  episodeId?: string;
   chosenAction: string;
   mathResult: string;
 }

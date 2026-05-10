@@ -21,9 +21,16 @@ export interface StoryChoice {
   label: string;
 }
 
+export type StoryImageStatus =
+  (typeof StoryImageStatus)[keyof typeof StoryImageStatus];
+
+export const StoryImageStatus = {
+  ready: "ready",
+} as const;
+
 export interface StoryImage {
   enabled: true;
-  status: "ready";
+  status: StoryImageStatus;
   imageId: string;
   url: string;
   alt: string;
@@ -31,31 +38,15 @@ export interface StoryImage {
   model: string;
 }
 
-export interface PendingStoryImage {
-  enabled: true;
-  status: "pending";
-  imageId: string;
-  statusUrl: string;
-  alt: string;
-  provider: string;
-  model: string;
-}
-
-export interface FailedStoryImage {
-  enabled: true;
-  status: "failed";
-  error: "image_generation_failed";
-}
-
-export type StoryImageResult = StoryImage | PendingStoryImage | FailedStoryImage;
-
 export interface StoryTurnResponse {
+  episodeId?: string;
   sceneTitle: string;
   storyText: string;
   choices: StoryChoice[];
   storySummary: string;
+  storyHistory?: string;
   safetyRating: string;
-  image?: StoryImageResult;
+  image?: StoryImage;
 }
 
 export interface EndingResponse {
@@ -63,7 +54,7 @@ export interface EndingResponse {
   endingText: string;
   badge: string;
   safetyRating: string;
-  image?: StoryImageResult;
+  image?: StoryImage;
 }
 
 export interface StartGameBody {
@@ -80,9 +71,63 @@ export interface TakeTurnBody {
   turn: number;
   maxTurns: number;
   storySummary: string;
+  storyHistory?: string;
+  episodeId?: string;
   chosenAction: string;
   mathResult: string;
 }
+
+export type PrepareGameStepBodyKind =
+  (typeof PrepareGameStepBodyKind)[keyof typeof PrepareGameStepBodyKind];
+
+export const PrepareGameStepBodyKind = {
+  turn: "turn",
+  ending: "ending",
+} as const;
+
+export interface PrepareGameStepBody {
+  kind: PrepareGameStepBodyKind;
+  hero: HeroInfo;
+  difficulty: string;
+  adventureSeed: string;
+  turn: number;
+  maxTurns: number;
+  storySummary: string;
+  storyHistory?: string;
+  episodeId?: string;
+  chosenAction: string;
+  mathSolved?: number;
+}
+
+export type PrepareGameStepResponseKind =
+  (typeof PrepareGameStepResponseKind)[keyof typeof PrepareGameStepResponseKind];
+
+export const PrepareGameStepResponseKind = {
+  turn: "turn",
+  ending: "ending",
+} as const;
+
+export interface PrepareGameStepResponse {
+  pendingId: string;
+  kind: PrepareGameStepResponseKind;
+  turn: number;
+}
+
+export interface ResolvePreparedGameStepBody {
+  pendingId: string;
+}
+
+export type ResolvePreparedGameStepResponse =
+  | {
+      kind: "turn";
+      turn: number;
+      data: StoryTurnResponse;
+    }
+  | {
+      kind: "ending";
+      turn: number;
+      data: EndingResponse;
+    };
 
 export interface GetEndingBody {
   hero: HeroInfo;
@@ -91,5 +136,7 @@ export interface GetEndingBody {
   turn: number;
   maxTurns: number;
   storySummary: string;
+  storyHistory?: string;
+  episodeId?: string;
   mathSolved: number;
 }

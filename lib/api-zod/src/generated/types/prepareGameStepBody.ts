@@ -6,8 +6,10 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { HeroInfo } from "./heroInfo";
+import type { PrepareGameStepBodyKind } from "./prepareGameStepBodyKind";
 
-export interface GetEndingBody {
+export interface PrepareGameStepBody {
+  kind: PrepareGameStepBodyKind;
   hero: HeroInfo;
   difficulty: string;
   adventureSeed: string;
@@ -16,5 +18,6 @@ export interface GetEndingBody {
   storySummary: string;
   storyHistory?: string;
   episodeId?: string;
-  mathSolved: number;
+  chosenAction: string;
+  mathSolved?: number;
 }

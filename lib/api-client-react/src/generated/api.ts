@@ -20,6 +20,10 @@ import type {
   EndingResponse,
   GetEndingBody,
   HealthStatus,
+  PrepareGameStepBody,
+  PrepareGameStepResponse,
+  ResolvePreparedGameStepBody,
+  ResolvePreparedGameStepResponse,
   StartGameBody,
   StoryTurnResponse,
   TakeTurnBody,
@@ -285,7 +289,185 @@ export const useTakeTurn = <
 };
 
 /**
- * Generates the final ending scene after 8 turns
+ * Starts background generation for the next scene or ending after a student chooses an action
+ * @summary Prepare the next story step while math is being solved
+ */
+export const getPrepareGameStepUrl = () => {
+  return `/api/game/prepare`;
+};
+
+export const prepareGameStep = async (
+  prepareGameStepBody: PrepareGameStepBody,
+  options?: RequestInit,
+): Promise<PrepareGameStepResponse> => {
+  return customFetch<PrepareGameStepResponse>(getPrepareGameStepUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(prepareGameStepBody),
+  });
+};
+
+export const getPrepareGameStepMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof prepareGameStep>>,
+    TError,
+    { data: BodyType<PrepareGameStepBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof prepareGameStep>>,
+  TError,
+  { data: BodyType<PrepareGameStepBody> },
+  TContext
+> => {
+  const mutationKey = ["prepareGameStep"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof prepareGameStep>>,
+    { data: BodyType<PrepareGameStepBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return prepareGameStep(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type PrepareGameStepMutationResult = NonNullable<
+  Awaited<ReturnType<typeof prepareGameStep>>
+>;
+export type PrepareGameStepMutationBody = BodyType<PrepareGameStepBody>;
+export type PrepareGameStepMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Prepare the next story step while math is being solved
+ */
+export const usePrepareGameStep = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof prepareGameStep>>,
+    TError,
+    { data: BodyType<PrepareGameStepBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof prepareGameStep>>,
+  TError,
+  { data: BodyType<PrepareGameStepBody> },
+  TContext
+> => {
+  return useMutation(getPrepareGameStepMutationOptions(options));
+};
+
+/**
+ * Returns the prepared scene or ending once the student has solved the math challenge
+ * @summary Resolve a prepared story step after math is solved
+ */
+export const getResolvePreparedGameStepUrl = () => {
+  return `/api/game/resolve`;
+};
+
+export const resolvePreparedGameStep = async (
+  resolvePreparedGameStepBody: ResolvePreparedGameStepBody,
+  options?: RequestInit,
+): Promise<ResolvePreparedGameStepResponse> => {
+  return customFetch<ResolvePreparedGameStepResponse>(
+    getResolvePreparedGameStepUrl(),
+    {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(resolvePreparedGameStepBody),
+    },
+  );
+};
+
+export const getResolvePreparedGameStepMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof resolvePreparedGameStep>>,
+    TError,
+    { data: BodyType<ResolvePreparedGameStepBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof resolvePreparedGameStep>>,
+  TError,
+  { data: BodyType<ResolvePreparedGameStepBody> },
+  TContext
+> => {
+  const mutationKey = ["resolvePreparedGameStep"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof resolvePreparedGameStep>>,
+    { data: BodyType<ResolvePreparedGameStepBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return resolvePreparedGameStep(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type ResolvePreparedGameStepMutationResult = NonNullable<
+  Awaited<ReturnType<typeof resolvePreparedGameStep>>
+>;
+export type ResolvePreparedGameStepMutationBody =
+  BodyType<ResolvePreparedGameStepBody>;
+export type ResolvePreparedGameStepMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Resolve a prepared story step after math is solved
+ */
+export const useResolvePreparedGameStep = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof resolvePreparedGameStep>>,
+    TError,
+    { data: BodyType<ResolvePreparedGameStepBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof resolvePreparedGameStep>>,
+  TError,
+  { data: BodyType<ResolvePreparedGameStepBody> },
+  TContext
+> => {
+  return useMutation(getResolvePreparedGameStepMutationOptions(options));
+};
+
+/**
+ * Generates the final ending scene after the configured number of math-gated chapters
  * @summary Generate the adventure ending
  */
 export const getGetEndingUrl = () => {
@@ -370,3 +552,89 @@ export const useGetEnding = <
 > => {
   return useMutation(getGetEndingMutationOptions(options));
 };
+
+/**
+ * Returns an in-memory generated image if it has not expired
+ * @summary Get a temporary generated scene image
+ */
+export const getGetImageUrl = (imageId: string) => {
+  return `/api/images/${imageId}`;
+};
+
+export const getImage = async (
+  imageId: string,
+  options?: RequestInit,
+): Promise<Blob> => {
+  return customFetch<Blob>(getGetImageUrl(imageId), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetImageQueryKey = (imageId: string) => {
+  return [`/api/images/${imageId}`] as const;
+};
+
+export const getGetImageQueryOptions = <
+  TData = Awaited<ReturnType<typeof getImage>>,
+  TError = ErrorType<void>,
+>(
+  imageId: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getImage>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetImageQueryKey(imageId);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getImage>>> = ({
+    signal,
+  }) => getImage(imageId, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!imageId,
+    ...queryOptions,
+  } as UseQueryOptions<Awaited<ReturnType<typeof getImage>>, TError, TData> & {
+    queryKey: QueryKey;
+  };
+};
+
+export type GetImageQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getImage>>
+>;
+export type GetImageQueryError = ErrorType<void>;
+
+/**
+ * @summary Get a temporary generated scene image
+ */
+
+export function useGetImage<
+  TData = Awaited<ReturnType<typeof getImage>>,
+  TError = ErrorType<void>,
+>(
+  imageId: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getImage>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetImageQueryOptions(imageId, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}

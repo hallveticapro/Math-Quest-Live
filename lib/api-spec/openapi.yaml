@@ -114,7 +114,7 @@ paths:
       operationId: getEnding
       tags: [game]
       summary: Generate the adventure ending
-      description: Generates the final ending scene after 8 turns
+      description: Generates the final ending scene after the configured number of math-gated chapters
       requestBody:
         required: true
         content:
@@ -222,6 +222,8 @@ components:
     StoryTurnResponse:
       type: object
       properties:
+        episodeId:
+          type: string
         sceneTitle:
           type: string
         storyText:
@@ -231,6 +233,8 @@ components:
           items:
             $ref: "#/components/schemas/StoryChoice"
         storySummary:
+          type: string
+        storyHistory:
           type: string
         safetyRating:
           type: string
@@ -294,6 +298,10 @@ components:
           type: integer
         storySummary:
           type: string
+        storyHistory:
+          type: string
+        episodeId:
+          type: string
         chosenAction:
           type: string
         mathResult:
@@ -327,6 +335,10 @@ components:
         maxTurns:
           type: integer
         storySummary:
+          type: string
+        storyHistory:
+          type: string
+        episodeId:
           type: string
         chosenAction:
           type: string
@@ -410,6 +422,10 @@ components:
         maxTurns:
           type: integer
         storySummary:
+          type: string
+        storyHistory:
+          type: string
+        episodeId:
           type: string
         mathSolved:
           type: integer

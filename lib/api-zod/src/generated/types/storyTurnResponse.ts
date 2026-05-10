@@ -9,10 +9,12 @@ import type { StoryChoice } from "./storyChoice";
 import type { StoryImage } from "./storyImage";
 
 export interface StoryTurnResponse {
+  episodeId?: string;
   sceneTitle: string;
   storyText: string;
   choices: StoryChoice[];
   storySummary: string;
+  storyHistory?: string;
   safetyRating: string;
   image?: StoryImage;
 }

@@ -94,7 +94,7 @@ const CONFIRMATION_POOLS: Partial<Record<SetupStep, ConfirmationTemplate[]>> = {
   ],
   length: [
     ({ questLengthLabel, questLengthTurns }) =>
-      `${questLengthLabel} it is. The Chronicle prepares ${questLengthTurns} math challenges.`,
+      `${questLengthLabel} it is. The Chronicle prepares ${questLengthTurns} math-gated chapters.`,
     ({ questLengthLabel }) => `The tale folds itself into a ${questLengthLabel}.`,
     ({ questLengthTurns }) => `${questLengthTurns} puzzle gates appear between here and the ending.`,
     () => "The book counts its pages and smiles.",
@@ -690,7 +690,7 @@ export function SetupScreen({
                       {option.description}
                     </span>
                     <span className="mt-1 text-xs text-[var(--mq-text-muted)] md:text-sm">
-                      {option.maxTurns} successful math challenges
+                      {option.maxTurns} math-gated chapters
                     </span>
                   </button>
                 ))}

@@ -67,7 +67,9 @@ type PrepareGameStepBody = {
   adventureSeed: string;
   turn: number;
   maxTurns: number;
+  episodeId?: string | null;
   storySummary: string;
+  storyHistory?: string;
   chosenAction: string;
   mathSolved?: number;
   lastMathSkill?: {
@@ -131,6 +133,26 @@ function appendUniqueSkill(skills: string[], problem: MathProblem) {
   const label = problem.skillLabel || problem.skill;
   if (skills.includes(label)) return skills;
   return [...skills, label];
+}
+
+function trimStoryHistory(history: string) {
+  const maxLength = 9000;
+  if (history.length <= maxLength) return history;
+  return `Earlier adventure notes were trimmed for length.\n${history.slice(-maxLength)}`;
+}
+
+function sceneHistoryEntry(chapter: number | "Intro", title: string, text: string) {
+  return `${chapter === "Intro" ? "Intro" : `Chapter ${chapter}`}: ${title}\n${text.trim()}`;
+}
+
+function appendStoryHistory(history: string, entry: string) {
+  const next = [history.trim(), entry.trim()].filter(Boolean).join("\n\n");
+  return trimStoryHistory(next);
+}
+
+function historyWithChosenAction(history: string, chosenAction: string | null) {
+  if (!chosenAction) return history;
+  return appendStoryHistory(history, `Chosen action: ${chosenAction}`);
 }
 
 function GameApp() {
@@ -244,7 +266,9 @@ function GameApp() {
       colorSchemeId,
       turn: 1,
       mathSolved: 0,
+      episodeId: null,
       storySummary: "",
+      storyHistory: "",
       sceneTitle: "",
       storyText: "",
       illustration: null,
@@ -284,7 +308,13 @@ function GameApp() {
           storyText: startResult.storyText,
           illustration: startResult.image ?? null,
           choices: startResult.choices,
+          episodeId: startResult.episodeId ?? null,
           storySummary: startResult.storySummary,
+          storyHistory: sceneHistoryEntry(
+            "Intro",
+            startResult.sceneTitle,
+            startResult.storyText,
+          ),
         }));
       })
       .catch(() => {
@@ -301,7 +331,13 @@ function GameApp() {
           storyText: FALLBACK_SCENE.storyText,
           illustration: null,
           choices: FALLBACK_SCENE.choices,
+          episodeId: null,
           storySummary: FALLBACK_SCENE.storySummary,
+          storyHistory: sceneHistoryEntry(
+            "Intro",
+            FALLBACK_SCENE.sceneTitle,
+            FALLBACK_SCENE.storyText,
+          ),
         }));
       })
       .finally(() => {
@@ -358,7 +394,9 @@ function GameApp() {
       adventureSeed: state.adventureSeed,
       turn: isEnding ? state.turn : state.turn + 1,
       maxTurns: state.maxTurns,
+      episodeId: state.episodeId ?? undefined,
       storySummary: state.storySummary,
+      storyHistory: historyWithChosenAction(state.storyHistory, choiceLabel),
       chosenAction: choiceLabel,
       mathSolved: isEnding ? state.mathSolved + 1 : undefined,
       lastMathSkill: buildSafeMathSkillMetadata(mathProblem),
@@ -439,6 +477,10 @@ function GameApp() {
         endingText: res.endingText,
         illustration: res.image ?? null,
         badge: res.badge,
+        storyHistory: appendStoryHistory(
+          historyWithChosenAction(s.storyHistory, s.chosenAction),
+          `Ending: ${res.endingTitle}\n${res.endingText}`,
+        ),
         practicedSkills: s.practicedSkills,
       }));
     } catch {
@@ -449,7 +491,12 @@ function GameApp() {
           adventureSeed: state.adventureSeed,
           turn: state.turn,
           maxTurns: state.maxTurns,
+          episodeId: state.episodeId ?? undefined,
           storySummary: state.storySummary,
+          storyHistory: historyWithChosenAction(
+            state.storyHistory,
+            state.chosenAction,
+          ),
           mathSolved: newMathSolved,
         });
         if (sessionVersion !== sessionVersionRef.current) return;
@@ -461,6 +508,10 @@ function GameApp() {
           endingText: res.endingText,
           illustration: res.image ?? null,
           badge: res.badge,
+          storyHistory: appendStoryHistory(
+            historyWithChosenAction(s.storyHistory, s.chosenAction),
+            `Ending: ${res.endingTitle}\n${res.endingText}`,
+          ),
           practicedSkills: s.practicedSkills,
         }));
       } catch {
@@ -474,6 +525,10 @@ function GameApp() {
             "You have completed your journey through the magical lands and returned safely home, wiser and stronger than before.",
           illustration: null,
           badge: "Star of Logic",
+          storyHistory: appendStoryHistory(
+            historyWithChosenAction(s.storyHistory, s.chosenAction),
+            "Ending: A Triumphant Return\nYou have completed your journey through the magical lands and returned safely home, wiser and stronger than before.",
+          ),
           practicedSkills: s.practicedSkills,
         }));
       }
@@ -510,6 +565,10 @@ function GameApp() {
         illustration: res.image ?? null,
         choices: res.choices,
         storySummary: res.storySummary,
+        storyHistory: appendStoryHistory(
+          historyWithChosenAction(s.storyHistory, s.chosenAction),
+          sceneHistoryEntry(nextTurn, res.sceneTitle, res.storyText),
+        ),
         practicedSkills: s.practicedSkills,
       }));
     } catch {
@@ -520,7 +579,12 @@ function GameApp() {
           adventureSeed: state.adventureSeed,
           turn: nextTurn,
           maxTurns: state.maxTurns,
+          episodeId: state.episodeId ?? undefined,
           storySummary: state.storySummary,
+          storyHistory: historyWithChosenAction(
+            state.storyHistory,
+            state.chosenAction,
+          ),
           chosenAction: state.chosenAction || "",
           mathResult: `Solved a ${state.recoveryMode ? "recovery" : "standard"} ${problem.difficulty} problem practicing ${problem.skillLabel || problem.skill}.`,
         });
@@ -534,6 +598,10 @@ function GameApp() {
           illustration: res.image ?? null,
           choices: res.choices,
           storySummary: res.storySummary,
+          storyHistory: appendStoryHistory(
+            historyWithChosenAction(s.storyHistory, s.chosenAction),
+            sceneHistoryEntry(nextTurn, res.sceneTitle, res.storyText),
+          ),
           practicedSkills: s.practicedSkills,
         }));
       } catch {
@@ -552,6 +620,14 @@ function GameApp() {
           illustration: null,
           choices: FALLBACK_SCENE.choices,
           storySummary: FALLBACK_SCENE.storySummary,
+          storyHistory: appendStoryHistory(
+            historyWithChosenAction(s.storyHistory, s.chosenAction),
+            sceneHistoryEntry(
+              nextTurn,
+              `${FALLBACK_SCENE.sceneTitle} (Part ${nextTurn})`,
+              FALLBACK_SCENE.storyText,
+            ),
+          ),
           practicedSkills: s.practicedSkills,
         }));
       }

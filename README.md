@@ -22,11 +22,11 @@ Made for educators with love by Andrew Hall ❤️
 
 ## Quest Lengths
 
-Quest length is measured by successful math challenges, not setup, intro text, wrong-answer retries, or the ending screen.
+Quest length is measured by successful math-gated story chapters, not setup, intro text, wrong-answer retries, or the ending screen. Each counted chapter requires one correctly solved math challenge before the story advances.
 
-- `Quick Quest` - 5 successful math challenges.
-- `Standard Quest` - 8 successful math challenges.
-- `Full Quest` - 10 successful math challenges.
+- `Quick Quest` - 8 math-gated chapters.
+- `Standard Quest` - 12 math-gated chapters.
+- `Full Quest` - 16 math-gated chapters.
 
 The game screen shows visible progress as `Math Challenges: solved / total`. Progress advances only after a correct math answer moves the story forward.
 

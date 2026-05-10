@@ -32,6 +32,7 @@ export const StartGameBody = zod.object({
 });
 
 export const StartGameResponse = zod.object({
+  episodeId: zod.string().optional(),
   sceneTitle: zod.string(),
   storyText: zod.string(),
   choices: zod.array(
@@ -41,16 +42,19 @@ export const StartGameResponse = zod.object({
     }),
   ),
   storySummary: zod.string(),
+  storyHistory: zod.string().optional(),
   safetyRating: zod.string(),
-  image: zod.object({
-    enabled: zod.literal(true),
-    status: zod.literal("ready"),
-    imageId: zod.string(),
-    url: zod.string(),
-    alt: zod.string(),
-    provider: zod.string(),
-    model: zod.string(),
-  }).optional(),
+  image: zod
+    .object({
+      enabled: zod.boolean(),
+      status: zod.enum(["ready"]),
+      imageId: zod.string(),
+      url: zod.string(),
+      alt: zod.string(),
+      provider: zod.string(),
+      model: zod.string(),
+    })
+    .optional(),
 });
 
 /**
@@ -69,11 +73,14 @@ export const TakeTurnBody = zod.object({
   turn: zod.number(),
   maxTurns: zod.number(),
   storySummary: zod.string(),
+  storyHistory: zod.string().optional(),
+  episodeId: zod.string().optional(),
   chosenAction: zod.string(),
   mathResult: zod.string(),
 });
 
 export const TakeTurnResponse = zod.object({
+  episodeId: zod.string().optional(),
   sceneTitle: zod.string(),
   storyText: zod.string(),
   choices: zod.array(
@@ -83,20 +90,113 @@ export const TakeTurnResponse = zod.object({
     }),
   ),
   storySummary: zod.string(),
+  storyHistory: zod.string().optional(),
   safetyRating: zod.string(),
-  image: zod.object({
-    enabled: zod.literal(true),
-    status: zod.literal("ready"),
-    imageId: zod.string(),
-    url: zod.string(),
-    alt: zod.string(),
-    provider: zod.string(),
-    model: zod.string(),
-  }).optional(),
+  image: zod
+    .object({
+      enabled: zod.boolean(),
+      status: zod.enum(["ready"]),
+      imageId: zod.string(),
+      url: zod.string(),
+      alt: zod.string(),
+      provider: zod.string(),
+      model: zod.string(),
+    })
+    .optional(),
 });
 
 /**
- * Generates the final ending scene after 8 turns
+ * Starts background generation for the next scene or ending after a student chooses an action
+ * @summary Prepare the next story step while math is being solved
+ */
+export const PrepareGameStepBody = zod.object({
+  kind: zod.enum(["turn", "ending"]),
+  hero: zod.object({
+    name: zod.string(),
+    pronouns: zod.string(),
+    ancestry: zod.string(),
+    className: zod.string(),
+  }),
+  difficulty: zod.string(),
+  adventureSeed: zod.string(),
+  turn: zod.number(),
+  maxTurns: zod.number(),
+  storySummary: zod.string(),
+  storyHistory: zod.string().optional(),
+  episodeId: zod.string().optional(),
+  chosenAction: zod.string(),
+  mathSolved: zod.number().optional(),
+});
+
+export const PrepareGameStepResponse = zod.object({
+  pendingId: zod.string(),
+  kind: zod.enum(["turn", "ending"]),
+  turn: zod.number(),
+});
+
+/**
+ * Returns the prepared scene or ending once the student has solved the math challenge
+ * @summary Resolve a prepared story step after math is solved
+ */
+export const ResolvePreparedGameStepBody = zod.object({
+  pendingId: zod.string(),
+});
+
+export const ResolvePreparedGameStepResponse = zod.union([
+  zod.object({
+    kind: zod.literal("turn"),
+    turn: zod.number(),
+    data: zod.object({
+      episodeId: zod.string().optional(),
+      sceneTitle: zod.string(),
+      storyText: zod.string(),
+      choices: zod.array(
+        zod.object({
+          id: zod.string(),
+          label: zod.string(),
+        }),
+      ),
+      storySummary: zod.string(),
+      storyHistory: zod.string().optional(),
+      safetyRating: zod.string(),
+      image: zod
+        .object({
+          enabled: zod.boolean(),
+          status: zod.enum(["ready"]),
+          imageId: zod.string(),
+          url: zod.string(),
+          alt: zod.string(),
+          provider: zod.string(),
+          model: zod.string(),
+        })
+        .optional(),
+    }),
+  }),
+  zod.object({
+    kind: zod.literal("ending"),
+    turn: zod.number(),
+    data: zod.object({
+      endingTitle: zod.string(),
+      endingText: zod.string(),
+      badge: zod.string(),
+      safetyRating: zod.string(),
+      image: zod
+        .object({
+          enabled: zod.boolean(),
+          status: zod.enum(["ready"]),
+          imageId: zod.string(),
+          url: zod.string(),
+          alt: zod.string(),
+          provider: zod.string(),
+          model: zod.string(),
+        })
+        .optional(),
+    }),
+  }),
+]);
+
+/**
+ * Generates the final ending scene after the configured number of math-gated chapters
  * @summary Generate the adventure ending
  */
 export const GetEndingBody = zod.object({
@@ -111,6 +211,8 @@ export const GetEndingBody = zod.object({
   turn: zod.number(),
   maxTurns: zod.number(),
   storySummary: zod.string(),
+  storyHistory: zod.string().optional(),
+  episodeId: zod.string().optional(),
   mathSolved: zod.number(),
 });
 
@@ -119,13 +221,23 @@ export const GetEndingResponse = zod.object({
   endingText: zod.string(),
   badge: zod.string(),
   safetyRating: zod.string(),
-  image: zod.object({
-    enabled: zod.literal(true),
-    status: zod.literal("ready"),
-    imageId: zod.string(),
-    url: zod.string(),
-    alt: zod.string(),
-    provider: zod.string(),
-    model: zod.string(),
-  }).optional(),
+  image: zod
+    .object({
+      enabled: zod.boolean(),
+      status: zod.enum(["ready"]),
+      imageId: zod.string(),
+      url: zod.string(),
+      alt: zod.string(),
+      provider: zod.string(),
+      model: zod.string(),
+    })
+    .optional(),
+});
+
+/**
+ * Returns an in-memory generated image if it has not expired
+ * @summary Get a temporary generated scene image
+ */
+export const GetImageParams = zod.object({
+  imageId: zod.coerce.string(),
 });

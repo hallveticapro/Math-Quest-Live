@@ -11,20 +11,20 @@ export const QUEST_LENGTH_OPTIONS: QuestLengthOption[] = [
   {
     id: "quick",
     label: "Quick Quest",
-    maxTurns: 5,
-    description: "Short review, about 5 math challenges.",
+    maxTurns: 8,
+    description: "Short adventure, 8 math-gated chapters.",
   },
   {
     id: "standard",
     label: "Standard Quest",
-    maxTurns: 8,
-    description: "Balanced adventure, about 8 math challenges.",
+    maxTurns: 12,
+    description: "Balanced adventure, 12 math-gated chapters.",
   },
   {
     id: "full",
     label: "Full Quest",
-    maxTurns: 10,
-    description: "Longer session, about 10 math challenges.",
+    maxTurns: 16,
+    description: "Longer session, 16 math-gated chapters.",
   },
 ];
 

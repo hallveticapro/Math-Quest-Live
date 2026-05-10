@@ -12,6 +12,8 @@ import {
   buildStartPrompt,
   buildTurnPrompt,
   buildEndingPrompt,
+  createEpisodePlan,
+  type EpisodePlan,
 } from "./storyPrompt.js";
 import { checkStoryTurnSafety, checkEndingSafety } from "./safety.js";
 import { openai, STORY_MODEL } from "../../lib/openaiClient.js";
@@ -42,8 +44,8 @@ const FALLBACK_ENDING = {
   safetyRating: "kid_safe",
 };
 
-type StoryTurnData = typeof FALLBACK_SCENE;
-type EndingData = typeof FALLBACK_ENDING;
+type StoryTurnData = typeof FALLBACK_SCENE & { episodeId?: string; image?: ImageMetadata };
+type EndingData = typeof FALLBACK_ENDING & { image?: ImageMetadata };
 type PreparedTurnResult =
   | { kind: "turn"; turn: number; data: StoryTurnData }
   | { kind: "ending"; turn: number; data: EndingData };
@@ -63,7 +65,9 @@ type SafeMathSkillMetadata = {
 };
 
 const PENDING_TURN_TTL_MS = 10 * 60 * 1000;
+const EPISODE_PLAN_TTL_MS = 3 * 60 * 60 * 1000;
 const pendingTurns = new Map<string, PendingTurn>();
+const episodePlans = new Map<string, { plan: EpisodePlan; expiresAt: number }>();
 
 function readStoryTimeoutMs() {
   const parsed = Number(process.env.STORY_TIMEOUT_MS ?? "30000");
@@ -80,6 +84,12 @@ function cleanupPendingTurns() {
       pendingTurns.delete(id);
     }
   }
+
+  for (const [id, episode] of episodePlans.entries()) {
+    if (episode.expiresAt <= now) {
+      episodePlans.delete(id);
+    }
+  }
 }
 
 setInterval(cleanupPendingTurns, 60 * 1000).unref();
@@ -87,6 +97,34 @@ setInterval(cleanupPendingTurns, 60 * 1000).unref();
 function withOptionalImage<T extends object>(data: T, image: ImageMetadata | undefined) {
   if (!image || image.status === "failed") return data;
   return { ...data, image };
+}
+
+function createEpisodeId() {
+  return `episode_${crypto.randomUUID()}`;
+}
+
+function storeEpisodePlan(plan: EpisodePlan) {
+  const episodeId = createEpisodeId();
+  episodePlans.set(episodeId, {
+    plan,
+    expiresAt: Date.now() + EPISODE_PLAN_TTL_MS,
+  });
+  return episodeId;
+}
+
+function resolveEpisodePlan(
+  data: Parameters<typeof createEpisodePlan>[0],
+  episodeId?: string,
+) {
+  if (episodeId?.startsWith("episode_")) {
+    const stored = episodePlans.get(episodeId);
+    if (stored && stored.expiresAt > Date.now()) {
+      stored.expiresAt = Date.now() + EPISODE_PLAN_TTL_MS;
+      return stored.plan;
+    }
+  }
+
+  return createEpisodePlan(data);
 }
 
 function isMilestoneTurn(turn: number, maxTurns: number) {
@@ -229,7 +267,9 @@ function parsePrepareBody(body: unknown) {
     adventureSeed: data.adventureSeed,
     turn: data.turn as number,
     maxTurns: data.maxTurns as number,
+    episodeId: typeof data.episodeId === "string" ? data.episodeId.slice(0, 80) : undefined,
     storySummary: data.storySummary,
+    storyHistory: typeof data.storyHistory === "string" ? data.storyHistory : undefined,
     chosenAction: data.chosenAction,
     lastMathSkill: parseSafeMathSkill(data.lastMathSkill),
     mathSolved: Number.isInteger(data.mathSolved) ? (data.mathSolved as number) : undefined,
@@ -241,7 +281,8 @@ function validatePreparedGameInput(data: NonNullable<ReturnType<typeof parsePrep
     !validateCommonGameInput(data) ||
     data.turn < 1 ||
     data.turn > data.maxTurns ||
-    !isValidStoryStateText(data.storySummary, 600) ||
+    !isValidStoryStateText(data.storySummary, 1600) ||
+    (data.storyHistory !== undefined && data.storyHistory.length > 12000) ||
     !isValidStoryStateText(data.chosenAction, 90)
   ) {
     return false;
@@ -260,6 +301,7 @@ function validatePreparedGameInput(data: NonNullable<ReturnType<typeof parsePrep
 }
 
 async function generatePreparedTurn(data: NonNullable<ReturnType<typeof parsePrepareBody>>): Promise<PreparedTurnResult> {
+  const episodePlan = resolveEpisodePlan(data, data.episodeId);
   if (data.kind === "ending") {
     const prompt = buildEndingPrompt({
       hero: data.hero,
@@ -268,7 +310,9 @@ async function generatePreparedTurn(data: NonNullable<ReturnType<typeof parsePre
       turn: data.turn,
       maxTurns: data.maxTurns,
       storySummary: `${data.storySummary} The hero chose to ${data.chosenAction}.`,
+      storyHistory: data.storyHistory,
       mathSolved: data.mathSolved ?? data.maxTurns,
+      episodePlan,
     });
     const raw = await callOpenAI(prompt);
     const parsed = parseJSON(raw);
@@ -303,8 +347,10 @@ async function generatePreparedTurn(data: NonNullable<ReturnType<typeof parsePre
     turn: data.turn,
     maxTurns: data.maxTurns,
     storySummary: data.storySummary,
+    storyHistory: data.storyHistory,
     chosenAction: data.chosenAction,
     mathResult: "The student selected this action and is solving the required math challenge before the next scene is shown.",
+    episodePlan,
     lastMathSkill: data.lastMathSkill,
   });
   const raw = await callOpenAI(prompt);
@@ -392,17 +438,19 @@ router.post("/start", async (req, res) => {
   }
 
   try {
-    const prompt = buildStartPrompt(parsed.data);
+    const episodePlan = createEpisodePlan(parsed.data);
+    const episodeId = storeEpisodePlan(episodePlan);
+    const prompt = buildStartPrompt(parsed.data, episodePlan);
     const raw = await callOpenAI(prompt);
     const data = parseJSON(raw);
 
     if (!checkStoryTurnSafety(data)) {
       req.log.warn("AI output failed safety check, using fallback");
-      res.json(FALLBACK_SCENE);
+      res.json({ ...FALLBACK_SCENE, episodeId });
       return;
     }
 
-    const turnData = data as StoryTurnData;
+    const turnData = { ...(data as StoryTurnData), episodeId };
     const image = await maybeGenerateSceneImage({
       context: {
         kind: "intro",
@@ -420,7 +468,9 @@ router.post("/start", async (req, res) => {
     res.json(withOptionalImage(turnData, image));
   } catch (err) {
     req.log.error({ err }, "Failed to generate start scene");
-    res.json(FALLBACK_SCENE);
+    const episodePlan = createEpisodePlan(parsed.data);
+    const episodeId = storeEpisodePlan(episodePlan);
+    res.json({ ...FALLBACK_SCENE, episodeId });
   }
 });
 
@@ -432,7 +482,8 @@ router.post("/turn", async (req, res) => {
     !Number.isInteger(parsed.data.turn) ||
     parsed.data.turn < 1 ||
     parsed.data.turn > parsed.data.maxTurns ||
-    !isValidStoryStateText(parsed.data.storySummary, 600) ||
+    !isValidStoryStateText(parsed.data.storySummary, 1600) ||
+    (parsed.data.storyHistory !== undefined && parsed.data.storyHistory.length > 12000) ||
     !isValidStoryStateText(parsed.data.chosenAction, 90) ||
     !isValidStoryStateText(parsed.data.mathResult, 160)
   ) {
@@ -441,7 +492,8 @@ router.post("/turn", async (req, res) => {
   }
 
   try {
-    const prompt = buildTurnPrompt(parsed.data);
+    const episodePlan = resolveEpisodePlan(parsed.data, parsed.data.episodeId);
+    const prompt = buildTurnPrompt({ ...parsed.data, episodePlan });
     const raw = await callOpenAI(prompt);
     const data = parseJSON(raw);
 
@@ -485,14 +537,16 @@ router.post("/ending", async (req, res) => {
     !Number.isInteger(parsed.data.mathSolved) ||
     parsed.data.mathSolved < 0 ||
     parsed.data.mathSolved > parsed.data.maxTurns ||
-    !isValidStoryStateText(parsed.data.storySummary, 600)
+    !isValidStoryStateText(parsed.data.storySummary, 1600) ||
+    (parsed.data.storyHistory !== undefined && parsed.data.storyHistory.length > 12000)
   ) {
     res.status(400).json({ error: "Invalid request body" });
     return;
   }
 
   try {
-    const prompt = buildEndingPrompt(parsed.data);
+    const episodePlan = resolveEpisodePlan(parsed.data, parsed.data.episodeId);
+    const prompt = buildEndingPrompt({ ...parsed.data, episodePlan });
     const raw = await callOpenAI(prompt);
     const data = parseJSON(raw);
 

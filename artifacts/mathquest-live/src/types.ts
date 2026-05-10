@@ -51,7 +51,9 @@ export type GameState = {
   turn: number;
   maxTurns: number;
   mathSolved: number;
+  episodeId: string | null;
   storySummary: string;
+  storyHistory: string;
   sceneTitle: string;
   storyText: string;
   illustration: SceneImage | null;
@@ -77,7 +79,9 @@ export const INITIAL_STATE: GameState = {
   turn: 1,
   maxTurns: 8,
   mathSolved: 0,
+  episodeId: null,
   storySummary: "",
+  storyHistory: "",
   sceneTitle: "",
   storyText: "",
   illustration: null,
