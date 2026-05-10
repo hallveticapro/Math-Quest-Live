@@ -22,10 +22,10 @@ This file documents the benchmarks currently used by MathQuest Live. Benchmark d
 
 ## Summary
 
-- Unique benchmark codes currently used: 19
-- Total skill entries currently mapped to benchmarks: 24
-- Grade 3 / Easy skill entries: 7
-- Grade 4 / Medium skill entries: 6
+- Unique benchmark codes currently used: 22
+- Total skill entries currently mapped to benchmarks: 30
+- Grade 3 / Easy skill entries: 10
+- Grade 4 / Medium skill entries: 9
 - Grade 5 / Hard skill entries: 6
 - Advanced Grade 5 / Extreme skill entries: 5
 
@@ -71,19 +71,25 @@ This file does not invent official domain names. A future verification pass shou
 
 | Difficulty | Grade Band | Benchmark Code | Current App Description | Skill Label | Problem Type | Generator(s) | Internal/Student/Teacher/README Use | Verification Status |
 |---|---:|---|---|---|---|---|---|---|
+| Easy | 3 | MA.3.NSO.1.2 | Practice identifying the value of a digit in a multi-digit whole number within Grade 3 expectations. | place value | digit value in a multi-digit number | g3PlaceValueDigit | Internal metadata; developer validation | Needs CPALMS/FDOE verification |
 | Easy | 3 | MA.3.NSO.2.1 | Practice multi-digit whole-number addition and subtraction. | addition and subtraction within 1,000 | addition/subtraction word problem | g3AddSub1000 | Internal metadata; developer validation | Needs official verification |
 | Easy | 3 | MA.3.AR.1.2 | Solve one- and two-step whole-number word problems involving multiplication. | multiplication within 100 | equal groups/array multiplication | g3MultiplicationFacts | Internal metadata; README sample uses this code/description | Needs official verification |
 | Easy | 3 | MA.3.AR.1.2 | Solve one- and two-step whole-number word problems involving division. | division within 100 | equal sharing division | g3DivisionFacts | Internal metadata | Needs official verification |
 | Easy | 3 | MA.3.GR.2.3 | Solve rectangle area and perimeter problems with whole-number side lengths. | area and perimeter with whole numbers | rectangle area or perimeter | g3AreaPerimeter | Internal metadata | Needs review |
 | Easy | 3 | MA.3.FR.2.1 | Compare fractional numbers with common numerators or denominators. | simple fraction comparison | same-denominator fraction comparison | g3FractionCompare | Internal metadata | Needs official verification |
+| Easy | 3 | MA.3.M.1.1 | Practice solving simple length measurement problems within Grade 3 expectations. | length measurement | length total or comparison | g3MeasurementLength | Internal metadata; developer validation | Needs CPALMS/FDOE verification |
 | Easy | 3 | MA.3.M.2.2 | Practice elapsed-time problem solving within Grade 3 expectations. | elapsed time | elapsed time in minutes | g3ElapsedTime | Internal metadata | Verified from provided source |
 | Easy | 3 | MA.3.M.2.2 | Practice two-step elapsed-time problem solving within Grade 3 expectations. | two-step elapsed time | two-step elapsed time with a missing part | g3ElapsedTimeTwoStep | Internal metadata | Verified from provided source |
+| Easy | 3 | MA.3.DP.1.1 | Practice reading and comparing values in a simple data table within Grade 3 expectations. | simple data interpretation | table total or comparison | g3DataInterpretation | Internal metadata; developer validation | Needs CPALMS/FDOE verification |
 | Medium | 4 | MA.4.NSO.1.4 | Round whole numbers from 0 to 10,000 to the nearest 10, 100, or 1,000. | rounding multi-digit numbers | whole-number rounding within verified Grade 4 range | g4Rounding | Internal metadata | Verified from provided source |
 | Medium | 4 | MA.4.NSO.2.2 | Multiply multi-digit whole numbers within Grade 4 expectations. | multi-digit multiplication | two-digit by one-digit multiplication | g4Multiplication | Internal metadata | Needs official verification |
 | Medium | 4 | MA.4.NSO.2.4 | Divide multi-digit whole numbers by one-digit divisors and express remainders as fractional parts of the divisor. | division with fractional remainders | division with fractional remainder notation | g4DivisionRemainders | Internal metadata | Verified from provided source |
 | Medium | 4 | MA.4.FR.1.3 | Identify and generate equivalent fractions. | equivalent fractions | equivalent fractions | g4EquivalentFractions | Internal metadata | Needs official verification |
+| Medium | 4 | MA.4.FR.1.3 | Practice equivalent fractions greater than one within Grade 4 expectations. | equivalent fractions greater than one | equivalent fractions greater than one | g4EquivalentFractionsGreaterThanOne | Internal metadata; developer validation | Verified from provided source |
 | Medium | 4 | MA.4.FR.1.2 | Relate fractions with denominators 10 or 100 to decimal notation. | decimals to hundredths | fraction-to-decimal conversion | g4DecimalsHundredths | Internal metadata | Needs official verification |
+| Medium | 4 | MA.4.FR.1.2 | Practice decimal-fraction relationships with tenths within Grade 4 expectations. | tenths as decimals and fractions | decimal-to-fraction tenths conversion | g4DecimalsTenthsToFraction | Internal metadata; developer validation | Verified from provided source |
 | Medium | 4 | MA.4.GR.1.3 | Solve problems involving unknown whole-number angle measures. | angle measurement | missing angle measure | g4Angles | Internal metadata | Needs official verification |
+| Medium | 4 | MA.4.GR.1.3 | Practice finding unknown whole-number angle measures in multi-part angles within Grade 4 expectations. | multi-part angle measurement | missing angle in a three-part angle | g4AnglesThreePart | Internal metadata; developer validation | Verified from provided source |
 | Hard | 5 | MA.5.NSO.1.3 | Compose and decompose multi-digit numbers with decimals to the thousandths. | decimal place-value decomposition | decimal decomposition by place value | g5DecimalPlaceValue | Internal metadata | Verified from provided source |
 | Hard | 5 | MA.5.NSO.2.3 | Add and subtract decimals to the thousandths. | decimal operations | decimal addition | g5DecimalOperations | Internal metadata | Needs official verification |
 | Hard | 5 | MA.5.FR.2.1 | Add and subtract fractions with unlike denominators. | fractions with unlike denominators | fraction addition | g5FractionAddUnlike | Internal metadata | Needs official verification |
@@ -97,6 +103,19 @@ This file does not invent official domain names. A future verification pass shou
 | Extreme | 5 | MA.5.AR.2.2 | Evaluate multi-step numerical expressions within Grade 5 limits. | advanced Grade 5 expression reasoning | expression evaluation with parentheses | g5ExtremeExpressions | Internal metadata | App-internal conservative wording |
 
 ## Easy / Grade 3 Current Usage
+
+### MA.3.NSO.1.2
+
+- Current app description: Practice identifying the value of a digit in a multi-digit whole number within Grade 3 expectations.
+- Difficulty band: Easy / Adventurer
+- Grade band: 3
+- Skill id: `g3_place_value_digit`
+- Skill label: place value
+- Generator: `g3PlaceValueDigit`
+- Problem type: digit value in a multi-digit number
+- Example problem shape: Students identify the value of a named digit in a four-digit treasure-map number.
+- Current use: internal problem metadata and developer validation.
+- Verification status: Needs CPALMS/FDOE verification.
 
 ### MA.3.NSO.2.1
 
@@ -163,6 +182,19 @@ This file does not invent official domain names. A future verification pass shou
 - Current use: internal problem metadata and developer validation.
 - Verification status: Needs official verification.
 
+### MA.3.M.1.1
+
+- Current app description: Practice solving simple length measurement problems within Grade 3 expectations.
+- Difficulty band: Easy / Adventurer
+- Grade band: 3
+- Skill id: `g3_measurement_length`
+- Skill label: length measurement
+- Generator: `g3MeasurementLength`
+- Problem type: length total or comparison
+- Example problem shape: Students add two path lengths or compare two measured lengths.
+- Current use: internal problem metadata and developer validation.
+- Verification status: Needs CPALMS/FDOE verification.
+
 ### MA.3.M.2.2
 
 - Current app description: Practice elapsed-time problem solving within Grade 3 expectations.
@@ -175,6 +207,19 @@ This file does not invent official domain names. A future verification pass shou
 - Example problem shape: A puzzle starts at an hour and ends later in the same hour; students find elapsed minutes.
 - Current use: internal problem metadata and developer validation.
 - Verification status: Verified from provided source.
+
+### MA.3.DP.1.1
+
+- Current app description: Practice reading and comparing values in a simple data table within Grade 3 expectations.
+- Difficulty band: Easy / Adventurer
+- Grade band: 3
+- Skill id: `g3_data_interpretation`
+- Skill label: simple data interpretation
+- Generator: `g3DataInterpretation`
+- Problem type: table total or comparison
+- Example problem shape: Students read a simple quest table and either compare two categories or add two requested categories.
+- Current use: internal problem metadata and developer validation.
+- Verification status: Needs CPALMS/FDOE verification.
 
 ### MA.3.M.2.2
 
@@ -191,17 +236,14 @@ This file does not invent official domain names. A future verification pass shou
 
 ## Easy Expansion Notes
 
-Implemented in the first Easy expansion pass:
+Implemented in Easy expansion passes:
 
 - `g3ElapsedTimeTwoStep` under verified benchmark `MA.3.M.2.2`.
+- `g3PlaceValueDigit` under provisional benchmark `MA.3.NSO.1.2`.
+- `g3MeasurementLength` under provisional benchmark `MA.3.M.1.1`.
+- `g3DataInterpretation` under provisional benchmark `MA.3.DP.1.1`.
 
-Skipped pending stronger verification before implementation:
-
-- Grade 3 place value and rounding
-- Grade 3 money or broader measurement
-- Grade 3 data interpretation
-
-Those skipped areas are still useful future targets, but this pass avoided adding unverified benchmark mappings.
+The provisional mappings were added to improve Easy play variety and should be audited against CPALMS/FDOE before formal standards reporting.
 
 ## Medium / Grade 4 Current Usage
 
@@ -257,6 +299,19 @@ Those skipped areas are still useful future targets, but this pass avoided addin
 - Current use: internal problem metadata and developer validation.
 - Verification status: Needs official verification.
 
+### MA.4.FR.1.3
+
+- Current app description: Practice equivalent fractions greater than one within Grade 4 expectations.
+- Difficulty band: Medium / Hero
+- Grade band: 4
+- Skill id: `g4_equivalent_fractions_greater_than_one`
+- Skill label: equivalent fractions greater than one
+- Generator: `g4EquivalentFractionsGreaterThanOne`
+- Problem type: equivalent fractions greater than one
+- Example problem shape: Students choose an equivalent fraction for a fraction greater than one.
+- Current use: internal problem metadata and developer validation.
+- Verification status: Verified from provided source.
+
 ### MA.4.FR.1.2
 
 - Current app description: Relate fractions with denominators 10 or 100 to decimal notation.
@@ -270,6 +325,19 @@ Those skipped areas are still useful future targets, but this pass avoided addin
 - Current use: internal problem metadata and developer validation.
 - Verification status: Needs official verification.
 
+### MA.4.FR.1.2
+
+- Current app description: Practice decimal-fraction relationships with tenths within Grade 4 expectations.
+- Difficulty band: Medium / Hero
+- Grade band: 4
+- Skill id: `g4_decimals_tenths_to_fraction`
+- Skill label: tenths as decimals and fractions
+- Generator: `g4DecimalsTenthsToFraction`
+- Problem type: decimal-to-fraction tenths conversion
+- Example problem shape: Students choose the fraction with denominator 10 that matches a one-decimal-place number.
+- Current use: internal problem metadata and developer validation.
+- Verification status: Verified from provided source.
+
 ### MA.4.GR.1.3
 
 - Current app description: Solve problems involving unknown whole-number angle measures.
@@ -282,6 +350,33 @@ Those skipped areas are still useful future targets, but this pass avoided addin
 - Example problem shape: Two angles combine to make 90, 120, or 180 degrees; students find the missing angle.
 - Current use: internal problem metadata and developer validation.
 - Verification status: Needs official verification.
+
+### MA.4.GR.1.3
+
+- Current app description: Practice finding unknown whole-number angle measures in multi-part angles within Grade 4 expectations.
+- Difficulty band: Medium / Hero
+- Grade band: 4
+- Skill id: `g4_angles_three_part`
+- Skill label: multi-part angle measurement
+- Generator: `g4AnglesThreePart`
+- Problem type: missing angle in a three-part angle
+- Example problem shape: Three angles make a whole angle; two are known and students find the missing angle.
+- Current use: internal problem metadata and developer validation.
+- Verification status: Verified from provided source.
+
+## Medium Expansion Notes
+
+Implemented in the first Medium expansion pass:
+
+- `g4EquivalentFractionsGreaterThanOne` under verified benchmark `MA.4.FR.1.3`.
+- `g4DecimalsTenthsToFraction` under verified benchmark `MA.4.FR.1.2`.
+- `g4AnglesThreePart` under verified benchmark `MA.4.GR.1.3`.
+
+Skipped pending stronger verification before implementation:
+
+- Grade 4 factors and multiples
+- Grade 4 area/perimeter problem solving
+- Grade 4 like-denominator fraction operations
 
 ## Hard / Grade 5 Current Usage
 

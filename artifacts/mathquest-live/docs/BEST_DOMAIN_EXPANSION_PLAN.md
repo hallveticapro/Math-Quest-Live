@@ -36,16 +36,22 @@ Current Easy coverage includes:
 - Same-denominator fraction comparison
 - Same-hour elapsed time
 - Two-step elapsed time with a missing activity duration
+- Place-value digit value
+- Length measurement totals and comparisons
+- Simple data-table totals and comparisons
 
 Current verified or referenced benchmark anchors include:
 
 - `MA.3.NSO.2.1`
+- `MA.3.NSO.1.2` (provisional; needs CPALMS/FDOE verification)
 - `MA.3.AR.1.2`
 - `MA.3.GR.2.3`
 - `MA.3.FR.2.1`
+- `MA.3.M.1.1` (provisional; needs CPALMS/FDOE verification)
 - `MA.3.M.2.2`
+- `MA.3.DP.1.1` (provisional; needs CPALMS/FDOE verification)
 
-Easy currently has useful arithmetic, early geometry, fraction comparison, and expanded elapsed-time coverage, but it could use more place value, rounding, measurement, money, and data interpretation after those benchmark mappings are verified.
+Easy currently has useful arithmetic, early geometry, fraction comparison, expanded elapsed-time coverage, and provisional generators for place value, measurement, and data interpretation. The provisional mappings should be audited before formal standards reporting.
 
 ### Medium / Grade 4
 
@@ -55,8 +61,11 @@ Current Medium coverage includes:
 - Two-digit by one-digit multiplication
 - Division with fractional remainders
 - Equivalent fractions
+- Equivalent fractions greater than one
 - Fraction-to-decimal notation with hundredths
+- Decimal-to-fraction notation with tenths
 - Missing angle measures
+- Missing angle measures in three-part angles
 
 Current verified benchmark anchors include:
 
@@ -67,7 +76,7 @@ Current verified benchmark anchors include:
 - `MA.4.FR.1.2`
 - `MA.4.GR.1.3`
 
-Medium has a healthy start, but some generators cover narrow slices of their benchmarks. It needs more area/perimeter, factors/multiples, fraction operations, and geometry variety.
+Medium has a healthy start, with expanded equivalent-fraction, decimal/fraction, and angle-reasoning variety. It still needs verified area/perimeter, factors/multiples, and fraction-operation coverage.
 
 ### Hard / Grade 5
 
@@ -116,10 +125,7 @@ Extreme correctly stays inside Grade 5. The next expansion should deepen multi-s
 ### Easy / Grade 3
 
 - Time
-- Measurement
 - Money
-- Data
-- Place value
 - Rounding
 
 ### Medium / Grade 4
@@ -127,7 +133,6 @@ Extreme correctly stays inside Grade 5. The next expansion should deepen multi-s
 - Area/perimeter
 - Factors/multiples
 - Fraction operations
-- Geometry
 
 ### Hard / Grade 5
 
@@ -177,7 +182,9 @@ The order below favors classroom value, low implementation risk, and better play
 
 Implementation status:
 
-- Skipped in the first Easy expansion pass because this plan still requires CPALMS/FDOE verification before mapping.
+- Implemented after user approval as `g3PlaceValueDigit` under provisional benchmark `MA.3.NSO.1.2`.
+- Still needs CPALMS/FDOE verification before formal standards reporting.
+- Rounding remains unimplemented pending stronger verification.
 
 ### 2. Easy Money And Measurement
 
@@ -206,7 +213,9 @@ Implementation status:
 
 Implementation status:
 
-- Skipped in the first Easy expansion pass because this plan still requires CPALMS/FDOE verification before mapping.
+- Implemented after user approval as `g3MeasurementLength` under provisional benchmark `MA.3.M.1.1`.
+- Money remains unimplemented; this pass added length measurement rather than coin/currency problems.
+- Still needs CPALMS/FDOE verification before formal standards reporting.
 
 ### 3. Easy Data Interpretation
 
@@ -237,7 +246,8 @@ Implementation status:
 
 Implementation status:
 
-- Skipped in the first Easy expansion pass because this plan still requires CPALMS/FDOE verification before mapping.
+- Implemented after user approval as `g3DataInterpretation` under provisional benchmark `MA.3.DP.1.1`.
+- Still needs CPALMS/FDOE verification before formal standards reporting.
 
 ### 3A. Easy Two-Step Elapsed Time Variety
 
@@ -293,6 +303,10 @@ Implementation status:
 - Notes about CPALMS/FDOE verification:
   - Verify the Grade 4 factor/multiple benchmark before implementation.
 
+Implementation status:
+
+- Skipped in the first Medium expansion pass because this plan still requires CPALMS/FDOE verification before mapping.
+
 ### 5. Medium Area And Perimeter Problem Solving
 
 - Difficulty band: Medium
@@ -319,6 +333,10 @@ Implementation status:
   - correctAnswer
 - Notes about CPALMS/FDOE verification:
   - Verify exact Grade 4 area/perimeter benchmark and whether missing-side problems are included.
+
+Implementation status:
+
+- Skipped in the first Medium expansion pass because this plan still requires CPALMS/FDOE verification before mapping.
 
 ### 6. Medium Fraction Operations
 
@@ -348,6 +366,12 @@ Implementation status:
 - Notes about CPALMS/FDOE verification:
   - Verify the Grade 4 fraction operation benchmarks before adding these generators.
 
+Implementation status:
+
+- Skipped in the first Medium expansion pass because the candidate Grade 4 fraction-operation benchmarks are not verified in the current reference docs.
+- Related verified fraction variety was added under `MA.4.FR.1.3` as `g4EquivalentFractionsGreaterThanOne`.
+- Related verified fraction-decimal variety was added under `MA.4.FR.1.2` as `g4DecimalsTenthsToFraction`.
+
 ### 7. Medium Geometry Variety
 
 - Difficulty band: Medium
@@ -373,6 +397,11 @@ Implementation status:
   - correctAnswer
 - Notes about CPALMS/FDOE verification:
   - `MA.4.GR.1.3` is already used and verified, but new geometry categories should not be added under it unless they match the official wording.
+
+Implementation status:
+
+- Implemented in the first Medium expansion pass as `g4AnglesThreePart` under verified benchmark `MA.4.GR.1.3`.
+- No new geometry category was added; the new generator stays within unknown whole-number angle measures.
 
 ### 8. Hard Coordinate Plane Basics
 

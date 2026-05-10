@@ -38,6 +38,8 @@ export const DIFFICULTY_ORDER: DifficultyKey[] = ["easy", "medium", "hard", "ext
 const NOT_VERIFIED_FROM_SOURCE = "Not verified from provided source";
 const CPALMS_SOURCE_NOTE =
   "Verified against user-provided CPALMS course export PDF; recheck CPALMS/FDOE before formal standards reporting.";
+const NEEDS_VERIFICATION_SOURCE_NOTE =
+  "Needs CPALMS/FDOE verification before formal standards reporting.";
 
 const OFFICIAL_BENCHMARK_WORDING: Record<string, string> = {
   "MA.3.NSO.2.1":
@@ -91,7 +93,10 @@ function benchmarkMetadata(
     strand: NOT_VERIFIED_FROM_SOURCE,
     reportingCategory: NOT_VERIFIED_FROM_SOURCE,
     verificationStatus,
-    sourceNote: CPALMS_SOURCE_NOTE,
+    sourceNote:
+      verificationStatus === "verified_from_provided_source"
+        ? CPALMS_SOURCE_NOTE
+        : NEEDS_VERIFICATION_SOURCE_NOTE,
   };
 }
 
@@ -106,9 +111,18 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
     gradeBand: 3,
     standardsSystem: "Florida B.E.S.T. Mathematics",
     description: "Grade 3 Florida B.E.S.T. math skills",
-    studentSummary: "Multiplication facts, place value, area, simple fractions",
+    studentSummary: "Place value, operations, measurement, data, area, simple fractions",
     readingGuidance: "shorter scenes, simpler vocabulary, 60-100 words",
     skills: [
+      {
+        id: "g3_place_value_digit",
+        benchmark: "MA.3.NSO.1.2",
+        description:
+          "Practice identifying the value of a digit in a multi-digit whole number within Grade 3 expectations.",
+        skill: "place value",
+        generator: "g3PlaceValueDigit",
+        ...benchmarkMetadata("MA.3.NSO.1.2", "needs_cpalms_fdoe_verification"),
+      },
       {
         id: "g3_add_sub_1000",
         benchmark: "MA.3.NSO.2.1",
@@ -155,6 +169,15 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
         ...benchmarkMetadata("MA.3.FR.2.1"),
       },
       {
+        id: "g3_measurement_length",
+        benchmark: "MA.3.M.1.1",
+        description:
+          "Practice solving simple length measurement problems within Grade 3 expectations.",
+        skill: "length measurement",
+        generator: "g3MeasurementLength",
+        ...benchmarkMetadata("MA.3.M.1.1", "needs_cpalms_fdoe_verification"),
+      },
+      {
         id: "g3_time_elapsed",
         benchmark: "MA.3.M.2.2",
         description: "Practice elapsed-time problem solving within Grade 3 expectations.",
@@ -169,6 +192,15 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
         skill: "two-step elapsed time",
         generator: "g3ElapsedTimeTwoStep",
         ...benchmarkMetadata("MA.3.M.2.2"),
+      },
+      {
+        id: "g3_data_interpretation",
+        benchmark: "MA.3.DP.1.1",
+        description:
+          "Practice reading and comparing values in a simple data table within Grade 3 expectations.",
+        skill: "simple data interpretation",
+        generator: "g3DataInterpretation",
+        ...benchmarkMetadata("MA.3.DP.1.1", "needs_cpalms_fdoe_verification"),
       },
     ],
   },
@@ -218,6 +250,15 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
         ...benchmarkMetadata("MA.4.FR.1.3"),
       },
       {
+        id: "g4_equivalent_fractions_greater_than_one",
+        benchmark: "MA.4.FR.1.3",
+        description:
+          "Practice equivalent fractions greater than one within Grade 4 expectations.",
+        skill: "equivalent fractions greater than one",
+        generator: "g4EquivalentFractionsGreaterThanOne",
+        ...benchmarkMetadata("MA.4.FR.1.3"),
+      },
+      {
         id: "g4_decimals_hundredths",
         benchmark: "MA.4.FR.1.2",
         description:
@@ -227,12 +268,30 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
         ...benchmarkMetadata("MA.4.FR.1.2"),
       },
       {
+        id: "g4_decimals_tenths_to_fraction",
+        benchmark: "MA.4.FR.1.2",
+        description:
+          "Practice decimal-fraction relationships with tenths within Grade 4 expectations.",
+        skill: "tenths as decimals and fractions",
+        generator: "g4DecimalsTenthsToFraction",
+        ...benchmarkMetadata("MA.4.FR.1.2"),
+      },
+      {
         id: "g4_angles",
         benchmark: "MA.4.GR.1.3",
         description:
           "Practice finding unknown whole-number angle measures within Grade 4 expectations.",
         skill: "angle measurement",
         generator: "g4Angles",
+        ...benchmarkMetadata("MA.4.GR.1.3"),
+      },
+      {
+        id: "g4_angles_three_part",
+        benchmark: "MA.4.GR.1.3",
+        description:
+          "Practice finding unknown whole-number angle measures in multi-part angles within Grade 4 expectations.",
+        skill: "multi-part angle measurement",
+        generator: "g4AnglesThreePart",
         ...benchmarkMetadata("MA.4.GR.1.3"),
       },
     ],

@@ -152,6 +152,40 @@ function parseFraction(value: string) {
   return { numerator: n, denominator: d };
 }
 
+function g3PlaceValueDigit(): ProblemCore {
+  const thousands = randInt(1, 9);
+  const hundreds = randInt(1, 9);
+  const tens = randInt(1, 9);
+  const ones = randInt(1, 9);
+  const digits = [thousands, hundreds, tens, ones];
+  const places = [
+    { label: "thousands", value: 1000, index: 0 },
+    { label: "hundreds", value: 100, index: 1 },
+    { label: "tens", value: 10, index: 2 },
+    { label: "ones", value: 1, index: 3 },
+  ];
+  const place = places[randInt(0, places.length - 1)];
+  const targetDigit = digits[place.index];
+  const number = thousands * 1000 + hundreds * 100 + tens * 10 + ones;
+  const answer = targetDigit * place.value;
+  const otherPlaceValues = places
+    .filter((candidate) => candidate.value !== place.value)
+    .map((candidate) => targetDigit * candidate.value);
+
+  return {
+    prompt: `The treasure map number is ${number.toLocaleString()}. What is the value of the ${targetDigit} in the ${place.label} place?`,
+    correctAnswer: answer.toLocaleString(),
+    wrongAnswers: [
+      targetDigit,
+      ...otherPlaceValues,
+      answer + place.value,
+      Math.max(place.value, answer - place.value),
+    ].map((value) => value.toLocaleString()),
+    hint: "Look at the place where the digit sits. Thousands, hundreds, tens, and ones have different values.",
+    secondHint: `The ${place.label} place means the digit is worth ${place.value.toLocaleString()} times as much as the digit itself.`,
+  };
+}
+
 function g3AddSub1000(): ProblemCore {
   const add = Math.random() < 0.5;
   if (add) {
@@ -260,6 +294,46 @@ function g3FractionCompare(): ProblemCore {
   };
 }
 
+function g3MeasurementLength(): ProblemCore {
+  const first = randInt(12, 48);
+  const second = randInt(8, 36);
+  const compare = Math.random() < 0.5;
+
+  if (compare) {
+    const longer = Math.max(first, second);
+    const shorter = Math.min(first, second);
+    const answer = longer - shorter;
+    return {
+      prompt: `A ribbon is ${longer} inches long. A rope is ${shorter} inches long. How many inches longer is the ribbon?`,
+      correctAnswer: String(answer),
+      wrongAnswers: [
+        longer + shorter,
+        shorter,
+        longer,
+        Math.max(1, answer - 1),
+        answer + 1,
+      ].map(String),
+      hint: "A comparison question asks how much more or less. Subtract the shorter length from the longer length.",
+      secondHint: "Line up the two lengths and find the difference between them.",
+    };
+  }
+
+  const answer = first + second;
+  return {
+    prompt: `A trail has one path that is ${first} yards long and another path that is ${second} yards long. How many yards are the paths in all?`,
+    correctAnswer: String(answer),
+    wrongAnswers: [
+      Math.abs(first - second),
+      first,
+      second,
+      answer + 5,
+      Math.max(1, answer - 5),
+    ].map(String),
+    hint: "The question asks for the total length. Add the two path lengths together.",
+    secondHint: "Check that your answer is longer than either path by itself.",
+  };
+}
+
 function g3ElapsedTime(): ProblemCore {
   const startHour = randInt(1, 9);
   const minutes = [15, 20, 25, 30, 35, 40, 45][randInt(0, 6)];
@@ -302,6 +376,55 @@ function g3ElapsedTimeTwoStep(): ProblemCore {
     ].map(String),
     hint: "Find the total time from the start to the end first. Then subtract the time already used by the map walk.",
     secondHint: "Count forward from the start time to the end time. The puzzle gate time is the part left after the first activity.",
+  };
+}
+
+function g3DataInterpretation(): ProblemCore {
+  const items = ["shells", "gems", "feathers", "keys", "stars"];
+  const shuffledItems = shuffle(items);
+  const categoryA = shuffledItems[0];
+  const categoryB = shuffledItems[1];
+  const categoryC = shuffledItems[2];
+  const valueA = randInt(6, 18);
+  let valueB = randInt(4, 16);
+  while (valueB === valueA) valueB = randInt(4, 16);
+  const valueC = randInt(3, 14);
+  const compare = Math.random() < 0.55;
+
+  if (compare) {
+    const largerCategory = valueA > valueB ? categoryA : categoryB;
+    const smallerCategory = valueA > valueB ? categoryB : categoryA;
+    const largerValue = Math.max(valueA, valueB);
+    const smallerValue = Math.min(valueA, valueB);
+    const answer = largerValue - smallerValue;
+    return {
+      prompt: `The quest table shows ${categoryA}: ${valueA}, ${categoryB}: ${valueB}, and ${categoryC}: ${valueC}. How many more ${largerCategory} than ${smallerCategory} are there?`,
+      correctAnswer: String(answer),
+      wrongAnswers: [
+        largerValue + smallerValue,
+        largerValue,
+        smallerValue,
+        Math.max(1, answer - 1),
+        answer + 1,
+      ].map(String),
+      hint: "Find the two categories named in the question first. 'How many more' means compare them.",
+      secondHint: "Subtract the smaller data value from the larger data value.",
+    };
+  }
+
+  const answer = valueA + valueB;
+  return {
+    prompt: `The quest table shows ${categoryA}: ${valueA}, ${categoryB}: ${valueB}, and ${categoryC}: ${valueC}. How many ${categoryA} and ${categoryB} are there altogether?`,
+    correctAnswer: String(answer),
+    wrongAnswers: [
+      Math.abs(valueA - valueB),
+      valueA + valueC,
+      valueB + valueC,
+      valueA,
+      answer + 1,
+    ].map(String),
+    hint: "Find the categories named in the question. 'Altogether' means add those values.",
+    secondHint: `Add the ${categoryA} value and the ${categoryB} value. Do not include categories the question did not ask for.`,
   };
 }
 
@@ -387,6 +510,27 @@ function g4EquivalentFractions(): ProblemCore {
   };
 }
 
+function g4EquivalentFractionsGreaterThanOne(): ProblemCore {
+  const denominator = randInt(3, 9);
+  const numerator = randInt(denominator + 1, denominator * 2 - 1);
+  const factor = randInt(2, 4);
+  const answer = `${numerator * factor}/${denominator * factor}`;
+
+  return {
+    prompt: `Which fraction is equivalent to ${numerator}/${denominator}?`,
+    correctAnswer: answer,
+    wrongAnswers: [
+      `${numerator + factor}/${denominator + factor}`,
+      `${numerator * factor}/${denominator}`,
+      `${numerator}/${denominator * factor}`,
+      `${denominator}/${numerator}`,
+      `${numerator + denominator}/${denominator * factor}`,
+    ],
+    hint: "Equivalent fractions can be greater than one and still name the same amount.",
+    secondHint: "Multiply the numerator and denominator by the same factor. The fraction may look larger, but the value stays equal.",
+  };
+}
+
 function g4DecimalsHundredths(): ProblemCore {
   const tenths = randInt(1, 9);
   const hundredths = tenths * 10;
@@ -401,6 +545,24 @@ function g4DecimalsHundredths(): ProblemCore {
     ],
     hint: "Hundredths are two places after the decimal point. Think of 100 equal parts.",
     secondHint: "A fraction out of 100 becomes a decimal with two digits after the decimal point.",
+  };
+}
+
+function g4DecimalsTenthsToFraction(): ProblemCore {
+  const tenths = randInt(1, 9);
+  const decimal = (tenths / 10).toFixed(1);
+  return {
+    prompt: `Which fraction is equal to ${decimal}?`,
+    correctAnswer: `${tenths}/10`,
+    wrongAnswers: [
+      `${tenths}/100`,
+      `${tenths * 10}/10`,
+      `${10}/${tenths}`,
+      `${tenths + 1}/10`,
+      `${Math.max(1, tenths - 1)}/10`,
+    ],
+    hint: "Tenths are one digit after the decimal point.",
+    secondHint: `${decimal} means ${tenths} tenths, so write ${tenths} over 10.`,
   };
 }
 
@@ -419,6 +581,32 @@ function g4Angles(): ProblemCore {
     ],
     hint: "The two angles combine to make the whole angle. Use subtraction to find the missing part.",
     secondHint: "Start with the whole angle, then subtract the angle you already know.",
+  };
+}
+
+function g4AnglesThreePart(): ProblemCore {
+  const whole = [120, 180, 240, 270][randInt(0, 3)];
+  const first = randInt(2, 8) * 10;
+  const second = randInt(2, 8) * 10;
+  const knownSum = first + second;
+  const minimumMissing = 20;
+  if (knownSum >= whole - minimumMissing) {
+    return g4AnglesThreePart();
+  }
+  const answer = whole - knownSum;
+
+  return {
+    prompt: `Three angles make ${whole}°. Two angles are ${first}° and ${second}°. What is the missing angle?`,
+    correctAnswer: `${answer}°`,
+    wrongAnswers: [
+      `${knownSum}°`,
+      `${whole - first}°`,
+      `${whole - second}°`,
+      `${Math.max(10, answer - 10)}°`,
+      `${answer + 10}°`,
+    ],
+    hint: "The three angle parts combine to make the whole angle.",
+    secondHint: "Add the two known angles first. Then subtract that sum from the whole angle.",
   };
 }
 
@@ -634,19 +822,25 @@ function g5ExtremeExpressions(): ProblemCore {
 }
 
 const GENERATORS: Record<string, ProblemGenerator> = {
+  g3PlaceValueDigit,
   g3AddSub1000,
   g3MultiplicationFacts,
   g3DivisionFacts,
   g3AreaPerimeter,
   g3FractionCompare,
+  g3MeasurementLength,
   g3ElapsedTime,
   g3ElapsedTimeTwoStep,
+  g3DataInterpretation,
   g4Rounding,
   g4Multiplication,
   g4DivisionRemainders,
   g4EquivalentFractions,
+  g4EquivalentFractionsGreaterThanOne,
   g4DecimalsHundredths,
+  g4DecimalsTenthsToFraction,
   g4Angles,
+  g4AnglesThreePart,
   g5DecimalPlaceValue,
   g5DecimalOperations,
   g5FractionAddUnlike,
