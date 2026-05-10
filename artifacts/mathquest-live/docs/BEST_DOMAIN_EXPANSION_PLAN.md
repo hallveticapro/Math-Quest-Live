@@ -35,6 +35,7 @@ Current Easy coverage includes:
 - Rectangle area and perimeter
 - Same-denominator fraction comparison
 - Same-hour elapsed time
+- Two-step elapsed time with a missing activity duration
 
 Current verified or referenced benchmark anchors include:
 
@@ -44,7 +45,7 @@ Current verified or referenced benchmark anchors include:
 - `MA.3.FR.2.1`
 - `MA.3.M.2.2`
 
-Easy currently has useful arithmetic and early geometry coverage, but it could use more place value, rounding, measurement, money, and data interpretation.
+Easy currently has useful arithmetic, early geometry, fraction comparison, and expanded elapsed-time coverage, but it could use more place value, rounding, measurement, money, and data interpretation after those benchmark mappings are verified.
 
 ### Medium / Grade 4
 
@@ -174,6 +175,10 @@ The order below favors classroom value, low implementation risk, and better play
 - Notes about CPALMS/FDOE verification:
   - Verify the exact Grade 3 benchmark for place value and rounding before adding metadata.
 
+Implementation status:
+
+- Skipped in the first Easy expansion pass because this plan still requires CPALMS/FDOE verification before mapping.
+
 ### 2. Easy Money And Measurement
 
 - Difficulty band: Easy
@@ -198,6 +203,10 @@ The order below favors classroom value, low implementation risk, and better play
   - correctAnswer
 - Notes about CPALMS/FDOE verification:
   - Verify current Grade 3 money and measurement expectations before adding benchmark metadata.
+
+Implementation status:
+
+- Skipped in the first Easy expansion pass because this plan still requires CPALMS/FDOE verification before mapping.
 
 ### 3. Easy Data Interpretation
 
@@ -225,6 +234,38 @@ The order below favors classroom value, low implementation risk, and better play
   - correctAnswer
 - Notes about CPALMS/FDOE verification:
   - Add only after identifying the verified Grade 3 data benchmark.
+
+Implementation status:
+
+- Skipped in the first Easy expansion pass because this plan still requires CPALMS/FDOE verification before mapping.
+
+### 3A. Easy Two-Step Elapsed Time Variety
+
+- Difficulty band: Easy
+- Grade band: 3
+- Domain/strand if verified: Not verified from provided source.
+- Candidate benchmark code if already verified: `MA.3.M.2.2`
+- Skill label: two-step elapsed time
+- Problem type idea: Use a start time, one known activity duration, and an end time; ask students to find the missing activity duration.
+- Example problem: "The hero starts at 2:15. The map walk takes 25 minutes, and the whole trip ends at 3:05. How many minutes did the puzzle gate take?"
+- Likely distractor patterns:
+  - Total elapsed time instead of missing part
+  - Known activity duration instead of missing duration
+  - Five-minute counting error
+  - Subtracting from the wrong time chunk
+- Hint idea: "Find the total time from the start to the end first. Then subtract the time already used."
+- Signature fields needed:
+  - difficulty
+  - benchmark
+  - skillId
+  - problemType
+  - normalized prompt with start time, known duration, end time, and correct answer
+- Notes about CPALMS/FDOE verification:
+  - `MA.3.M.2.2` is verified from the provided Grade 3 source for one- and two-step elapsed-time problems.
+
+Implementation status:
+
+- Implemented in the first Easy expansion pass as `g3ElapsedTimeTwoStep`.
 
 ### 4. Medium Factors And Multiples
 

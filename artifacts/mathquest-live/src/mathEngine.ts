@@ -275,6 +275,36 @@ function g3ElapsedTime(): ProblemCore {
   };
 }
 
+function formatClockTime(totalMinutes: number) {
+  const hour = Math.floor(totalMinutes / 60);
+  const minute = totalMinutes % 60;
+  return `${hour}:${String(minute).padStart(2, "0")}`;
+}
+
+function g3ElapsedTimeTwoStep(): ProblemCore {
+  const startHour = randInt(1, 8);
+  const startMinute = [0, 5, 10, 15, 20, 25, 30][randInt(0, 6)];
+  const firstPart = [15, 20, 25, 30, 35][randInt(0, 4)];
+  const secondPart = [20, 25, 30, 35, 40, 45][randInt(0, 5)];
+  const total = firstPart + secondPart;
+  const startTotalMinutes = startHour * 60 + startMinute;
+  const endTime = formatClockTime(startTotalMinutes + total);
+
+  return {
+    prompt: `The hero starts a quest at ${formatClockTime(startTotalMinutes)}. The map walk takes ${firstPart} minutes, and the whole trip ends at ${endTime}. How many minutes did the puzzle gate take?`,
+    correctAnswer: String(secondPart),
+    wrongAnswers: [
+      total,
+      firstPart,
+      Math.max(5, secondPart - 5),
+      secondPart + 5,
+      Math.max(5, total - 5),
+    ].map(String),
+    hint: "Find the total time from the start to the end first. Then subtract the time already used by the map walk.",
+    secondHint: "Count forward from the start time to the end time. The puzzle gate time is the part left after the first activity.",
+  };
+}
+
 function g4Rounding(): ProblemCore {
   const value = randInt(100, 10_000);
   const place = [10, 100, 1000][randInt(0, 2)];
@@ -610,6 +640,7 @@ const GENERATORS: Record<string, ProblemGenerator> = {
   g3AreaPerimeter,
   g3FractionCompare,
   g3ElapsedTime,
+  g3ElapsedTimeTwoStep,
   g4Rounding,
   g4Multiplication,
   g4DivisionRemainders,

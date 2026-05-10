@@ -162,6 +162,14 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
         generator: "g3ElapsedTime",
         ...benchmarkMetadata("MA.3.M.2.2"),
       },
+      {
+        id: "g3_time_elapsed_two_step",
+        benchmark: "MA.3.M.2.2",
+        description: "Practice two-step elapsed-time problem solving within Grade 3 expectations.",
+        skill: "two-step elapsed time",
+        generator: "g3ElapsedTimeTwoStep",
+        ...benchmarkMetadata("MA.3.M.2.2"),
+      },
     ],
   },
   medium: {
