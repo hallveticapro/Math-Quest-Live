@@ -53,7 +53,7 @@ Optional:
 - `BASE_PATH` - Vite base path. Defaults to `/`.
 - `API_PROXY_TARGET` - Vite dev proxy target for `/api`. Defaults to `http://localhost:8080`.
 - `ENABLE_IMAGE_GENERATION` - Enables backend-only generated illustrations when set to `true`. Defaults to `false`.
-- `IMAGE_MODE` - Image generation mode. Valid values are `off`, `cover`, `milestones`, and `every_scene`. Defaults to `milestones`.
+- `IMAGE_MODE` - Image generation mode. Valid values are `off`, `cover`, `cover_outro`, `milestones`, and `every_scene`. Defaults to `cover_outro`.
 - `IMAGE_PROVIDER` - Image provider. Defaults to `openai`. Unsupported providers log a warning and disable images.
 - `IMAGE_MODEL` - Image model. Defaults to `gpt-image-1-mini`.
 - `IMAGE_QUALITY` - Image quality. Valid values are `low`, `medium`, and `high`. Defaults to `medium`.
@@ -163,7 +163,7 @@ Generated illustrations are backend-only and off by default. Set `ENABLE_IMAGE_G
 The default mode is:
 
 ```text
-IMAGE_MODE=milestones
+IMAGE_MODE=cover_outro
 IMAGE_PROVIDER=openai
 IMAGE_MODEL=gpt-image-1-mini
 IMAGE_QUALITY=medium
@@ -174,10 +174,11 @@ Image modes:
 
 - `off` - Never generate images.
 - `cover` - Generate only the intro/cover image.
-- `milestones` - Generate intro, midpoint, and ending images.
+- `cover_outro` - Generate only the intro/cover and ending/outro images.
+- `milestones` - Generate intro, every second story turn, and ending images.
 - `every_scene` - Attempt an image for each generated scene and ending.
 
-Images can increase cost and latency. `every_scene` should be used cautiously. Image generation is non-blocking: story text returns first, and eligible images appear later if they finish in time. Image generation failure, rate limits, timeouts, or unsupported providers do not stop gameplay; the app continues with the story text and math challenge.
+Images can increase cost and latency. `every_scene` should be used cautiously. Cover and outro images are allowed to finish before those scenes appear; regular in-story images stay non-blocking, so story text returns first and eligible images appear later if they finish in time. Image generation failure, rate limits, timeouts, or unsupported providers do not stop gameplay; the app continues with the story text and math challenge.
 
 After the intro, the app starts preparing the next scene as soon as the student chooses an action. The student solves the required math challenge while the backend generates the next story text and any eligible image. The prepared scene is only revealed after a correct math answer, so the math gate remains required.
 
@@ -193,7 +194,8 @@ Manual image checks:
 
 - `ENABLE_IMAGE_GENERATION=false`: gameplay should behave like the text-only app.
 - `ENABLE_IMAGE_GENERATION=true` and `IMAGE_MODE=cover`: intro image only.
-- `ENABLE_IMAGE_GENERATION=true` and `IMAGE_MODE=milestones`: intro, midpoint, and ending images.
+- `ENABLE_IMAGE_GENERATION=true` and `IMAGE_MODE=cover_outro`: intro and ending images only.
+- `ENABLE_IMAGE_GENERATION=true` and `IMAGE_MODE=milestones`: intro, every second story turn, and ending images.
 - `ENABLE_IMAGE_GENERATION=true` and `IMAGE_MODE=every_scene`: images attempted for each scene.
 - Invalid `IMAGE_PROVIDER`: server logs a warning and gameplay continues without images.
 - Provider failure or timeout: gameplay continues without showing technical errors to students.
@@ -301,7 +303,7 @@ ghcr.io/YOUR_GITHUB_USERNAME_OR_ORG/YOUR_REPO_NAME:latest
    - `IMAGE_RATE_LIMIT_MAX_REQUESTS=20`
    - `CORS_ORIGIN=*`
    - `ENABLE_IMAGE_GENERATION=false`
-   - `IMAGE_MODE=milestones`
+   - `IMAGE_MODE=cover_outro`
    - `IMAGE_PROVIDER=openai`
    - `IMAGE_MODEL=gpt-image-1-mini`
    - `IMAGE_QUALITY=medium`
@@ -322,12 +324,12 @@ To test optional images on Unraid, start with:
 
 ```text
 ENABLE_IMAGE_GENERATION=true
-IMAGE_MODE=milestones
+IMAGE_MODE=cover_outro
 IMAGE_MODEL=gpt-image-1-mini
 IMAGE_QUALITY=medium
 ```
 
-Use `every_scene` only if you are comfortable with the additional image cost and latency.
+Use `milestones` or `every_scene` only if you are comfortable with the additional image cost and latency.
 
 ## NGINX Proxy Manager Notes
 

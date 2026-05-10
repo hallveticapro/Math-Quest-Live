@@ -23,6 +23,18 @@ function validateImageModes() {
     "cover mode should not generate turn images",
   );
   assert(
+    shouldGenerateImage({ enabled: true, imageMode: "cover_outro", maxTurns: 8, isIntro: true }),
+    "cover_outro mode should generate intro images",
+  );
+  assert(
+    shouldGenerateImage({ enabled: true, imageMode: "cover_outro", maxTurns: 8, isEnding: true }),
+    "cover_outro mode should generate ending images",
+  );
+  assert(
+    !shouldGenerateImage({ enabled: true, imageMode: "cover_outro", maxTurns: 8, turn: 4 }),
+    "cover_outro mode should not generate turn images",
+  );
+  assert(
     shouldGenerateImage({ enabled: true, imageMode: "milestones", maxTurns: 8, isIntro: true }),
     "milestones mode should generate intro images",
   );

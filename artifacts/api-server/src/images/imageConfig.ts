@@ -1,6 +1,6 @@
 import { logger } from "../lib/logger";
 
-export type ImageMode = "off" | "cover" | "milestones" | "every_scene";
+export type ImageMode = "off" | "cover" | "cover_outro" | "milestones" | "every_scene";
 export type ImageProviderName = "openai";
 export type ImageQuality = "low" | "medium" | "high";
 export type ImageSize = "1024x1024" | "1024x1536" | "1536x1024";
@@ -19,7 +19,7 @@ export type ImageConfig = {
   storageMode: ImageStorageMode;
 };
 
-const IMAGE_MODES = new Set<ImageMode>(["off", "cover", "milestones", "every_scene"]);
+const IMAGE_MODES = new Set<ImageMode>(["off", "cover", "cover_outro", "milestones", "every_scene"]);
 const IMAGE_QUALITIES = new Set<ImageQuality>(["low", "medium", "high"]);
 const IMAGE_SIZES = new Set<ImageSize>(["1024x1024", "1024x1536", "1536x1024"]);
 const IMAGE_STYLES = new Set<ImageStyle>(["cartoon-fantasy"]);
@@ -54,7 +54,7 @@ export function getImageConfig(): ImageConfig {
 
   return {
     enabled: readBoolean(process.env.ENABLE_IMAGE_GENERATION, false) && provider !== "unsupported",
-    mode: readEnum(process.env.IMAGE_MODE, IMAGE_MODES, "milestones"),
+    mode: readEnum(process.env.IMAGE_MODE, IMAGE_MODES, "cover_outro"),
     provider,
     model: process.env.IMAGE_MODEL || "gpt-image-1-mini",
     quality: readEnum(process.env.IMAGE_QUALITY, IMAGE_QUALITIES, "medium"),

@@ -19,6 +19,7 @@ export function shouldGenerateImage({
 }: ImageMoment) {
   if (!enabled || imageMode === "off") return false;
   if (imageMode === "cover") return isIntro;
+  if (imageMode === "cover_outro") return isIntro || isEnding;
   if (imageMode === "every_scene") return isIntro || isEnding || Number.isInteger(turn);
 
   if (imageMode === "milestones") {
