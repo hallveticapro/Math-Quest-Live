@@ -43,15 +43,15 @@ Current Easy coverage includes:
 Current verified or referenced benchmark anchors include:
 
 - `MA.3.NSO.2.1`
-- `MA.3.NSO.1.2` (provisional; needs CPALMS/FDOE verification)
+- `MA.3.NSO.1.2`
 - `MA.3.AR.1.2`
 - `MA.3.GR.2.3`
 - `MA.3.FR.2.1`
-- `MA.3.M.1.1` (provisional; needs CPALMS/FDOE verification)
+- `MA.3.M.1.2`
 - `MA.3.M.2.2`
-- `MA.3.DP.1.1` (provisional; needs CPALMS/FDOE verification)
+- `MA.3.DP.1.2`
 
-Easy currently has useful arithmetic, early geometry, fraction comparison, expanded elapsed-time coverage, and provisional generators for place value, measurement, and data interpretation. The provisional mappings should be audited before formal standards reporting.
+Easy currently has useful arithmetic, early geometry, fraction comparison, expanded elapsed-time coverage, and verified generators for place value, measurement, and data interpretation. The full Grade 3 reference now lives in `3RD_GRADE_BEST_STANDARDS_REFERENCE.md`.
 
 ### Medium / Grade 4
 
@@ -76,7 +76,9 @@ Current verified benchmark anchors include:
 - `MA.4.FR.1.2`
 - `MA.4.GR.1.3`
 
-Medium has a healthy start, with expanded equivalent-fraction, decimal/fraction, and angle-reasoning variety. It still needs verified area/perimeter, factors/multiples, and fraction-operation coverage.
+The full Grade 4 reference now lives in `4TH_GRADE_BEST_STANDARDS_REFERENCE.md`.
+
+Medium has a healthy start, with expanded equivalent-fraction, decimal/fraction, and angle-reasoning variety. The Grade 4 master reference now verifies future anchors for area/perimeter, factors/prime/composite, fraction operations, money, measurement conversion, data, and decimal comparison.
 
 ### Hard / Grade 5
 
@@ -85,50 +87,67 @@ Current Hard coverage includes:
 - Decimal place-value decomposition to thousandths
 - Decimal addition
 - Decimal subtraction
+- Decimal comparison to thousandths
+- Decimal rounding to whole number, tenth, or hundredth
 - Fraction addition with unlike denominators
 - Fraction subtraction with unlike denominators
 - Fraction multiplied by a whole number in context
+- Fraction multiplied by fraction
 - Volume of right rectangular prisms
 - First-quadrant ordered-pair representation
+- Coordinate axes and first-quadrant plotting
 - Numerical expressions / order of operations
 
 Current verified benchmark anchors include:
 
 - `MA.5.NSO.1.3`
+- `MA.5.NSO.1.4`
+- `MA.5.NSO.1.5`
 - `MA.5.NSO.2.3`
 - `MA.5.FR.2.1`
+- `MA.5.FR.2.2`
 - `MA.5.AR.1.2`
 - `MA.5.GR.3.2`
+- `MA.5.GR.4.1`
+- `MA.5.GR.4.2`
 - `MA.5.AR.2.2`
 
-Hard is strongest in core Grade 5 arithmetic, volume, and first-quadrant coordinate basics. It still needs verified broader multi-digit operations and mixed decimal/fraction reasoning.
+The full Grade 5 reference now lives in `5TH_GRADE_BEST_STANDARDS_REFERENCE.md`.
+
+Hard now has broader Grade 5 decimal, fraction, volume, coordinate-plane, and expression coverage. It still intentionally avoids the heavier multi-step load reserved for Extreme.
 
 ### Extreme / Advanced Grade 5
 
 Current Extreme coverage includes:
 
 - Advanced Grade 5 fraction reasoning
+- Multi-step whole-number problems with contextual remainders
 - Multi-step decimal addition/subtraction to thousandths
 - Missing dimension volume reasoning
+- Multi-step measurement conversion
+- Multi-step money problems with decimal notation
 - Coordinate-value interpretation in context
 - Multi-step numerical expressions within Grade 5 limits
 
 Current verified benchmark anchors include:
 
+- `MA.5.AR.1.1`
 - `MA.5.AR.1.2`
 - `MA.5.NSO.2.3`
 - `MA.5.GR.3.3`
+- `MA.5.M.1.1`
+- `MA.5.M.2.1`
 - `MA.5.GR.4.2`
 - `MA.5.AR.2.2`
 
-Extreme correctly stays inside Grade 5. The next expansion should deepen multi-step reasoning without adding Grade 6 topics.
+Extreme correctly stays inside Grade 5 while adding more multi-step variety. Future work should continue deepening Grade 5 reasoning without adding Grade 6 topics.
 
 ## Underrepresented Areas
 
 ### Easy / Grade 3
 
 - Time
-- Money
+- Measurement operations beyond length
 - Rounding
 
 ### Medium / Grade 4
@@ -136,11 +155,17 @@ Extreme correctly stays inside Grade 5. The next expansion should deepen multi-s
 - Area/perimeter
 - Factors/multiples
 - Fraction operations
+- Money with decimal notation
+- Measurement conversion
+- Data interpretation
+- Decimal comparison/order to hundredths
 
 ### Hard / Grade 5
 
-- Multi-digit operations
-- Decimal/fraction mixed reasoning
+- Broader multi-digit whole-number operations
+- Decimal multiplication/division exploration
+- Geometry classification
+- Data interpretation with mean, mode, median, or range
 
 ### Extreme / Advanced Grade 5
 
@@ -160,7 +185,7 @@ The order below favors classroom value, low implementation risk, and better play
 - Difficulty band: Easy
 - Grade band: 3
 - Domain/strand if verified: Not verified from provided source.
-- Candidate benchmark code if already verified: Needs CPALMS/FDOE verification before mapping.
+- Candidate benchmark code if already verified: `MA.3.NSO.1.2` for place-value composition/decomposition; `MA.3.NSO.1.4` for rounding.
 - Skill label: Grade 3 place value and rounding
 - Problem type idea: Identify value of a digit, compare two three-digit numbers, or round to a nearby ten/hundred if verified.
 - Example problem: "The treasure map number is 472. What is the value of the 7?"
@@ -180,29 +205,28 @@ The order below favors classroom value, low implementation risk, and better play
   - targetPlace
   - correctAnswer
 - Notes about CPALMS/FDOE verification:
-  - Verify the exact Grade 3 benchmark for place value and rounding before adding metadata.
+  - Grade 3 place value and rounding benchmarks are now available in `3RD_GRADE_BEST_STANDARDS_REFERENCE.md`.
 
 Implementation status:
 
-- Implemented after user approval as `g3PlaceValueDigit` under provisional benchmark `MA.3.NSO.1.2`.
-- Still needs CPALMS/FDOE verification before formal standards reporting.
-- Rounding remains unimplemented pending stronger verification.
+- Implemented after user approval as `g3PlaceValueDigit` under verified benchmark `MA.3.NSO.1.2`.
+- Rounding remains unimplemented; `MA.3.NSO.1.4` is now available for a future Grade 3 rounding generator.
 
-### 2. Easy Money And Measurement
+### 2. Easy Measurement Operations
 
 - Difficulty band: Easy
 - Grade band: 3
 - Domain/strand if verified: Not verified from provided source.
-- Candidate benchmark code if already verified: Needs CPALMS/FDOE verification before mapping.
-- Skill label: money and measurement
-- Problem type idea: Add coins/bills, compare simple lengths, or choose a measurement total.
-- Example problem: "A market pouch has 3 quarters and 2 dimes. How much money is in the pouch?"
+- Candidate benchmark code if already verified: `MA.3.M.1.2` for whole-number measurement operations.
+- Skill label: measurement operations
+- Problem type idea: compare simple lengths, choose a measurement total, or extend to mass, weight, temperature, or liquid volume.
+- Example problem: "A trail has one path that is 24 yards long and another path that is 18 yards long. How many yards are the paths in all?"
 - Likely distractor patterns:
-  - Count coins as 1 each
-  - Confuse dime/quarter values
-  - Skip one coin group
-  - Add one extra coin value
-- Hint idea: "Give each coin its value first, then add the values."
+  - Add instead of compare
+  - Use only one measured value
+  - Skip a measured value
+  - Off-by-one comparison
+- Hint idea: "Use the unit in the problem, then decide whether to add or compare."
 - Signature fields needed:
   - difficulty
   - benchmark
@@ -211,20 +235,19 @@ Implementation status:
   - coinCounts or measurementValues
   - correctAnswer
 - Notes about CPALMS/FDOE verification:
-  - Verify current Grade 3 money and measurement expectations before adding benchmark metadata.
+  - Grade 3 measurement benchmarks are now available in `3RD_GRADE_BEST_STANDARDS_REFERENCE.md`.
 
 Implementation status:
 
-- Implemented after user approval as `g3MeasurementLength` under provisional benchmark `MA.3.M.1.1`.
-- Money remains unimplemented; this pass added length measurement rather than coin/currency problems.
-- Still needs CPALMS/FDOE verification before formal standards reporting.
+- Implemented after user approval as `g3MeasurementLength` under verified benchmark `MA.3.M.1.2`.
+- Money is not represented in the provided Grade 3 benchmark list; this plan now focuses on measurement operations instead.
 
 ### 3. Easy Data Interpretation
 
 - Difficulty band: Easy
 - Grade band: 3
 - Domain/strand if verified: Not verified from provided source.
-- Candidate benchmark code if already verified: Needs CPALMS/FDOE verification before mapping.
+- Candidate benchmark code if already verified: `MA.3.DP.1.2`
 - Skill label: simple data interpretation
 - Problem type idea: Read a small table or pictograph-style count.
 - Example problem: "The class found 8 shells, 5 gems, and 6 feathers. How many more shells than gems did they find?"
@@ -244,12 +267,11 @@ Implementation status:
   - comparisonType
   - correctAnswer
 - Notes about CPALMS/FDOE verification:
-  - Add only after identifying the verified Grade 3 data benchmark.
+  - Grade 3 data benchmarks are now available in `3RD_GRADE_BEST_STANDARDS_REFERENCE.md`.
 
 Implementation status:
 
-- Implemented after user approval as `g3DataInterpretation` under provisional benchmark `MA.3.DP.1.1`.
-- Still needs CPALMS/FDOE verification before formal standards reporting.
+- Implemented after user approval as `g3DataInterpretation` under verified benchmark `MA.3.DP.1.2`.
 
 ### 3A. Easy Two-Step Elapsed Time Variety
 
@@ -284,10 +306,10 @@ Implementation status:
 - Difficulty band: Medium
 - Grade band: 4
 - Domain/strand if verified: Not verified from provided source.
-- Candidate benchmark code if already verified: Needs CPALMS/FDOE verification before mapping.
+- Candidate benchmark code if already verified: `MA.4.AR.3.1`
 - Skill label: factors and multiples
-- Problem type idea: Identify a factor pair, choose a multiple, or sort factor/multiple relationships.
-- Example problem: "Which number is a factor of 36?"
+- Problem type idea: Identify a factor pair, decide whether a number is prime/composite/neither, or choose a factor of a number from 0 to 144.
+- Example problem: "Which number is a factor of 36?" or "Is 47 prime, composite, or neither?"
 - Likely distractor patterns:
   - Multiple instead of factor
   - Nearby non-factor
@@ -303,18 +325,18 @@ Implementation status:
   - candidateFactors
   - correctAnswer
 - Notes about CPALMS/FDOE verification:
-  - Verify the Grade 4 factor/multiple benchmark before implementation.
+  - `MA.4.AR.3.1` is verified from the provided Grade 4 source for factor pairs from 0 to 144 and prime/composite/neither.
 
 Implementation status:
 
-- Skipped in the first Medium expansion pass because this plan still requires CPALMS/FDOE verification before mapping.
+- Not implemented yet. It is now standards-ready for a future Medium expansion pass.
 
 ### 5. Medium Area And Perimeter Problem Solving
 
 - Difficulty band: Medium
 - Grade band: 4
 - Domain/strand if verified: Not verified from provided source.
-- Candidate benchmark code if already verified: Needs CPALMS/FDOE verification before mapping.
+- Candidate benchmark code if already verified: `MA.4.GR.2.1`; `MA.4.GR.2.2` for same-area/same-perimeter comparison problems.
 - Skill label: area and perimeter problem solving
 - Problem type idea: Find perimeter from side lengths, find missing side from perimeter, or compare two rectangles.
 - Example problem: "A garden is 12 feet long and 7 feet wide. What is its perimeter?"
@@ -334,20 +356,21 @@ Implementation status:
   - targetMeasure
   - correctAnswer
 - Notes about CPALMS/FDOE verification:
-  - Verify exact Grade 4 area/perimeter benchmark and whether missing-side problems are included.
+  - `MA.4.GR.2.1` is verified from the provided Grade 4 source for area/perimeter rectangle problems, including unknown sides, with whole-number side lengths.
+  - `MA.4.GR.2.2` is verified for same-perimeter/different-area and same-area/different-perimeter rectangle problems.
 
 Implementation status:
 
-- Skipped in the first Medium expansion pass because this plan still requires CPALMS/FDOE verification before mapping.
+- Not implemented yet. It is now standards-ready for a future Medium expansion pass.
 
 ### 6. Medium Fraction Operations
 
 - Difficulty band: Medium
 - Grade band: 4
 - Domain/strand if verified: Not verified from provided source.
-- Candidate benchmark code if already verified: `MA.4.FR.2.1` or `MA.4.FR.2.2` may be candidates from earlier project notes, but they must be verified against source before use.
+- Candidate benchmark code if already verified: `MA.4.FR.2.1`, `MA.4.FR.2.2`, `MA.4.FR.2.3`, or `MA.4.FR.2.4`, depending on generator shape.
 - Skill label: Grade 4 fraction operations
-- Problem type idea: Add fractions with like denominators, decompose a fraction, or multiply a fraction by a whole number if verified.
+- Problem type idea: Add/subtract fractions with like denominators, decompose a fraction into like-denominator sums, add tenths and hundredths using equivalent fractions, or explore fraction times whole number.
 - Example problem: "A hero uses 2/8 of a ribbon, then 3/8 more. How much ribbon did they use?"
 - Likely distractor patterns:
   - Add denominators
@@ -366,11 +389,14 @@ Implementation status:
   - operation
   - correctAnswer
 - Notes about CPALMS/FDOE verification:
-  - Verify the Grade 4 fraction operation benchmarks before adding these generators.
+  - `MA.4.FR.2.1` is verified for decomposing fractions, including mixed numbers and fractions greater than one, into sums with the same denominator.
+  - `MA.4.FR.2.2` is verified for adding and subtracting fractions with like denominators, including mixed numbers and fractions greater than one.
+  - `MA.4.FR.2.3` is verified for adding tenths and hundredths using equivalent fractions.
+  - `MA.4.FR.2.4` is verified for exploring multiplication of a fraction by a whole number or a whole number by a fraction.
 
 Implementation status:
 
-- Skipped in the first Medium expansion pass because the candidate Grade 4 fraction-operation benchmarks are not verified in the current reference docs.
+- Not implemented yet. These candidates are now verified from the provided Grade 4 source and ready for a future Medium expansion pass.
 - Related verified fraction variety was added under `MA.4.FR.1.3` as `g4EquivalentFractionsGreaterThanOne`.
 - Related verified fraction-decimal variety was added under `MA.4.FR.1.2` as `g4DecimalsTenthsToFraction`.
 
@@ -663,7 +689,7 @@ Implementation status:
 
 ### Easy Expansion Prompt
 
-Add Grade 3 generators for place value, rounding if verified, money/measurement, and simple data interpretation. Use only verified benchmark metadata. Keep one-step and light two-step problems. Add stable signatures, unique answer choices, and skill-specific hints.
+Add Grade 3 generators for place value, rounding, measurement operations, and simple data interpretation. Use only verified benchmark metadata. Keep one-step and light two-step problems. Add stable signatures, unique answer choices, and skill-specific hints.
 
 Recommended order:
 
@@ -674,14 +700,18 @@ Recommended order:
 
 ### Medium Expansion Prompt
 
-Add Grade 4 generators for factors/multiples, area/perimeter, fraction operations, and additional angle/geometry variety. Keep each generator within verified Grade 4 expectations and avoid introducing Grade 5 fraction complexity.
+Add Grade 4 generators for factors/prime/composite, area/perimeter, fraction operations, money, measurement conversion, data interpretation, decimal comparison, and additional angle/geometry variety. Keep each generator within verified Grade 4 expectations and avoid introducing Grade 5 fraction complexity.
 
 Recommended order:
 
-1. Factors/multiples
-2. Area/perimeter
-3. Like-denominator fraction operations, if benchmark verified
-4. Angle reasoning variations
+1. Factors/prime/composite using `MA.4.AR.3.1`
+2. Area/perimeter and missing rectangle sides using `MA.4.GR.2.1`
+3. Like-denominator fraction operations using `MA.4.FR.2.2`
+4. Money with decimal notation using `MA.4.M.2.2`
+5. Data interpretation using `MA.4.DP.1.2` or `MA.4.DP.1.3`
+6. Measurement conversion using `MA.4.M.1.2`
+7. Decimal comparison/order to hundredths using `MA.4.NSO.1.5`
+8. Additional angle reasoning variations using `MA.4.GR.1.3`
 
 ### Hard Expansion Prompt
 
@@ -689,10 +719,11 @@ Add Grade 5 generators for coordinate plane basics, broader multi-digit operatio
 
 Recommended order:
 
-1. Coordinate plane basics
-2. Decimal/fraction representation, if benchmark verified
-3. Multi-digit operations, if benchmark verified
-4. Additional fraction operation variety
+1. Coordinate plane basics using `MA.5.GR.4.1` and `MA.5.GR.4.2`
+2. Decimal comparison and rounding using `MA.5.NSO.1.4` and `MA.5.NSO.1.5`
+3. Fraction multiplication using `MA.5.FR.2.2`
+4. Multi-digit operations using `MA.5.NSO.2.1` or `MA.5.NSO.2.2`
+5. Geometry classification using `MA.5.GR.1.1` or `MA.5.GR.1.2`
 
 ### Extreme Expansion Prompt
 
@@ -702,9 +733,12 @@ Recommended order:
 
 1. Unlike-denominator fraction multi-step reasoning
 2. Decimal to thousandths multi-step reasoning
-3. Volume with missing dimension and simple equation language
-4. Coordinate plane interpretation in context
-5. Order-of-operations expressions within Grade 5 limits
+3. Contextual remainders using `MA.5.AR.1.1`
+4. Volume with missing dimension and simple equation language
+5. Measurement conversion using `MA.5.M.1.1`
+6. Money with decimal notation using `MA.5.M.2.1`
+7. Coordinate plane interpretation in context
+8. Order-of-operations expressions within Grade 5 limits
 
 ## Documentation Updates Needed After Implementation
 

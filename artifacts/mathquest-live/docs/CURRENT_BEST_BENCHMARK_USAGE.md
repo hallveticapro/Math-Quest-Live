@@ -22,12 +22,12 @@ This file documents the benchmarks currently used by MathQuest Live. Benchmark d
 
 ## Summary
 
-- Unique benchmark codes currently used: 22
-- Total skill entries currently mapped to benchmarks: 33
-- Grade 3 / Easy skill entries: 10
-- Grade 4 / Medium skill entries: 9
-- Grade 5 / Hard skill entries: 9
-- Advanced Grade 5 / Extreme skill entries: 5
+- Unique benchmark codes currently used: 35
+- Total skill entries currently mapped to benchmarks: 46
+- Grade 3 / Easy skill entries: 12
+- Grade 4 / Medium skill entries: 13
+- Grade 5 / Hard skill entries: 13
+- Advanced Grade 5 / Extreme skill entries: 8
 
 Benchmark codes and descriptions are currently internal metadata on generated math problems. Student-facing setup, settings, and app-info UI show difficulty-level descriptions and skill summaries, but they do not show individual benchmark codes. The README includes a sample metadata object that shows one benchmark code and description.
 
@@ -57,7 +57,7 @@ Generated math problems currently include:
 
 ## Current Domains / Strands
 
-No separate official domain or strand field currently exists in the app metadata.
+The generated problem metadata includes `domain`, `strand`, and `reportingCategory` fields, but the current values remain conservative placeholders unless a later source provides official wording for those fields.
 
 The app currently implies broad content areas through:
 
@@ -69,41 +69,56 @@ This file does not invent official domain names. A future verification pass shou
 
 ## Summary Table
 
+The summary table is the current authoritative inventory after the Grade 3, Grade 4, and Grade 5 standards-reference expansion passes. Some narrative detail sections below preserve extra notes from earlier audits and should be treated as explanatory, not as a replacement for this table.
+
 | Difficulty | Grade Band | Benchmark Code | Current App Description | Skill Label | Problem Type | Generator(s) | Internal/Student/Teacher/README Use | Verification Status |
 |---|---:|---|---|---|---|---|---|---|
-| Easy | 3 | MA.3.NSO.1.2 | Practice identifying the value of a digit in a multi-digit whole number within Grade 3 expectations. | place value | digit value in a multi-digit number | g3PlaceValueDigit | Internal metadata; developer validation | Needs CPALMS/FDOE verification |
-| Easy | 3 | MA.3.NSO.2.1 | Practice multi-digit whole-number addition and subtraction. | addition and subtraction within 1,000 | addition/subtraction word problem | g3AddSub1000 | Internal metadata; developer validation | Needs official verification |
-| Easy | 3 | MA.3.AR.1.2 | Solve one- and two-step whole-number word problems involving multiplication. | multiplication within 100 | equal groups/array multiplication | g3MultiplicationFacts | Internal metadata; README sample uses this code/description | Needs official verification |
-| Easy | 3 | MA.3.AR.1.2 | Solve one- and two-step whole-number word problems involving division. | division within 100 | equal sharing division | g3DivisionFacts | Internal metadata | Needs official verification |
-| Easy | 3 | MA.3.GR.2.3 | Solve rectangle area and perimeter problems with whole-number side lengths. | area and perimeter with whole numbers | rectangle area or perimeter | g3AreaPerimeter | Internal metadata | Needs review |
-| Easy | 3 | MA.3.FR.2.1 | Compare fractional numbers with common numerators or denominators. | simple fraction comparison | same-denominator fraction comparison | g3FractionCompare | Internal metadata | Needs official verification |
-| Easy | 3 | MA.3.M.1.1 | Practice solving simple length measurement problems within Grade 3 expectations. | length measurement | length total or comparison | g3MeasurementLength | Internal metadata; developer validation | Needs CPALMS/FDOE verification |
+| Easy | 3 | MA.3.NSO.1.2 | Practice identifying the value of a digit in a multi-digit whole number within Grade 3 expectations. | place value | digit value in a multi-digit number | g3PlaceValueDigit | Internal metadata; developer validation | Verified from provided source |
+| Easy | 3 | MA.3.NSO.2.1 | Practice multi-digit whole-number addition and subtraction. | addition and subtraction within 1,000 | addition/subtraction word problem | g3AddSub1000 | Internal metadata; developer validation | Verified from provided source |
+| Easy | 3 | MA.3.AR.1.2 | Solve one- and two-step whole-number word problems involving multiplication. | multiplication within 100 | equal groups/array multiplication | g3MultiplicationFacts | Internal metadata; README sample uses this code/description | Verified from provided source |
+| Easy | 3 | MA.3.AR.1.2 | Solve one- and two-step whole-number word problems involving division. | division within 100 | equal sharing division | g3DivisionFacts | Internal metadata | Verified from provided source |
+| Easy | 3 | MA.3.GR.2.3 | Solve rectangle area and perimeter problems with whole-number side lengths. | area and perimeter with whole numbers | rectangle area or perimeter | g3AreaPerimeter | Internal metadata | Verified from provided source |
+| Easy | 3 | MA.3.FR.2.1 | Compare fractional numbers with common numerators or denominators. | simple fraction comparison | same-denominator fraction comparison | g3FractionCompare | Internal metadata | Verified from provided source |
+| Easy | 3 | MA.3.FR.2.2 | Practice identifying equivalent fractions within Grade 3 expectations. | equivalent fractions | equivalent fractions | g3EquivalentFractions | Internal metadata; developer validation | Verified from provided source |
+| Easy | 3 | MA.3.NSO.1.4 | Practice rounding whole numbers from 0 to 1,000 to the nearest 10 or 100. | rounding whole numbers | whole-number rounding | g3Rounding | Internal metadata; developer validation | Verified from provided source |
+| Easy | 3 | MA.3.M.1.2 | Practice solving real-world length measurement problems within Grade 3 expectations. | length measurement | length total or comparison | g3MeasurementLength | Internal metadata; developer validation | Verified from provided source |
 | Easy | 3 | MA.3.M.2.2 | Practice elapsed-time problem solving within Grade 3 expectations. | elapsed time | elapsed time in minutes | g3ElapsedTime | Internal metadata | Verified from provided source |
 | Easy | 3 | MA.3.M.2.2 | Practice two-step elapsed-time problem solving within Grade 3 expectations. | two-step elapsed time | two-step elapsed time with a missing part | g3ElapsedTimeTwoStep | Internal metadata | Verified from provided source |
-| Easy | 3 | MA.3.DP.1.1 | Practice reading and comparing values in a simple data table within Grade 3 expectations. | simple data interpretation | table total or comparison | g3DataInterpretation | Internal metadata; developer validation | Needs CPALMS/FDOE verification |
+| Easy | 3 | MA.3.DP.1.2 | Practice reading and comparing values in a simple data table within Grade 3 expectations. | simple data interpretation | table total or comparison | g3DataInterpretation | Internal metadata; developer validation | Verified from provided source |
 | Medium | 4 | MA.4.NSO.1.4 | Round whole numbers from 0 to 10,000 to the nearest 10, 100, or 1,000. | rounding multi-digit numbers | whole-number rounding within verified Grade 4 range | g4Rounding | Internal metadata | Verified from provided source |
-| Medium | 4 | MA.4.NSO.2.2 | Multiply multi-digit whole numbers within Grade 4 expectations. | multi-digit multiplication | two-digit by one-digit multiplication | g4Multiplication | Internal metadata | Needs official verification |
+| Medium | 4 | MA.4.NSO.2.2 | Multiply multi-digit whole numbers within Grade 4 expectations. | multi-digit multiplication | two-digit by one-digit multiplication | g4Multiplication | Internal metadata | Verified from provided source |
 | Medium | 4 | MA.4.NSO.2.4 | Divide multi-digit whole numbers by one-digit divisors and express remainders as fractional parts of the divisor. | division with fractional remainders | division with fractional remainder notation | g4DivisionRemainders | Internal metadata | Verified from provided source |
-| Medium | 4 | MA.4.FR.1.3 | Identify and generate equivalent fractions. | equivalent fractions | equivalent fractions | g4EquivalentFractions | Internal metadata | Needs official verification |
+| Medium | 4 | MA.4.AR.3.1 | Practice factor pairs and prime/composite classification within Grade 4 expectations. | factors, prime, and composite numbers | factor pairs or prime/composite classification | g4FactorsPrimeComposite | Internal metadata; developer validation | Verified from provided source |
+| Medium | 4 | MA.4.GR.2.1 | Practice rectangle area and perimeter problem solving, including unknown sides, within Grade 4 expectations. | area and perimeter problem solving | rectangle area/perimeter or missing side | g4AreaPerimeterRectangles | Internal metadata; developer validation | Verified from provided source |
+| Medium | 4 | MA.4.FR.1.3 | Identify and generate equivalent fractions. | equivalent fractions | equivalent fractions | g4EquivalentFractions | Internal metadata | Verified from provided source |
 | Medium | 4 | MA.4.FR.1.3 | Practice equivalent fractions greater than one within Grade 4 expectations. | equivalent fractions greater than one | equivalent fractions greater than one | g4EquivalentFractionsGreaterThanOne | Internal metadata; developer validation | Verified from provided source |
-| Medium | 4 | MA.4.FR.1.2 | Relate fractions with denominators 10 or 100 to decimal notation. | decimals to hundredths | fraction-to-decimal conversion | g4DecimalsHundredths | Internal metadata | Needs official verification |
+| Medium | 4 | MA.4.FR.1.2 | Relate fractions with denominators 10 or 100 to decimal notation. | decimals to hundredths | fraction-to-decimal conversion | g4DecimalsHundredths | Internal metadata | Verified from provided source |
 | Medium | 4 | MA.4.FR.1.2 | Practice decimal-fraction relationships with tenths within Grade 4 expectations. | tenths as decimals and fractions | decimal-to-fraction tenths conversion | g4DecimalsTenthsToFraction | Internal metadata; developer validation | Verified from provided source |
-| Medium | 4 | MA.4.GR.1.3 | Solve problems involving unknown whole-number angle measures. | angle measurement | missing angle measure | g4Angles | Internal metadata | Needs official verification |
+| Medium | 4 | MA.4.FR.2.2 | Practice adding and subtracting fractions with like denominators within Grade 4 expectations. | like-denominator fraction operations | like-denominator fraction addition/subtraction | g4FractionAddLikeDenominators | Internal metadata; developer validation | Verified from provided source |
+| Medium | 4 | MA.4.M.2.2 | Practice one- and two-step money problems using decimal notation within Grade 4 expectations. | money with decimal notation | decimal money addition/subtraction | g4MoneyDecimal | Internal metadata; developer validation | Verified from provided source |
+| Medium | 4 | MA.4.GR.1.3 | Solve problems involving unknown whole-number angle measures. | angle measurement | missing angle measure | g4Angles | Internal metadata | Verified from provided source |
 | Medium | 4 | MA.4.GR.1.3 | Practice finding unknown whole-number angle measures in multi-part angles within Grade 4 expectations. | multi-part angle measurement | missing angle in a three-part angle | g4AnglesThreePart | Internal metadata; developer validation | Verified from provided source |
 | Hard | 5 | MA.5.NSO.1.3 | Compose and decompose multi-digit numbers with decimals to the thousandths. | decimal place-value decomposition | decimal decomposition by place value | g5DecimalPlaceValue | Internal metadata | Verified from provided source |
-| Hard | 5 | MA.5.NSO.2.3 | Add and subtract decimals to the thousandths. | decimal operations | decimal addition | g5DecimalOperations | Internal metadata | Needs official verification |
+| Hard | 5 | MA.5.NSO.2.3 | Add and subtract decimals to the thousandths. | decimal operations | decimal addition | g5DecimalOperations | Internal metadata | Verified from provided source |
 | Hard | 5 | MA.5.NSO.2.3 | Practice decimal subtraction to the thousandths within Grade 5 expectations. | decimal subtraction | decimal subtraction to thousandths | g5DecimalSubtraction | Internal metadata; developer validation | Verified from provided source |
-| Hard | 5 | MA.5.FR.2.1 | Add and subtract fractions with unlike denominators. | fractions with unlike denominators | fraction addition | g5FractionAddUnlike | Internal metadata | Needs official verification |
+| Hard | 5 | MA.5.NSO.1.4 | Practice comparing decimals to the thousandths within Grade 5 expectations. | decimal comparison | decimal comparison to thousandths | g5DecimalCompare | Internal metadata; developer validation | Verified from provided source |
+| Hard | 5 | MA.5.NSO.1.5 | Practice rounding decimals to the nearest hundredth, tenth, or whole number within Grade 5 expectations. | decimal rounding | decimal rounding | g5DecimalRounding | Internal metadata; developer validation | Verified from provided source |
+| Hard | 5 | MA.5.FR.2.1 | Add and subtract fractions with unlike denominators. | fractions with unlike denominators | fraction addition | g5FractionAddUnlike | Internal metadata | Verified from provided source |
 | Hard | 5 | MA.5.FR.2.1 | Practice subtracting fractions with unlike denominators within Grade 5 expectations. | subtracting fractions with unlike denominators | fraction subtraction | g5FractionSubtractUnlike | Internal metadata; developer validation | Verified from provided source |
-| Hard | 5 | MA.5.AR.1.2 | Solve real-world problems involving multiplication of fractions. | multiplying fractions by whole numbers | fraction times whole number | g5FractionTimesWhole | Internal metadata | Needs official verification |
-| Hard | 5 | MA.5.GR.3.2 | Find volume of right rectangular prisms with whole-number side lengths. | volume of rectangular prisms | rectangular prism volume | g5Volume | Internal metadata | Needs official verification |
+| Hard | 5 | MA.5.AR.1.2 | Solve real-world problems involving multiplication of fractions. | multiplying fractions by whole numbers | fraction times whole number | g5FractionTimesWhole | Internal metadata | Verified from provided source |
+| Hard | 5 | MA.5.FR.2.2 | Practice multiplying fractions by fractions within Grade 5 expectations. | fraction by fraction multiplication | fraction multiplication | g5FractionTimesFraction | Internal metadata; developer validation | Verified from provided source |
+| Hard | 5 | MA.5.GR.3.2 | Find volume of right rectangular prisms with whole-number side lengths. | volume of rectangular prisms | rectangular prism volume | g5Volume | Internal metadata | Verified from provided source |
 | Hard | 5 | MA.5.GR.4.2 | Practice representing first-quadrant locations as ordered pairs in a real-world context. | coordinate plane ordered pairs | first-quadrant ordered pair | g5CoordinatePoint | Internal metadata; developer validation | Verified from provided source |
-| Hard | 5 | MA.5.AR.2.2 | Evaluate multi-step numerical expressions using order of operations. | numerical expressions | expression evaluation | g5Expressions | Internal metadata | Needs official verification |
-| Extreme | 5 | MA.5.AR.1.2 | Solve multi-step real-world problems involving fraction operations. | advanced Grade 5 fraction reasoning | fraction addition plus whole number | g5ExtremeFractionCombo | Internal metadata | Needs review |
-| Extreme | 5 | MA.5.NSO.2.3 | Solve multi-step decimal addition and subtraction problems to thousandths. | advanced Grade 5 decimal operations | decimal addition/subtraction to thousandths | g5ExtremeDecimalCombo | Internal metadata | App-internal conservative wording |
-| Extreme | 5 | MA.5.GR.3.3 | Solve real-world volume problems involving right rectangular prisms. | advanced Grade 5 volume reasoning | missing dimension from volume | g5ExtremeVolume | Internal metadata | Needs official verification |
+| Hard | 5 | MA.5.GR.4.1 | Practice identifying coordinate axes and plotting first-quadrant ordered pairs within Grade 5 expectations. | coordinate axes and plotting | coordinate axes or ordered pair plotting | g5CoordinateAxes | Internal metadata; developer validation | Verified from provided source |
+| Hard | 5 | MA.5.AR.2.2 | Evaluate multi-step numerical expressions using order of operations. | numerical expressions | expression evaluation | g5Expressions | Internal metadata | Verified from provided source |
+| Extreme | 5 | MA.5.AR.1.2 | Solve multi-step real-world problems involving fraction operations. | advanced Grade 5 fraction reasoning | fraction addition plus whole number | g5ExtremeFractionCombo | Internal metadata | Verified from provided source |
+| Extreme | 5 | MA.5.AR.1.1 | Practice multi-step whole-number word problems with contextual remainders within Grade 5 expectations. | advanced whole-number problem solving | contextual remainder interpretation | g5ExtremeWholeNumberRemainders | Internal metadata; developer validation | Verified from provided source |
+| Extreme | 5 | MA.5.NSO.2.3 | Solve multi-step decimal addition and subtraction problems to thousandths. | advanced Grade 5 decimal operations | decimal addition/subtraction to thousandths | g5ExtremeDecimalCombo | Internal metadata | Verified from provided source |
+| Extreme | 5 | MA.5.GR.3.3 | Solve real-world volume problems involving right rectangular prisms. | advanced Grade 5 volume reasoning | missing dimension from volume | g5ExtremeVolume | Internal metadata | Verified from provided source |
+| Extreme | 5 | MA.5.M.1.1 | Practice multi-step real-world measurement conversion problems within a single system. | advanced measurement conversion | measurement conversion and addition | g5ExtremeMeasurementConversion | Internal metadata; developer validation | Verified from provided source |
+| Extreme | 5 | MA.5.M.2.1 | Practice multi-step money problems using decimal notation within Grade 5 expectations. | advanced money problem solving | multi-step decimal money | g5ExtremeMoneyDecimal | Internal metadata; developer validation | Verified from provided source |
 | Extreme | 5 | MA.5.GR.4.2 | Represent and interpret real-world problems using first-quadrant coordinate values. | coordinate plane interpretation | coordinate-value interpretation in context | g5ExtremeCoordinate | Internal metadata | Verified from provided source |
-| Extreme | 5 | MA.5.AR.2.2 | Evaluate multi-step numerical expressions within Grade 5 limits. | advanced Grade 5 expression reasoning | expression evaluation with parentheses | g5ExtremeExpressions | Internal metadata | App-internal conservative wording |
+| Extreme | 5 | MA.5.AR.2.2 | Evaluate multi-step numerical expressions within Grade 5 limits. | advanced Grade 5 expression reasoning | expression evaluation with parentheses | g5ExtremeExpressions | Internal metadata | Verified from provided source |
 
 ## Easy / Grade 3 Current Usage
 
@@ -118,7 +133,7 @@ This file does not invent official domain names. A future verification pass shou
 - Problem type: digit value in a multi-digit number
 - Example problem shape: Students identify the value of a named digit in a four-digit treasure-map number.
 - Current use: internal problem metadata and developer validation.
-- Verification status: Needs CPALMS/FDOE verification.
+- Verification status: Verified from provided source.
 
 ### MA.3.NSO.2.1
 
@@ -131,7 +146,7 @@ This file does not invent official domain names. A future verification pass shou
 - Problem type: addition/subtraction word problem
 - Example problem shape: A map or treasure scenario combines or removes whole-number amounts, then asks how many steps/gems there are in all or left.
 - Current use: internal problem metadata and developer validation.
-- Verification status: Needs official verification.
+- Verification status: Verified from provided source.
 
 ### MA.3.AR.1.2
 
@@ -144,7 +159,7 @@ This file does not invent official domain names. A future verification pass shou
 - Problem type: equal groups/array multiplication
 - Example problem shape: A garden has a number of rows with a number of flowers in each row; students find the total.
 - Current use: internal problem metadata, developer validation, and README sample metadata.
-- Verification status: Needs official verification.
+- Verification status: Verified from provided source.
 
 ### MA.3.AR.1.2
 
@@ -157,7 +172,7 @@ This file does not invent official domain names. A future verification pass shou
 - Problem type: equal sharing division
 - Example problem shape: A total number of glowing stones is shared equally into bags; students find how many go in each bag.
 - Current use: internal problem metadata and developer validation.
-- Verification status: Needs official verification.
+- Verification status: Verified from provided source.
 
 ### MA.3.GR.2.3
 
@@ -170,7 +185,7 @@ This file does not invent official domain names. A future verification pass shou
 - Problem type: rectangle area or perimeter
 - Example problem shape: A rectangle has a length and width; students find either area or perimeter.
 - Current use: internal problem metadata and developer validation.
-- Verification status: Needs review.
+- Verification status: Verified from provided source.
 
 ### MA.3.FR.2.1
 
@@ -183,11 +198,11 @@ This file does not invent official domain names. A future verification pass shou
 - Problem type: same-denominator fraction comparison
 - Example problem shape: Students choose which of two fractions with the same denominator is greater.
 - Current use: internal problem metadata and developer validation.
-- Verification status: Needs official verification.
+- Verification status: Verified from provided source.
 
-### MA.3.M.1.1
+### MA.3.M.1.2
 
-- Current app description: Practice solving simple length measurement problems within Grade 3 expectations.
+- Current app description: Practice solving real-world length measurement problems within Grade 3 expectations.
 - Difficulty band: Easy / Adventurer
 - Grade band: 3
 - Skill id: `g3_measurement_length`
@@ -196,7 +211,7 @@ This file does not invent official domain names. A future verification pass shou
 - Problem type: length total or comparison
 - Example problem shape: Students add two path lengths or compare two measured lengths.
 - Current use: internal problem metadata and developer validation.
-- Verification status: Needs CPALMS/FDOE verification.
+- Verification status: Verified from provided source.
 
 ### MA.3.M.2.2
 
@@ -211,7 +226,7 @@ This file does not invent official domain names. A future verification pass shou
 - Current use: internal problem metadata and developer validation.
 - Verification status: Verified from provided source.
 
-### MA.3.DP.1.1
+### MA.3.DP.1.2
 
 - Current app description: Practice reading and comparing values in a simple data table within Grade 3 expectations.
 - Difficulty band: Easy / Adventurer
@@ -222,7 +237,7 @@ This file does not invent official domain names. A future verification pass shou
 - Problem type: table total or comparison
 - Example problem shape: Students read a simple quest table and either compare two categories or add two requested categories.
 - Current use: internal problem metadata and developer validation.
-- Verification status: Needs CPALMS/FDOE verification.
+- Verification status: Verified from provided source.
 
 ### MA.3.M.2.2
 
@@ -242,11 +257,11 @@ This file does not invent official domain names. A future verification pass shou
 Implemented in Easy expansion passes:
 
 - `g3ElapsedTimeTwoStep` under verified benchmark `MA.3.M.2.2`.
-- `g3PlaceValueDigit` under provisional benchmark `MA.3.NSO.1.2`.
-- `g3MeasurementLength` under provisional benchmark `MA.3.M.1.1`.
-- `g3DataInterpretation` under provisional benchmark `MA.3.DP.1.1`.
+- `g3PlaceValueDigit` under verified benchmark `MA.3.NSO.1.2`.
+- `g3MeasurementLength` under verified benchmark `MA.3.M.1.2`.
+- `g3DataInterpretation` under verified benchmark `MA.3.DP.1.2`.
 
-The provisional mappings were added to improve Easy play variety and should be audited against CPALMS/FDOE before formal standards reporting.
+The Grade 3 source reference now lives in `artifacts/mathquest-live/docs/3RD_GRADE_BEST_STANDARDS_REFERENCE.md`.
 
 ## Medium / Grade 4 Current Usage
 
@@ -274,7 +289,7 @@ The provisional mappings were added to improve Easy play variety and should be a
 - Problem type: two-digit by one-digit multiplication
 - Example problem shape: A shelf has a two-digit number of books in each stack and a one-digit number of stacks; students find the total.
 - Current use: internal problem metadata and developer validation.
-- Verification status: Needs official verification.
+- Verification status: Verified from provided source.
 
 ### MA.4.NSO.2.4
 
@@ -300,7 +315,7 @@ The provisional mappings were added to improve Easy play variety and should be a
 - Problem type: equivalent fractions
 - Example problem shape: Students choose a fraction equivalent to a given fraction.
 - Current use: internal problem metadata and developer validation.
-- Verification status: Needs official verification.
+- Verification status: Verified from provided source.
 
 ### MA.4.FR.1.3
 
@@ -326,7 +341,7 @@ The provisional mappings were added to improve Easy play variety and should be a
 - Problem type: fraction-to-decimal conversion
 - Example problem shape: Students choose the decimal equivalent of a fraction with denominator 100.
 - Current use: internal problem metadata and developer validation.
-- Verification status: Needs official verification.
+- Verification status: Verified from provided source.
 
 ### MA.4.FR.1.2
 
@@ -352,7 +367,7 @@ The provisional mappings were added to improve Easy play variety and should be a
 - Problem type: missing angle measure
 - Example problem shape: Two angles combine to make 90, 120, or 180 degrees; students find the missing angle.
 - Current use: internal problem metadata and developer validation.
-- Verification status: Needs official verification.
+- Verification status: Verified from provided source.
 
 ### MA.4.GR.1.3
 
@@ -375,11 +390,12 @@ Implemented in the first Medium expansion pass:
 - `g4DecimalsTenthsToFraction` under verified benchmark `MA.4.FR.1.2`.
 - `g4AnglesThreePart` under verified benchmark `MA.4.GR.1.3`.
 
-Skipped pending stronger verification before implementation:
+Now verified from the provided Grade 4 CPALMS export and ready for future implementation:
 
-- Grade 4 factors and multiples
-- Grade 4 area/perimeter problem solving
-- Grade 4 like-denominator fraction operations
+- Grade 4 factors, factor pairs, prime, and composite: `MA.4.AR.3.1`
+- Grade 4 area/perimeter and missing rectangle side lengths: `MA.4.GR.2.1`
+- Grade 4 like-denominator fraction operations: `MA.4.FR.2.2`
+- Grade 4 fraction decomposition: `MA.4.FR.2.1`
 
 ## Hard / Grade 5 Current Usage
 
@@ -407,7 +423,7 @@ Skipped pending stronger verification before implementation:
 - Problem type: decimal addition
 - Example problem shape: A robot travels two decimal distances; students add the distances.
 - Current use: internal problem metadata and developer validation.
-- Verification status: Needs official verification.
+- Verification status: Verified from provided source.
 
 ### MA.5.NSO.2.3
 
@@ -433,7 +449,7 @@ Skipped pending stronger verification before implementation:
 - Problem type: fraction addition
 - Example problem shape: Students add two fractions with unlike denominators.
 - Current use: internal problem metadata and developer validation.
-- Verification status: Needs official verification.
+- Verification status: Verified from provided source.
 
 ### MA.5.FR.2.1
 
@@ -459,7 +475,7 @@ Skipped pending stronger verification before implementation:
 - Problem type: fraction times whole number
 - Example problem shape: A recipe uses a fraction of a cup per batch; students find the amount for multiple batches.
 - Current use: internal problem metadata and developer validation.
-- Verification status: Needs official verification.
+- Verification status: Verified from provided source.
 
 ### MA.5.GR.3.2
 
@@ -472,7 +488,7 @@ Skipped pending stronger verification before implementation:
 - Problem type: rectangular prism volume
 - Example problem shape: A rectangular prism has length, width, and height; students calculate volume.
 - Current use: internal problem metadata and developer validation.
-- Verification status: Needs official verification.
+- Verification status: Verified from provided source.
 
 ### MA.5.GR.4.2
 
@@ -498,7 +514,7 @@ Skipped pending stronger verification before implementation:
 - Problem type: expression evaluation
 - Example problem shape: Students evaluate a multiplication-plus-addition expression.
 - Current use: internal problem metadata and developer validation.
-- Verification status: Needs official verification.
+- Verification status: Verified from provided source.
 
 ## Hard Expansion Notes
 
@@ -526,7 +542,7 @@ Skipped pending stronger verification before implementation:
 - Problem type: fraction addition plus whole number
 - Example problem shape: A hero collects two fractional crystal amounts and then whole crystals; students add the total amount.
 - Current use: internal problem metadata and developer validation.
-- Verification status: Needs review.
+- Verification status: Verified from provided source.
 
 ### MA.5.NSO.2.3
 
@@ -539,7 +555,7 @@ Skipped pending stronger verification before implementation:
 - Problem type: decimal addition/subtraction to thousandths
 - Example problem shape: Two decimal weights are added and a decimal amount chips away; students find the remaining weight.
 - Current use: internal problem metadata and developer validation.
-- Verification status: App-internal conservative wording.
+- Verification status: Verified from provided source.
 
 ### MA.5.GR.3.3
 
@@ -552,7 +568,7 @@ Skipped pending stronger verification before implementation:
 - Problem type: missing dimension from volume
 - Example problem shape: A prism has volume, width, and height; students divide to find length.
 - Current use: internal problem metadata and developer validation.
-- Verification status: Needs official verification.
+- Verification status: Verified from provided source.
 
 ### MA.5.GR.4.2
 
@@ -578,20 +594,20 @@ Skipped pending stronger verification before implementation:
 - Problem type: expression evaluation with parentheses
 - Example problem shape: Students evaluate an expression with parentheses, multiplication, and subtraction.
 - Current use: internal problem metadata and developer validation.
-- Verification status: App-internal conservative wording.
+- Verification status: Verified from provided source.
 
 ## Potential Concerns
 
-- All benchmark descriptions need official CPALMS/FDOE verification before public release, commercial use, or formal standards reporting.
-- No explicit domain/strand metadata exists yet. The app only stores benchmark codes, descriptions, skill labels, and generator names.
+- The app now has local Grade 3, Grade 4, and Grade 5 CPALMS-export reference files, but formal public reporting should still recheck benchmark wording against live CPALMS/FDOE pages.
+- Explicit `domain`, `strand`, and `reportingCategory` metadata fields exist on generated problems, but their values are conservative placeholders until an official source for those labels is added.
 - `MA.3.AR.1.2` is used for both multiplication and division word problems. This may be reasonable, but the exact benchmark scope should be checked.
-- `MA.3.GR.2.3` is used for both rectangle area and perimeter. This is a priority review item because area and perimeter may map to separate or more specific Grade 3 geometry benchmarks.
-- `MA.5.AR.1.2` is used for both Hard fraction-times-whole-number problems and Extreme multi-step fraction reasoning. Verify whether both generated problem shapes match the intended benchmark.
-- `MA.5.NSO.2.3` appears in both Hard and Extreme. Extreme uses the same Grade 5 code with higher complexity, which matches the app's design goal, but official wording should be checked.
-- `MA.5.AR.2.2` appears in both Hard and Extreme expression generators. Extreme stays within Grade 5-style numerical expressions, but benchmark wording should be checked.
+- `MA.3.GR.2.3` is used for both rectangle area and perimeter and is verified from the provided Grade 3 source for that combined scope.
+- `MA.5.AR.1.2` is used for both Hard fraction-times-whole-number problems and Extreme multi-step fraction reasoning. Both remain Grade 5, but the app should not claim exhaustive benchmark coverage.
+- `MA.5.NSO.2.3` appears in both Hard and Extreme. Extreme uses the same Grade 5 code with higher complexity, which matches the app's design goal.
+- `MA.5.AR.2.2` appears in both Hard and Extreme expression generators. Extreme stays within Grade 5-style numerical expressions.
 - Extreme now uses first-quadrant coordinate-value interpretation under `MA.5.GR.4.2` after manual review.
 - Recovery problems use easier difficulty bands through `generateUniqueRecoveryProblem`. This means a Hard recovery problem can use Medium metadata and an Extreme recovery problem can use Hard metadata. That is intentional for support, but teacher-facing reporting should explain recovery metadata if it is ever displayed.
-- README currently includes one sample benchmark description for `MA.3.AR.1.2`; it is marked elsewhere as conservative/unverified, but should still be checked against official language.
+- README currently includes one sample benchmark description for `MA.3.AR.1.2`; keep public wording conservative and avoid claiming exhaustive coverage.
 - Student-facing UI currently shows challenge-level descriptions and summaries, not individual benchmark codes. This keeps the student experience clean.
 
 ## Next Verification Steps
@@ -600,7 +616,6 @@ Skipped pending stronger verification before implementation:
 2. Decide whether to keep, replace, or broaden any benchmark descriptions that are too specific.
 3. Add explicit domain/strand metadata only after official wording is verified.
 4. Review remaining potential mismatches first:
-   - `MA.3.GR.2.3`
    - `MA.3.AR.1.2`
    - `MA.5.AR.1.2`
 5. After verification, update `floridaBestMath.ts`, this reference file, README wording, and any teacher/debug display consistently.

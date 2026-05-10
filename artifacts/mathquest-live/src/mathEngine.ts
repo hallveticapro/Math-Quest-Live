@@ -147,6 +147,10 @@ function fraction(numerator: number, denominator: number) {
   return `${numerator / divisor}/${denominator / divisor}`;
 }
 
+function money(cents: number) {
+  return `$${(cents / 100).toFixed(2)}`;
+}
+
 function parseFraction(value: string) {
   const [n, d] = value.split("/").map(Number);
   return { numerator: n, denominator: d };
@@ -291,6 +295,47 @@ function g3FractionCompare(): ProblemCore {
     ],
     hint: "These fractions have the same denominator, so the pieces are the same size. Compare the numerators.",
     secondHint: "With the same denominator, the fraction with the larger numerator is greater.",
+  };
+}
+
+function g3EquivalentFractions(): ProblemCore {
+  const denominator = [2, 3, 4, 6, 8][randInt(0, 4)];
+  const numerator = randInt(1, denominator - 1);
+  const factor = randInt(2, 4);
+  const answer = `${numerator * factor}/${denominator * factor}`;
+
+  return {
+    prompt: `Which fraction is equivalent to ${numerator}/${denominator}?`,
+    correctAnswer: answer,
+    wrongAnswers: [
+      `${numerator + factor}/${denominator + factor}`,
+      `${numerator}/${denominator * factor}`,
+      `${numerator * factor}/${denominator}`,
+      `${denominator}/${numerator}`,
+      `${numerator + 1}/${denominator}`,
+    ],
+    hint: "Equivalent fractions name the same amount, even when the numbers look different.",
+    secondHint: "Multiply the numerator and denominator by the same number to make an equivalent fraction.",
+  };
+}
+
+function g3Rounding(): ProblemCore {
+  const place = Math.random() < 0.55 ? 10 : 100;
+  const value = randInt(11, 999);
+  const answer = Math.round(value / place) * place;
+
+  return {
+    prompt: `Round ${value} to the nearest ${place}.`,
+    correctAnswer: String(answer),
+    wrongAnswers: [
+      Math.floor(value / place) * place,
+      Math.ceil(value / place) * place,
+      answer + place,
+      Math.max(0, answer - place),
+      value,
+    ].map(String),
+    hint: "Find the place you are rounding to. Then look at the digit just to the right.",
+    secondHint: "If the next digit is 5 or more, round up. If it is 4 or less, keep the rounding place the same.",
   };
 }
 
@@ -491,6 +536,87 @@ function g4DivisionRemainders(): ProblemCore {
   };
 }
 
+function g4FactorsPrimeComposite(): ProblemCore {
+  const classify = Math.random() < 0.45;
+  const primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47];
+  if (classify) {
+    const composite = Math.random() < 0.65;
+    const number = composite
+      ? [4, 6, 8, 9, 10, 12, 15, 16, 18, 21, 24, 27, 35, 49, 64][randInt(0, 14)]
+      : primes[randInt(0, primes.length - 1)];
+    const answer = composite ? "composite" : "prime";
+    return {
+      prompt: `Is ${number} prime, composite, or neither?`,
+      correctAnswer: answer,
+      wrongAnswers: ["prime", "composite", "neither", "factor"].filter(
+        (choice) => choice !== answer,
+      ),
+      hint: "A prime number has exactly two factors: 1 and itself. A composite number has more than two factors.",
+      secondHint: "Try dividing by small numbers like 2, 3, 5, or 7. If one divides evenly, the number is composite.",
+    };
+  }
+
+  const a = randInt(3, 12);
+  const b = randInt(3, 12);
+  const product = a * b;
+  const answer = `${a} and ${b}`;
+
+  return {
+    prompt: `Which factor pair makes ${product}?`,
+    correctAnswer: answer,
+    wrongAnswers: [
+      `${a + 1} and ${b}`,
+      `${a} and ${b + 1}`,
+      `${Math.max(1, a - 1)} and ${b}`,
+      `${a + b} and 1`,
+    ],
+    hint: "A factor pair multiplies together to make the target number.",
+    secondHint: `Look for two numbers whose product is ${product}.`,
+  };
+}
+
+function g4AreaPerimeterRectangles(): ProblemCore {
+  const length = randInt(6, 18);
+  const width = randInt(4, 12);
+  const missingSide = Math.random() < 0.35;
+
+  if (missingSide) {
+    const perimeter = 2 * (length + width);
+    return {
+      prompt: `A rectangular garden has a perimeter of ${perimeter} feet and one side is ${length} feet long. What is the other side length?`,
+      correctAnswer: `${width} feet`,
+      wrongAnswers: [
+        `${perimeter - length} feet`,
+        `${perimeter / 2} feet`,
+        `${length + width} feet`,
+        `${Math.max(1, width - 1)} feet`,
+        `${width + 1} feet`,
+      ],
+      hint: "Perimeter includes two lengths and two widths.",
+      secondHint: "Divide the perimeter by 2 to get length + width, then subtract the known side.",
+    };
+  }
+
+  const area = Math.random() < 0.5;
+  const answer = area ? length * width : 2 * (length + width);
+  return {
+    prompt: `A rectangle is ${length} feet long and ${width} feet wide. What is its ${area ? "area" : "perimeter"}?`,
+    correctAnswer: `${answer} ${area ? "square feet" : "feet"}`,
+    wrongAnswers: [
+      `${length + width} feet`,
+      `${length * width} square feet`,
+      `${2 * (length + width)} feet`,
+      `${answer + length} ${area ? "square feet" : "feet"}`,
+    ],
+    hint: area
+      ? "Area covers the inside of the rectangle. Multiply length by width."
+      : "Perimeter is the distance around the rectangle. Add all four sides.",
+    secondHint: area
+      ? "Use square units for area."
+      : "Use length + width + length + width for perimeter.",
+  };
+}
+
 function g4EquivalentFractions(): ProblemCore {
   const numerator = randInt(1, 5);
   const denominator = randInt(numerator + 2, 10);
@@ -563,6 +689,71 @@ function g4DecimalsTenthsToFraction(): ProblemCore {
     ],
     hint: "Tenths are one digit after the decimal point.",
     secondHint: `${decimal} means ${tenths} tenths, so write ${tenths} over 10.`,
+  };
+}
+
+function g4FractionAddLikeDenominators(): ProblemCore {
+  const denominator = [5, 6, 8, 10, 12][randInt(0, 4)];
+  const subtract = Math.random() < 0.35;
+
+  if (subtract) {
+    const n1 = randInt(3, denominator + 3);
+    const n2 = randInt(1, n1 - 1);
+    const answer = fraction(n1 - n2, denominator);
+    return {
+      prompt: `What is ${n1}/${denominator} - ${n2}/${denominator}?`,
+      correctAnswer: answer,
+      wrongAnswers: [
+        `${n1 - n2}/${denominator * 2}`,
+        `${n1 + n2}/${denominator}`,
+        `${Math.max(1, n1 - n2)}/${denominator + 1}`,
+        `${n2}/${denominator}`,
+      ],
+      hint: "The denominators are the same, so subtract the numerators.",
+      secondHint: "Keep the denominator the same. Only the top numbers change.",
+    };
+  }
+
+  const n1 = randInt(1, denominator - 1);
+  const n2 = randInt(1, denominator - 1);
+  const answer = fraction(n1 + n2, denominator);
+  return {
+    prompt: `What is ${n1}/${denominator} + ${n2}/${denominator}?`,
+    correctAnswer: answer,
+    wrongAnswers: [
+      `${n1 + n2}/${denominator * 2}`,
+      `${Math.abs(n1 - n2) || 1}/${denominator}`,
+      `${n1 + n2 + 1}/${denominator}`,
+      `${n1}/${denominator}`,
+    ],
+    hint: "The denominators are the same, so add the numerators.",
+    secondHint: "Keep the denominator the same. Add only the top numbers.",
+  };
+}
+
+function g4MoneyDecimal(): ProblemCore {
+  const first = randInt(125, 975);
+  const second = randInt(75, 625);
+  const taxOrFee = randInt(25, 175);
+  const twoStep = Math.random() < 0.45;
+  const answer = twoStep ? first + second - taxOrFee : first + second;
+
+  return {
+    prompt: twoStep
+      ? `A market basket costs ${money(first)} and a lantern costs ${money(second)}. A coupon takes off ${money(taxOrFee)}. What is the total?`
+      : `A market basket costs ${money(first)} and a lantern costs ${money(second)}. What is the total?`,
+    correctAnswer: money(answer),
+    wrongAnswers: [
+      money(first + second + taxOrFee),
+      money(Math.abs(first - second)),
+      money(first + second),
+      money(Math.max(0, answer - 100)),
+      money(answer + 100),
+    ],
+    hint: "Line up the dollars and cents. Add or subtract cents with cents.",
+    secondHint: twoStep
+      ? "Add the two prices first. Then subtract the coupon."
+      : "Add the two prices. Keep two digits after the decimal point.",
   };
 }
 
@@ -666,6 +857,51 @@ function g5DecimalSubtraction(): ProblemCore {
   };
 }
 
+function g5DecimalCompare(): ProblemCore {
+  const a = randInt(1000, 9999) / 1000;
+  let b = randInt(1000, 9999) / 1000;
+  while (a === b) b = randInt(1000, 9999) / 1000;
+  const greater = Math.max(a, b);
+  const lesser = Math.min(a, b);
+
+  return {
+    prompt: `Which decimal is greater: ${a.toFixed(3)} or ${b.toFixed(3)}?`,
+    correctAnswer: greater.toFixed(3),
+    wrongAnswers: [
+      lesser.toFixed(3),
+      (greater - 0.001).toFixed(3),
+      (lesser + 0.001).toFixed(3),
+      greater.toFixed(2),
+    ],
+    hint: "Compare digits by place value: ones, tenths, hundredths, then thousandths.",
+    secondHint: "Line up the decimal points. The first place where the digits differ decides the greater number.",
+  };
+}
+
+function g5DecimalRounding(): ProblemCore {
+  const value = randInt(1000, 99999) / 1000;
+  const places = [
+    { label: "whole number", decimals: 0 },
+    { label: "tenth", decimals: 1 },
+    { label: "hundredth", decimals: 2 },
+  ];
+  const target = places[randInt(0, places.length - 1)];
+  const answer = value.toFixed(target.decimals);
+
+  return {
+    prompt: `Round ${value.toFixed(3)} to the nearest ${target.label}.`,
+    correctAnswer: answer,
+    wrongAnswers: [
+      value.toFixed(3),
+      (value + 0.01).toFixed(target.decimals),
+      Math.max(0, value - 0.01).toFixed(target.decimals),
+      value.toFixed(Math.min(3, target.decimals + 1)),
+    ],
+    hint: "Find the place you are rounding to, then look one digit to the right.",
+    secondHint: "A digit of 5 or more rounds up. A digit of 4 or less stays the same.",
+  };
+}
+
 function g5FractionAddUnlike(): ProblemCore {
   const d1 = [3, 4, 5, 6, 8][randInt(0, 4)];
   const d2 = [5, 6, 8, 10, 12][randInt(0, 4)];
@@ -733,6 +969,27 @@ function g5FractionTimesWhole(): ProblemCore {
   };
 }
 
+function g5FractionTimesFraction(): ProblemCore {
+  const d1 = [3, 4, 5, 6, 8][randInt(0, 4)];
+  const d2 = [4, 5, 6, 8, 10][randInt(0, 4)];
+  const n1 = randInt(1, d1 - 1);
+  const n2 = randInt(1, d2 - 1);
+  const answer = fraction(n1 * n2, d1 * d2);
+
+  return {
+    prompt: `What is ${n1}/${d1} × ${n2}/${d2}?`,
+    correctAnswer: answer,
+    wrongAnswers: [
+      fraction(n1 + n2, d1 + d2),
+      fraction(n1 * d2, d1 * n2),
+      fraction(n1 * n2, d1 + d2),
+      fraction(n1 + n2, d1 * d2),
+    ],
+    hint: "To multiply fractions, multiply the numerators and multiply the denominators.",
+    secondHint: "Top times top, bottom times bottom. Simplify the fraction if possible.",
+  };
+}
+
 function g5Volume(): ProblemCore {
   const length = randInt(4, 12);
   const width = randInt(3, 10);
@@ -768,6 +1025,35 @@ function g5CoordinatePoint(): ProblemCore {
     ],
     hint: "In an ordered pair, the first number is x and the second number is y.",
     secondHint: "East matches x. North matches y. Write the point as (x, y).",
+  };
+}
+
+function g5CoordinateAxes(): ProblemCore {
+  const x = randInt(1, 10);
+  const y = randInt(1, 10);
+  const askAxis = Math.random() < 0.35;
+
+  if (askAxis) {
+    return {
+      prompt: `On a coordinate plane, which axis shows left and right movement?`,
+      correctAnswer: "x-axis",
+      wrongAnswers: ["y-axis", "origin", "ordered pair", "quadrant"],
+      hint: "The x-axis runs side to side.",
+      secondHint: "The y-axis runs up and down. The x-axis runs left and right.",
+    };
+  }
+
+  return {
+    prompt: `Plot a point ${x} spaces right and ${y} spaces up from the origin. Which ordered pair names the point?`,
+    correctAnswer: `(${x}, ${y})`,
+    wrongAnswers: [
+      `(${y}, ${x})`,
+      `(${x}, 0)`,
+      `(0, ${y})`,
+      `(${x + 1}, ${y})`,
+    ],
+    hint: "Start at the origin. Move right for x, then up for y.",
+    secondHint: "Ordered pairs are written as (x, y).",
   };
 }
 
@@ -811,6 +1097,26 @@ function g5ExtremeFractionCombo(): ProblemCore {
   };
 }
 
+function g5ExtremeWholeNumberRemainders(): ProblemCore {
+  const buses = randInt(6, 12);
+  const seats = randInt(18, 36);
+  const students = buses * seats + randInt(1, seats - 1);
+  const needed = Math.ceil(students / seats);
+
+  return {
+    prompt: `${students} students are going on a quest trip. Each wagon holds ${seats} students. How many wagons are needed?`,
+    correctAnswer: String(needed),
+    wrongAnswers: [
+      String(Math.floor(students / seats)),
+      String(needed + 1),
+      String(seats),
+      String(buses),
+    ],
+    hint: "Divide to see how many full wagons are filled, then think about the leftover students.",
+    secondHint: "A remainder means another wagon is needed, even if it is not full.",
+  };
+}
+
 function g5ExtremeDecimalCombo(): ProblemCore {
   const a = randInt(1250, 9999) / 1000;
   const b = randInt(250, 4999) / 1000;
@@ -842,6 +1148,48 @@ function g5ExtremeVolume(): ProblemCore {
     ].map(String),
     hint: "Volume equals length × width × height. Here one dimension is missing.",
     secondHint: "Divide the volume by width × height to find the missing length.",
+  };
+}
+
+function g5ExtremeMeasurementConversion(): ProblemCore {
+  const yards = randInt(2, 8);
+  const feet = randInt(1, 2);
+  const extraFeet = randInt(4, 18);
+  const totalFeet = yards * 3 + feet + extraFeet;
+
+  return {
+    prompt: `A banner uses ${yards} yards ${feet} feet of ribbon, then ${extraFeet} more feet. How many feet of ribbon is that altogether?`,
+    correctAnswer: `${totalFeet} feet`,
+    wrongAnswers: [
+      `${yards + feet + extraFeet} feet`,
+      `${yards * 3 + feet} feet`,
+      `${yards * 3 + extraFeet} feet`,
+      `${totalFeet + 3} feet`,
+    ],
+    hint: "Convert yards to feet before adding. One yard equals 3 feet.",
+    secondHint: "Multiply yards by 3, then add the other feet.",
+  };
+}
+
+function g5ExtremeMoneyDecimal(): ProblemCore {
+  const tickets = randInt(3, 8);
+  const ticketCost = randInt(125, 475);
+  const snackCost = randInt(225, 975);
+  const budget = tickets * ticketCost + snackCost + randInt(100, 800);
+  const spent = tickets * ticketCost + snackCost;
+  const left = budget - spent;
+
+  return {
+    prompt: `A team has ${money(budget)}. They buy ${tickets} passes at ${money(ticketCost)} each and supplies for ${money(snackCost)}. How much money is left?`,
+    correctAnswer: money(left),
+    wrongAnswers: [
+      money(spent),
+      money(budget - ticketCost - snackCost),
+      money(left + ticketCost),
+      money(Math.max(0, left - 100)),
+    ],
+    hint: "Find the total cost first. Multiply the number of passes by the cost of each pass.",
+    secondHint: "Add the supplies cost to the pass total, then subtract from the budget.",
   };
 }
 
@@ -894,6 +1242,8 @@ const GENERATORS: Record<string, ProblemGenerator> = {
   g3DivisionFacts,
   g3AreaPerimeter,
   g3FractionCompare,
+  g3EquivalentFractions,
+  g3Rounding,
   g3MeasurementLength,
   g3ElapsedTime,
   g3ElapsedTimeTwoStep,
@@ -901,24 +1251,35 @@ const GENERATORS: Record<string, ProblemGenerator> = {
   g4Rounding,
   g4Multiplication,
   g4DivisionRemainders,
+  g4FactorsPrimeComposite,
+  g4AreaPerimeterRectangles,
   g4EquivalentFractions,
   g4EquivalentFractionsGreaterThanOne,
   g4DecimalsHundredths,
   g4DecimalsTenthsToFraction,
+  g4FractionAddLikeDenominators,
+  g4MoneyDecimal,
   g4Angles,
   g4AnglesThreePart,
   g5DecimalPlaceValue,
   g5DecimalOperations,
   g5DecimalSubtraction,
+  g5DecimalCompare,
+  g5DecimalRounding,
   g5FractionAddUnlike,
   g5FractionSubtractUnlike,
   g5FractionTimesWhole,
+  g5FractionTimesFraction,
   g5Volume,
   g5CoordinatePoint,
+  g5CoordinateAxes,
   g5Expressions,
   g5ExtremeFractionCombo,
+  g5ExtremeWholeNumberRemainders,
   g5ExtremeDecimalCombo,
   g5ExtremeVolume,
+  g5ExtremeMeasurementConversion,
+  g5ExtremeMoneyDecimal,
   g5ExtremeCoordinate,
   g5ExtremeExpressions,
 };
