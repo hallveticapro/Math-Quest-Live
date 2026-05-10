@@ -22,6 +22,7 @@ import {
   HERO_NAMES,
   HERO_PRONOUNS,
 } from "../adventureOptions";
+
 type SetupStep =
   | "intro"
   | "name"
@@ -47,6 +48,103 @@ const STEP_ORDER: SetupStep[] = ["intro", ...DECISION_STEPS];
 const WRITING_TRANSITION_MS = 1900;
 const SETUP_TRANSITION_OUT_MS = 140;
 const SETUP_TRANSITION_IN_MS = 180;
+
+type ConfirmationContext = {
+  name: string;
+  pronouns: string;
+  ancestry: string;
+  className: string;
+  difficultyLabel: string;
+  questLengthLabel: string;
+  questLengthTurns: number;
+  seed: string;
+  colorSchemeName: string;
+};
+
+type ConfirmationTemplate = (context: ConfirmationContext) => string;
+
+const CONFIRMATION_POOLS: Partial<Record<SetupStep, ConfirmationTemplate[]>> = {
+  name: [
+    ({ name }) => `So it shall be written: ${name}.`,
+    ({ name }) => `The first bright letters form the name ${name}.`,
+    ({ name }) => `A fresh page turns, and ${name} shines at the top.`,
+    ({ name }) => `The Chronicle hums softly around the name ${name}.`,
+    ({ name }) => `${name} enters the tale in golden ink.`,
+  ],
+  pronouns: [
+    ({ name }) => `The quill learns how the tale will speak of ${name}.`,
+    () => "The quill nods and writes carefully.",
+    () => "The Chronicle adjusts its voice with care.",
+    () => "Every sentence settles into place.",
+    ({ name }) => `${name}'s story is ready to be told with respect.`,
+  ],
+  ancestry: [
+    ({ name }) => `The page glows as ${name || "the hero"}'s origin takes shape.`,
+    ({ ancestry }) => `The Chronicle records ${ancestry} ancestry with a shimmer of ink.`,
+    ({ name }) => `A soft light gathers around ${name || "the hero"}'s beginning.`,
+    () => "The hero's origin is written as one part of a much larger story.",
+    ({ ancestry }) => `The ${ancestry} spark joins the Chronicle without changing the hero's choices.`,
+  ],
+  difficulty: [
+    ({ difficultyLabel }) => `${difficultyLabel} is set. The path sharpens its puzzles.`,
+    ({ difficultyLabel }) => `The Chronicle measures the road and marks it ${difficultyLabel}.`,
+    () => "The challenge rises to meet the hero.",
+    () => "Puzzle runes brighten along the path ahead.",
+    ({ difficultyLabel }) => `The quill circles the challenge level: ${difficultyLabel}.`,
+  ],
+  length: [
+    ({ questLengthLabel, questLengthTurns }) =>
+      `${questLengthLabel} it is. The Chronicle prepares ${questLengthTurns} math challenges.`,
+    ({ questLengthLabel }) => `The tale folds itself into a ${questLengthLabel}.`,
+    ({ questLengthTurns }) => `${questLengthTurns} puzzle gates appear between here and the ending.`,
+    () => "The book counts its pages and smiles.",
+    ({ questLengthLabel }) => `The chapter ribbon settles on ${questLengthLabel}.`,
+  ],
+  seed: [
+    ({ seed }) =>
+      seed === "Random"
+        ? "The Chronicle chooses a surprising path."
+        : `The Chronicle opens to ${seed}.`,
+    ({ seed }) =>
+      seed === "Random"
+        ? "The map turns itself toward a mystery."
+        : `${seed} glimmers in the margin of the page.`,
+    ({ seed }) =>
+      seed === "Random"
+        ? "A hidden destination waits behind the next page."
+        : `The first doorway now leads toward ${seed}.`,
+    ({ seed }) =>
+      seed === "Random"
+        ? "The quill spins once and picks a safe surprise."
+        : `The Chronicle marks ${seed} as the opening scene.`,
+  ],
+  colors: [
+    ({ colorSchemeName }) =>
+      `The ink shimmers, and the Chronicle takes on ${colorSchemeName}.`,
+    ({ colorSchemeName }) => `${colorSchemeName} banners unfurl across the page.`,
+    () => "The borders glow with the chosen colors.",
+    () => "Fresh light spills across the Chronicle's cover.",
+    ({ colorSchemeName }) => `The quill paints the margins in ${colorSchemeName}.`,
+  ],
+};
+
+const WRITING_LINE_POOLS = [
+  [
+    "The Chronicler dips the quill in starlight...",
+    "A new chapter begins...",
+    "Writing your quest...",
+  ],
+  [
+    "The pages flutter into place...",
+    "Puzzle sparks gather in the margins...",
+    "Opening the first chapter...",
+  ],
+  [
+    "The quill traces a glowing doorway...",
+    "Your hero steps toward the first clue...",
+    "Preparing the adventure...",
+  ],
+];
 
 type SetupScreenProps = {
   onStart: (
@@ -180,8 +278,10 @@ export function SetupScreen({
     DEFAULT_COLOR_SCHEME_ID,
   );
   const [isWriting, setIsWriting] = useState(false);
+  const [writingLines, setWritingLines] = useState(WRITING_LINE_POOLS[0]);
   const [isStageTransitioning, setIsStageTransitioning] = useState(false);
   const transitionTimersRef = useRef<Array<ReturnType<typeof setTimeout>>>([]);
+  const lastConfirmationIndexRef = useRef<Partial<Record<SetupStep, number>>>({});
 
   const currentIndex = STEP_ORDER.indexOf(step);
   const stepNumber = getStepNumber(step);
@@ -251,14 +351,43 @@ export function SetupScreen({
     update();
   };
 
+  const pickFromPool = <T,>(pool: T[], stepKey: SetupStep): T => {
+    if (pool.length === 1) return pool[0];
+    const lastIndex = lastConfirmationIndexRef.current[stepKey];
+    let index = Math.floor(Math.random() * pool.length);
+    if (lastIndex !== undefined && index === lastIndex) {
+      index = (index + 1 + Math.floor(Math.random() * (pool.length - 1))) % pool.length;
+    }
+    lastConfirmationIndexRef.current[stepKey] = index;
+    return pool[index];
+  };
+
+  const getConfirmationContext = (): ConfirmationContext => {
+    const difficultyOption = DIFFICULTY_OPTIONS.find(
+      (option) => option.value === difficulty,
+    );
+    const questLength =
+      QUEST_LENGTH_OPTIONS.find((option) => option.maxTurns === maxTurns) ??
+      DEFAULT_QUEST_LENGTH;
+    const colorScheme =
+      COLOR_SCHEMES.find((scheme) => scheme.id === colorSchemeId) ??
+      COLOR_SCHEMES[0];
+
+    return {
+      name: name || "the hero",
+      pronouns,
+      ancestry: ancestry || "mysterious",
+      className,
+      difficultyLabel: difficultyOption?.label ?? difficulty,
+      questLengthLabel: questLength.label,
+      questLengthTurns: questLength.maxTurns,
+      seed,
+      colorSchemeName: colorScheme.name,
+    };
+  };
+
   const getConfirmationText = () => {
     switch (step) {
-      case "name":
-        return `So it shall be written: ${name}.`;
-      case "pronouns":
-        return "The quill nods and writes carefully.";
-      case "ancestry":
-        return `The page glows as ${name || "the hero"}'s origin takes shape.`;
       case "class":
         return getClassConfirmationText({
           name,
@@ -266,22 +395,9 @@ export function SetupScreen({
           className,
           pronouns,
         });
-      case "difficulty":
-        return "The challenge is set.";
-      case "length": {
-        const questLength =
-          QUEST_LENGTH_OPTIONS.find((option) => option.maxTurns === maxTurns) ??
-          DEFAULT_QUEST_LENGTH;
-        return `${questLength.label} it is. The Chronicle prepares ${questLength.maxTurns} math challenges.`;
-      }
-      case "seed":
-        return seed === "Random"
-          ? "The Chronicle chooses a surprising path."
-          : `The Chronicle opens to ${seed}.`;
-      case "colors":
-        return "The ink shimmers, and the Chronicle takes on its colors.";
       default:
-        return "";
+        const pool = CONFIRMATION_POOLS[step];
+        return pool ? pickFromPool(pool, step)(getConfirmationContext()) : "";
     }
   };
 
@@ -326,6 +442,9 @@ export function SetupScreen({
 
   const handleBeginStory = () => {
     resetScrollForTransition();
+    setWritingLines(
+      WRITING_LINE_POOLS[Math.floor(Math.random() * WRITING_LINE_POOLS.length)],
+    );
     setIsWriting(true);
     setTimeout(() => {
       onStart(
@@ -356,9 +475,9 @@ export function SetupScreen({
           <div className="mx-auto h-16 w-16 border-4 border-[var(--mq-border)] border-t-[var(--mq-heading)] border-b-[var(--mq-secondary)] animate-spin"></div>
           <h2 className="rs-title text-4xl md:text-5xl">The Chronicle Opens</h2>
           <div className="story-text space-y-2 text-xl">
-            <p>The Chronicler dips the quill in starlight...</p>
-            <p>A new chapter begins...</p>
-            <p>Writing your quest...</p>
+            {writingLines.map((line) => (
+              <p key={line}>{line}</p>
+            ))}
           </div>
         </div>
       </div>

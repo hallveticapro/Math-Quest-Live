@@ -27,8 +27,12 @@ function validateImageModes() {
     "milestones mode should generate intro images",
   );
   assert(
+    shouldGenerateImage({ enabled: true, imageMode: "milestones", maxTurns: 5, turn: 2 }),
+    "milestones mode should generate every second turn, including quick quests",
+  );
+  assert(
     shouldGenerateImage({ enabled: true, imageMode: "milestones", maxTurns: 8, turn: 4 }),
-    "milestones mode should generate midpoint images",
+    "milestones mode should generate every second turn",
   );
   assert(
     shouldGenerateImage({ enabled: true, imageMode: "milestones", maxTurns: 8, isEnding: true }),
@@ -36,7 +40,7 @@ function validateImageModes() {
   );
   assert(
     !shouldGenerateImage({ enabled: true, imageMode: "milestones", maxTurns: 8, turn: 3 }),
-    "milestones mode should not generate non-milestone turn images",
+    "milestones mode should not generate odd-numbered turn images",
   );
   assert(
     shouldGenerateImage({ enabled: true, imageMode: "every_scene", maxTurns: 8, turn: 3 }),

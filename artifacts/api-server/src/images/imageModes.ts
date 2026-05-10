@@ -23,8 +23,10 @@ export function shouldGenerateImage({
 
   if (imageMode === "milestones") {
     if (isIntro || isEnding) return true;
-    if (!Number.isInteger(turn)) return false;
-    return turn === Math.ceil(maxTurns / 2);
+    if (typeof turn !== "number" || !Number.isInteger(turn)) return false;
+    // Milestone illustrations are intentionally frequent enough to show up in
+    // quick 5-turn quests without becoming an every-scene image mode.
+    return turn > 0 && turn <= maxTurns && turn % 2 === 0;
   }
 
   return false;

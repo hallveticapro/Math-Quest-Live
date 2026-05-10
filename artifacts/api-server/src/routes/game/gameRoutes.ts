@@ -15,7 +15,7 @@ import {
 } from "./storyPrompt.js";
 import { checkStoryTurnSafety, checkEndingSafety } from "./safety.js";
 import { openai, STORY_MODEL } from "../../lib/openaiClient.js";
-import { requestSceneImage } from "../../images/imageService.js";
+import { maybeGenerateSceneImage, requestSceneImage } from "../../images/imageService.js";
 import type { ImageMetadata } from "../../images/imageTypes.js";
 
 const router = Router();
@@ -87,6 +87,10 @@ setInterval(cleanupPendingTurns, 60 * 1000).unref();
 function withOptionalImage<T extends object>(data: T, image: ImageMetadata | undefined) {
   if (!image || image.status === "failed") return data;
   return { ...data, image };
+}
+
+function isMilestoneTurn(turn: number, maxTurns: number) {
+  return Number.isInteger(turn) && turn > 0 && turn <= maxTurns && turn % 2 === 0;
 }
 
 async function callOpenAI(prompt: string): Promise<string> {
@@ -273,7 +277,7 @@ async function generatePreparedTurn(data: NonNullable<ReturnType<typeof parsePre
     }
 
     const endingData = parsed as EndingData;
-    const image = requestSceneImage({
+    const image = await maybeGenerateSceneImage({
       context: {
         kind: "ending",
         hero: data.hero,
@@ -312,7 +316,7 @@ async function generatePreparedTurn(data: NonNullable<ReturnType<typeof parsePre
   const turnData = parsed as StoryTurnData;
   const image = requestSceneImage({
     context: {
-      kind: data.turn === Math.ceil(data.maxTurns / 2) ? "milestone" : "scene",
+      kind: isMilestoneTurn(data.turn, data.maxTurns) ? "milestone" : "scene",
       hero: data.hero,
       adventureSeed: data.adventureSeed,
       difficulty: data.difficulty,
@@ -399,7 +403,7 @@ router.post("/start", async (req, res) => {
     }
 
     const turnData = data as StoryTurnData;
-    const image = requestSceneImage({
+    const image = await maybeGenerateSceneImage({
       context: {
         kind: "intro",
         hero: parsed.data.hero,
@@ -450,7 +454,7 @@ router.post("/turn", async (req, res) => {
     const turnData = data as StoryTurnData;
     const image = requestSceneImage({
       context: {
-        kind: parsed.data.turn === Math.ceil(parsed.data.maxTurns / 2) ? "milestone" : "scene",
+        kind: isMilestoneTurn(parsed.data.turn, parsed.data.maxTurns) ? "milestone" : "scene",
         hero: parsed.data.hero,
         adventureSeed: parsed.data.adventureSeed,
         difficulty: parsed.data.difficulty,
@@ -499,7 +503,7 @@ router.post("/ending", async (req, res) => {
     }
 
     const endingData = data as EndingData;
-    const image = requestSceneImage({
+    const image = await maybeGenerateSceneImage({
       context: {
         kind: "ending",
         hero: parsed.data.hero,

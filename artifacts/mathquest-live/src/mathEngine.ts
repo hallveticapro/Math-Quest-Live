@@ -1,5 +1,6 @@
 import {
   FL_BEST_MATH_BANDS,
+  type BenchmarkVerificationStatus,
   type DifficultyKey,
   type MathSkill,
   normalizeDifficulty,
@@ -14,6 +15,12 @@ export type MathProblem = {
   standardsSystem: "Florida B.E.S.T. Mathematics";
   benchmark: string;
   benchmarkDescription: string;
+  officialBenchmark: string;
+  domain: string;
+  strand: string;
+  reportingCategory: string;
+  verificationStatus: BenchmarkVerificationStatus;
+  sourceNote: string;
   skill: string;
   skillLabel?: string;
   skillId: string;
@@ -269,8 +276,8 @@ function g3ElapsedTime(): ProblemCore {
 }
 
 function g4Rounding(): ProblemCore {
-  const value = randInt(12_000, 999_999);
-  const place = [10, 100, 1000, 10_000][randInt(0, 3)];
+  const value = randInt(100, 10_000);
+  const place = [10, 100, 1000][randInt(0, 2)];
   const answer = Math.round(value / place) * place;
   return {
     prompt: `Round ${value.toLocaleString()} to the nearest ${place.toLocaleString()}.`,
@@ -278,10 +285,13 @@ function g4Rounding(): ProblemCore {
     wrongAnswers: [
       answer + place,
       answer - place,
+      answer + place * 2,
+      answer - place * 2,
       Math.floor(value / place) * place,
       Math.ceil(value / place) * place,
+      value,
     ]
-      .filter((n) => n >= 0)
+      .filter((n) => n >= 0 && n <= 10_000)
       .map((n) => n.toLocaleString()),
     hint: "Find the place you are rounding to, then look at the digit immediately to its right.",
     secondHint: "If the digit to the right is 5 or more, round up. If it is 4 or less, keep the rounding place the same.",
@@ -312,17 +322,19 @@ function g4DivisionRemainders(): ProblemCore {
   const quotient = randInt(12, 45);
   const remainder = randInt(1, divisor - 1);
   const dividend = divisor * quotient + remainder;
+  const fractionalRemainder = `${remainder}/${divisor}`;
   return {
-    prompt: `${dividend} lanterns are packed into boxes of ${divisor}. What is ${dividend} ÷ ${divisor}?`,
-    correctAnswer: `${quotient} R${remainder}`,
+    prompt: `${dividend} lanterns are packed into boxes of ${divisor}. What is ${dividend} ÷ ${divisor} as a mixed number?`,
+    correctAnswer: `${quotient} ${fractionalRemainder}`,
     wrongAnswers: [
-      `${quotient} R${divisor - remainder}`,
-      `${quotient + 1} R${remainder}`,
-      `${quotient - 1} R${remainder}`,
+      `${quotient} ${divisor - remainder}/${divisor}`,
+      `${quotient + 1} ${fractionalRemainder}`,
+      `${quotient - 1} ${fractionalRemainder}`,
+      `${quotient} ${remainder}/${divisor + 1}`,
       String(quotient),
     ],
-    hint: "Divide to find how many full boxes you can make. Anything left over is the remainder.",
-    secondHint: "Use multiplication to check: divisor × quotient, then see how many are left.",
+    hint: "Divide to find the whole number. Write the leftover part as a fraction over the divisor.",
+    secondHint: "Use multiplication to check the whole number, then put the remainder over the number you divided by.",
   };
 }
 
@@ -381,19 +393,26 @@ function g4Angles(): ProblemCore {
 }
 
 function g5DecimalPlaceValue(): ProblemCore {
-  const number = (randInt(1000, 9999) / 1000).toFixed(3);
-  const thousandths = Number(number.split(".")[1][2]);
+  const whole = randInt(12, 98);
+  const tenths = randInt(1, 9);
+  let hundredths = randInt(1, 9);
+  while (hundredths === tenths) hundredths = randInt(1, 9);
+  let thousandths = randInt(1, 9);
+  while (thousandths === tenths || thousandths === hundredths) {
+    thousandths = randInt(1, 9);
+  }
+  const number = `${whole}.${tenths}${hundredths}${thousandths}`;
   return {
-    prompt: `In the number ${number}, what digit is in the thousandths place?`,
-    correctAnswer: String(thousandths),
+    prompt: `Which expression decomposes ${number} by place value?`,
+    correctAnswer: `${whole} + ${tenths}/10 + ${hundredths}/100 + ${thousandths}/1000`,
     wrongAnswers: [
-      number[0],
-      number.split(".")[1][0],
-      number.split(".")[1][1],
-      String((thousandths + 1) % 10),
+      `${whole} + ${tenths}/100 + ${hundredths}/10 + ${thousandths}/1000`,
+      `${whole} + ${tenths}/10 + ${hundredths}/1000 + ${thousandths}/100`,
+      `${whole} + ${tenths}/1000 + ${hundredths}/100 + ${thousandths}/10`,
+      `${whole + 1} + ${tenths}/10 + ${hundredths}/100 + ${thousandths}/1000`,
     ],
-    hint: "Read the digits after the decimal as tenths, hundredths, then thousandths.",
-    secondHint: "The thousandths digit is the third digit to the right of the decimal point.",
+    hint: "Break the number into whole number, tenths, hundredths, and thousandths parts.",
+    secondHint: "The first digit after the decimal is tenths, the second is hundredths, and the third is thousandths.",
   };
 }
 
@@ -543,19 +562,19 @@ function g5ExtremeVolume(): ProblemCore {
 }
 
 function g5ExtremeCoordinate(): ProblemCore {
-  const x1 = randInt(1, 8);
-  const y1 = randInt(1, 8);
-  const x2 = randInt(x1 + 1, 12);
-  const y2 = y1;
-  const distance = x2 - x1;
+  const week = randInt(2, 9);
+  const inches = randInt(6, 24);
   return {
-    prompt: `On a coordinate grid, one point is (${x1}, ${y1}) and another is (${x2}, ${y2}). How many units apart are they?`,
-    correctAnswer: String(distance),
-    wrongAnswers: [x2 + x1, y1, x2, Math.abs(y2 - y1), distance + 1].map(
-      String,
-    ),
-    hint: "The first coordinate tells left or right. When the y-values match, measure the horizontal distance.",
-    secondHint: "Subtract the smaller x-value from the larger x-value.",
+    prompt: `A garden team plots plant growth at (${week}, ${inches}), where x is weeks and y is height in inches. What does ${inches} represent?`,
+    correctAnswer: `${inches} inches tall`,
+    wrongAnswers: [
+      `${week} inches tall`,
+      `${inches} weeks`,
+      `${week} weeks`,
+      `${week + inches} inches tall`,
+    ],
+    hint: "Read the meaning of each axis. The first coordinate matches x, and the second coordinate matches y.",
+    secondHint: "Here y means height in inches, so the second number tells how tall the plant is.",
   };
 }
 
@@ -636,6 +655,12 @@ function buildProblem(
     standardsSystem: band.standardsSystem,
     benchmark: skill.benchmark,
     benchmarkDescription: skill.description,
+    officialBenchmark: skill.officialBenchmark,
+    domain: skill.domain,
+    strand: skill.strand,
+    reportingCategory: skill.reportingCategory,
+    verificationStatus: skill.verificationStatus,
+    sourceNote: skill.sourceNote,
     skill: skill.skill,
     skillLabel: skill.skill,
     skillId: skill.id,

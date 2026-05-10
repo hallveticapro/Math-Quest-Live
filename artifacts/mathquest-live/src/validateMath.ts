@@ -35,6 +35,24 @@ for (const difficulty of DIFFICULTY_OPTIONS) {
       Boolean(problem.benchmarkDescription),
       `${difficulty.label}: missing benchmark description`,
     );
+    assertValid(
+      Boolean(problem.officialBenchmark),
+      `${difficulty.label}: missing official benchmark wording`,
+    );
+    assertValid(Boolean(problem.domain), `${difficulty.label}: missing domain`);
+    assertValid(Boolean(problem.strand), `${difficulty.label}: missing strand`);
+    assertValid(
+      Boolean(problem.reportingCategory),
+      `${difficulty.label}: missing reporting category`,
+    );
+    assertValid(
+      Boolean(problem.verificationStatus),
+      `${difficulty.label}: missing verification status`,
+    );
+    assertValid(
+      Boolean(problem.sourceNote),
+      `${difficulty.label}: missing source note`,
+    );
     assertValid(Boolean(problem.skill), `${difficulty.label}: missing skill`);
     assertValid(
       Boolean(problem.skillId),
@@ -83,6 +101,9 @@ for (const difficulty of DIFFICULTY_OPTIONS) {
         difficulty: problem.difficulty,
         gradeBand: problem.gradeBand,
         benchmark: problem.benchmark,
+        benchmarkDescription: problem.benchmarkDescription,
+        officialBenchmark: problem.officialBenchmark,
+        verificationStatus: problem.verificationStatus,
         skill: problem.skill,
         skillId: problem.skillId,
         problemType: problem.problemType,
