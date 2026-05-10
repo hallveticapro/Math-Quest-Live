@@ -246,6 +246,10 @@
   min-height: 58px;
 }
 
+.chronicler-intro-image {
+  max-width: min(360px, 44dvh, 100%);
+}
+
 .quest-stage {
   transition:
     opacity 180ms ease,
@@ -275,13 +279,11 @@
   from {
     opacity: 0;
     transform: scaleY(0.96) translateY(-10px);
-    max-height: 0;
   }
 
   to {
     opacity: 1;
     transform: scaleY(1) translateY(0);
-    max-height: 900px;
   }
 }
 
@@ -339,10 +341,18 @@
     font-size: 1rem;
     line-height: 1.65;
   }
+
+  .chronicler-intro-image {
+    max-width: min(320px, 38dvh, 100%);
+  }
 }
 
 @media (max-height: 820px) and (min-width: 768px) {
   .setup-footer {
     min-height: 52px;
+  }
+
+  .chronicler-intro-image {
+    max-width: min(330px, 40dvh, 100%);
   }
 }

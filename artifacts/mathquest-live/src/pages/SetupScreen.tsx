@@ -418,8 +418,8 @@ export function SetupScreen({
           )}
 
           {mode === "question" && step === "intro" && (
-            <section className="mx-auto max-w-3xl text-center space-y-5 md:space-y-6 animate-in fade-in slide-in-from-bottom-3 duration-300">
-              <div className="text-4xl md:text-5xl" aria-hidden="true">
+            <section className="mx-auto max-w-3xl text-center space-y-4 md:space-y-5 animate-in fade-in slide-in-from-bottom-3 duration-300">
+              <div className="text-3xl md:text-4xl" aria-hidden="true">
                 ✦
               </div>
               <h3 className="rs-title text-3xl md:text-4xl xl:text-5xl">
@@ -432,7 +432,7 @@ export function SetupScreen({
               <img
                 src="/images/chronicler-book-quill.png"
                 alt="An open magical book with a candle and glowing quill."
-                className="mx-auto aspect-square w-full max-w-[420px] rounded-2xl border-2 border-[var(--mq-border-strong)] object-cover shadow-[0_0_34px_color-mix(in_srgb,var(--mq-primary)_40%,transparent),0_18px_40px_rgba(0,0,0,0.45)]"
+                className="chronicler-intro-image mx-auto aspect-square w-full rounded-2xl border-2 border-[var(--mq-border-strong)] object-cover shadow-[0_0_34px_color-mix(in_srgb,var(--mq-primary)_40%,transparent),0_18px_40px_rgba(0,0,0,0.45)]"
               />
             </section>
           )}

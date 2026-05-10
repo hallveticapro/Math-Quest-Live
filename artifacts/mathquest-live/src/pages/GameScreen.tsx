@@ -258,18 +258,18 @@ export function GameScreen({
                 ))}
               </div>
             ) : (
-              <div className="quest-math-accordion rs-panel p-6 md:p-8 space-y-8 !border-[var(--mq-secondary)] shadow-[0_0_30px_color-mix(in_srgb,var(--mq-secondary)_35%,transparent)]">
-                <div className="text-center space-y-6">
-                  <div className="inline-block bg-[var(--mq-background)] border border-[var(--mq-secondary)] text-[var(--mq-secondary)] font-bold px-6 py-2 uppercase tracking-widest mb-2 shadow-inner">
+              <div className="quest-math-accordion rs-panel space-y-5 overflow-hidden p-4 !border-[var(--mq-secondary)] shadow-[0_0_30px_color-mix(in_srgb,var(--mq-secondary)_35%,transparent)] md:space-y-8 md:p-8">
+                <div className="text-center space-y-4 md:space-y-6">
+                  <div className="inline-block bg-[var(--mq-background)] border border-[var(--mq-secondary)] text-[var(--mq-secondary)] font-bold px-4 py-2 uppercase tracking-widest mb-1 shadow-inner md:px-6 md:mb-2">
                     Math Challenge
                   </div>
-                  <h3 className="text-3xl md:text-5xl font-bold font-sans py-4 text-[var(--mq-text)] tracking-wide">
+                  <h3 className="text-2xl md:text-5xl font-bold font-sans py-2 md:py-4 text-[var(--mq-text)] tracking-wide leading-tight break-words">
                     {currentMathProblem.prompt}
                   </h3>
 
                   {wrongAttempts > 0 && (
                     <div
-                      className="inline-flex items-center justify-center gap-2 text-[var(--mq-warning)] font-bold text-xl uppercase tracking-wider animate-in shake"
+                      className="inline-flex items-center justify-center gap-2 text-[var(--mq-warning)] font-bold text-lg uppercase tracking-wider animate-in shake md:text-xl"
                       role="status"
                     >
                       <Lightbulb className="h-6 w-6" aria-hidden="true" />
@@ -277,7 +277,7 @@ export function GameScreen({
                     </div>
                   )}
                   {activeHint && (
-                    <div className="border border-[var(--mq-secondary)] bg-[var(--mq-background)] p-4 text-[var(--mq-text)] font-serif text-lg text-center max-w-lg mx-auto shadow-[0_0_20px_color-mix(in_srgb,var(--mq-secondary)_25%,transparent)]">
+                    <div className="mx-auto w-full max-w-lg border border-[var(--mq-secondary)] bg-[var(--mq-background)] p-3 text-center font-serif text-base text-[var(--mq-text)] shadow-[0_0_20px_color-mix(in_srgb,var(--mq-secondary)_25%,transparent)] md:p-4 md:text-lg">
                       <div className="mb-2 inline-flex items-center justify-center gap-2 text-[var(--mq-secondary)] font-bold uppercase">
                         <Lightbulb className="h-5 w-5" aria-hidden="true" />
                         {showHint ? "Support Hint" : "Hint"}
@@ -293,18 +293,18 @@ export function GameScreen({
                   )}
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4">
                   {currentMathProblem.choices.map((ans, idx) => {
                     const letters = ["A", "B", "C", "D"];
                     return (
                       <button
                         key={idx}
-                        className="mq-focus rs-button !border-[var(--mq-secondary)] hover:!border-[var(--mq-primary-hover)] hover:!text-[var(--mq-text)] h-24 text-2xl md:text-3xl w-full flex items-center justify-center disabled:pointer-events-none disabled:opacity-70"
+                        className="mq-focus rs-button !border-[var(--mq-secondary)] hover:!border-[var(--mq-primary-hover)] hover:!text-[var(--mq-text)] h-20 text-xl md:h-24 md:text-3xl w-full flex items-center justify-center disabled:pointer-events-none disabled:opacity-70"
                         onClick={() => handleMathClick(ans)}
                         disabled={isTransitioning}
                         data-testid={`button-math-answer-${idx}`}
                       >
-                        <span className="text-[var(--mq-secondary)] font-bold mr-6 text-xl">
+                        <span className="text-[var(--mq-secondary)] font-bold mr-4 text-lg md:mr-6 md:text-xl">
                           {letters[idx]}
                         </span>
                         {ans}
