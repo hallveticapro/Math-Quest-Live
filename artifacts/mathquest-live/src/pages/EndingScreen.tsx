@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { GameState } from "../types";
 import { playFanfare } from "../lib/sounds";
 import { SceneImage } from "../components/SceneImage";
+import { getQuestLengthByTurns } from "../questLengths";
 
 interface EndingScreenProps {
   state: GameState;
@@ -10,7 +11,18 @@ interface EndingScreenProps {
 }
 
 export function EndingScreen({ state, onPlayAgain, onNewHero }: EndingScreenProps) {
-  const { endingTitle, endingText, badge, mathSolved, hero, illustration } = state;
+  const {
+    endingTitle,
+    endingText,
+    badge,
+    mathSolved,
+    hero,
+    illustration,
+    difficulty,
+    maxTurns,
+    practicedSkills,
+  } = state;
+  const questLength = getQuestLengthByTurns(maxTurns);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -48,6 +60,43 @@ export function EndingScreen({ state, onPlayAgain, onNewHero }: EndingScreenProp
           <div className="border-t-2 border-b-2 border-[var(--mq-secondary)] py-6 flex flex-col md:flex-row items-center justify-between bg-[var(--mq-background)]/50 px-6">
             <span className="text-xl font-bold text-[var(--mq-secondary)] uppercase tracking-widest mb-2 md:mb-0">Challenges Overcome</span>
             <span className="text-5xl font-black font-sans text-[var(--mq-secondary)] drop-shadow-[0_0_10px_var(--mq-secondary)]">{mathSolved}</span>
+          </div>
+
+          <div className="rounded-sm border border-[var(--mq-border)] bg-[var(--mq-background)]/60 p-5 text-center">
+            <h2 className="text-sm font-bold uppercase tracking-[0.25em] text-[var(--mq-primary-hover)]">
+              Quest Summary
+            </h2>
+            <div className="mt-4 grid gap-3 text-sm sm:grid-cols-3">
+              <div>
+                <div className="font-bold uppercase tracking-wider text-[var(--mq-heading)]">Challenge</div>
+                <div className="text-[var(--mq-text)]">{difficulty}</div>
+              </div>
+              <div>
+                <div className="font-bold uppercase tracking-wider text-[var(--mq-heading)]">Length</div>
+                <div className="text-[var(--mq-text)]">{questLength.label}</div>
+              </div>
+              <div>
+                <div className="font-bold uppercase tracking-wider text-[var(--mq-heading)]">Math</div>
+                <div className="text-[var(--mq-text)]">{mathSolved} / {maxTurns}</div>
+              </div>
+            </div>
+            {practicedSkills.length > 0 && (
+              <div className="mt-5">
+                <div className="mb-2 text-xs font-bold uppercase tracking-widest text-[var(--mq-text-muted)]">
+                  Skills Practiced
+                </div>
+                <div className="flex flex-wrap justify-center gap-2">
+                  {practicedSkills.map((skill) => (
+                    <span
+                      key={skill}
+                      className="rounded-sm border border-[var(--mq-border)] bg-[var(--mq-surface-strong)] px-3 py-1 text-sm text-[var(--mq-text)]"
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 

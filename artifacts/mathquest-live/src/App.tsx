@@ -68,6 +68,13 @@ type PrepareGameStepBody = {
   storySummary: string;
   chosenAction: string;
   mathSolved?: number;
+  lastMathSkill?: {
+    skillLabel: string;
+    problemType: string;
+    difficulty: string;
+    gradeBand: number;
+    storyFlavor: string;
+  };
 };
 type PrepareGameStepResponse = {
   pendingId: string;
@@ -92,6 +99,36 @@ function resolvePreparedStep(pendingId: string) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ pendingId }),
   });
+}
+
+function getMathStoryFlavor(problem: MathProblem) {
+  const text = `${problem.skill} ${problem.problemType}`.toLowerCase();
+  if (text.includes("fraction")) return "fraction clues, equal parts, and careful comparisons";
+  if (text.includes("decimal")) return "place-value clues, careful measuring, and precise comparisons";
+  if (text.includes("volume")) return "stacked blocks, chambers, and space-filling puzzles";
+  if (text.includes("area") || text.includes("perimeter")) return "maps, borders, rooms, and measured paths";
+  if (text.includes("coordinate")) return "map coordinates, grid paths, and location clues";
+  if (text.includes("angle")) return "turning gears, tilted mirrors, and angle clues";
+  if (text.includes("round")) return "estimate clues and place-value signs";
+  if (text.includes("division")) return "equal shares, groups, and fair sorting";
+  if (text.includes("multiplication")) return "arrays, equal groups, and repeated patterns";
+  return "patterns, clues, and careful problem solving";
+}
+
+function buildSafeMathSkillMetadata(problem: MathProblem) {
+  return {
+    skillLabel: problem.skillLabel || problem.skill,
+    problemType: problem.problemType,
+    difficulty: problem.difficulty,
+    gradeBand: problem.gradeBand,
+    storyFlavor: getMathStoryFlavor(problem),
+  };
+}
+
+function appendUniqueSkill(skills: string[], problem: MathProblem) {
+  const label = problem.skillLabel || problem.skill;
+  if (skills.includes(label)) return skills;
+  return [...skills, label];
 }
 
 function GameApp() {
@@ -202,6 +239,7 @@ function GameApp() {
       wrongAttempts: 0,
       showHint: false,
       recoveryMode: false,
+      practicedSkills: [],
       isLoading: true,
       screen: "game",
     }));
@@ -255,12 +293,16 @@ function GameApp() {
       });
   };
 
-  const handleQuickStart = (difficulty: string) => {
+  const handleQuickStart = (difficulty: string, maxTurns: number) => {
     if (quickStartLockRef.current) return;
 
     quickStartLockRef.current = true;
     setIsQuickStarting(true);
-    const session = buildQuickStartSession(difficulty, lastQuickStartRef.current);
+    const session = buildQuickStartSession(
+      difficulty,
+      maxTurns,
+      lastQuickStartRef.current,
+    );
     lastQuickStartRef.current = session;
     applyColorScheme(session.colorSchemeId);
 
@@ -289,6 +331,7 @@ function GameApp() {
     actionLockRef.current = true;
     playClick();
     const isEnding = state.turn >= state.maxTurns;
+    const mathProblem = generateSessionMathProblem(state.difficulty);
     pendingPreparationRef.current = prepareGameStep({
       kind: isEnding ? "ending" : "turn",
       hero: state.hero,
@@ -299,6 +342,7 @@ function GameApp() {
       storySummary: state.storySummary,
       chosenAction: choiceLabel,
       mathSolved: isEnding ? state.mathSolved + 1 : undefined,
+      lastMathSkill: buildSafeMathSkillMetadata(mathProblem),
     }).catch((err: unknown) => {
       console.warn(
         "Prepared turn failed; falling back to reveal-time generation.",
@@ -307,7 +351,6 @@ function GameApp() {
       return null;
     });
 
-    const mathProblem = generateSessionMathProblem(state.difficulty);
     setState((s) => ({
       ...s,
       chosenAction: choiceLabel,
@@ -347,6 +390,7 @@ function GameApp() {
         endingText: res.endingText,
         illustration: res.image ?? null,
         badge: res.badge,
+        practicedSkills: s.practicedSkills,
       }));
     } catch {
       try {
@@ -368,6 +412,7 @@ function GameApp() {
           endingText: res.endingText,
           illustration: res.image ?? null,
           badge: res.badge,
+          practicedSkills: s.practicedSkills,
         }));
       } catch {
         if (sessionVersion !== sessionVersionRef.current) return;
@@ -380,6 +425,7 @@ function GameApp() {
             "You have completed your journey through the magical lands and returned safely home, wiser and stronger than before.",
           illustration: null,
           badge: "Star of Logic",
+          practicedSkills: s.practicedSkills,
         }));
       }
     } finally {
@@ -389,10 +435,7 @@ function GameApp() {
     }
   };
 
-  const revealNextTurn = async (
-    newMathSolved: number,
-    mathDifficulty: string,
-  ) => {
+  const revealNextTurn = async (newMathSolved: number, problem: MathProblem) => {
     const sessionVersion = sessionVersionRef.current;
     const nextTurn = state.turn + 1;
     try {
@@ -418,6 +461,7 @@ function GameApp() {
         illustration: res.image ?? null,
         choices: res.choices,
         storySummary: res.storySummary,
+        practicedSkills: s.practicedSkills,
       }));
     } catch {
       try {
@@ -429,7 +473,7 @@ function GameApp() {
           maxTurns: state.maxTurns,
           storySummary: state.storySummary,
           chosenAction: state.chosenAction || "",
-          mathResult: `Solved a ${state.recoveryMode ? "recovery" : "standard"} ${mathDifficulty} problem.`,
+          mathResult: `Solved a ${state.recoveryMode ? "recovery" : "standard"} ${problem.difficulty} problem practicing ${problem.skillLabel || problem.skill}.`,
         });
         if (sessionVersion !== sessionVersionRef.current) return;
         setState((s) => ({
@@ -441,6 +485,7 @@ function GameApp() {
           illustration: res.image ?? null,
           choices: res.choices,
           storySummary: res.storySummary,
+          practicedSkills: s.practicedSkills,
         }));
       } catch {
         if (sessionVersion !== sessionVersionRef.current) return;
@@ -458,6 +503,7 @@ function GameApp() {
           illustration: null,
           choices: FALLBACK_SCENE.choices,
           storySummary: FALLBACK_SCENE.storySummary,
+          practicedSkills: s.practicedSkills,
         }));
       }
     } finally {
@@ -486,12 +532,13 @@ function GameApp() {
         showHint: false,
         recoveryMode: false,
         mathSolved: newMathSolved,
+        practicedSkills: appendUniqueSkill(s.practicedSkills, prob),
       }));
 
       if (state.turn >= state.maxTurns) {
         void revealEnding(newMathSolved);
       } else {
-        void revealNextTurn(newMathSolved, prob.difficulty);
+        void revealNextTurn(newMathSolved, prob);
       }
     } else {
       mathAnswerLockRef.current = true;

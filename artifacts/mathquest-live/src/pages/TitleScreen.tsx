@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { DIFFICULTY_OPTIONS } from "../math/floridaBestMath";
 import { playClick } from "../lib/sounds";
+import {
+  DEFAULT_QUEST_LENGTH,
+  QUEST_LENGTH_OPTIONS,
+} from "../questLengths";
 
 export function TitleScreen({
   onBegin,
@@ -8,10 +12,16 @@ export function TitleScreen({
   isQuickStarting = false,
 }: {
   onBegin: () => void;
-  onQuickStart: (difficulty: string) => void;
+  onQuickStart: (difficulty: string, maxTurns: number) => void;
   isQuickStarting?: boolean;
 }) {
   const [showQuickStartChoices, setShowQuickStartChoices] = useState(false);
+  const [quickDifficulty, setQuickDifficulty] = useState(
+    DIFFICULTY_OPTIONS[1]?.value ?? "Medium",
+  );
+  const [quickMaxTurns, setQuickMaxTurns] = useState(
+    DEFAULT_QUEST_LENGTH.maxTurns,
+  );
 
   return (
     <div className="min-h-[100dvh] w-full flex flex-col items-center justify-center p-6 text-center space-y-12 animate-in fade-in duration-1000">
@@ -56,28 +66,84 @@ export function TitleScreen({
 
         {showQuickStartChoices && (
           <div
-            className="grid grid-cols-2 gap-3 rounded-sm border border-[var(--mq-border)] bg-[var(--mq-surface)] p-3 shadow-[0_0_24px_color-mix(in_srgb,var(--mq-primary)_25%,transparent)] animate-in fade-in zoom-in-95 duration-150"
-            aria-label="Choose a Quick Start challenge level"
+            className="space-y-4 rounded-sm border border-[var(--mq-border)] bg-[var(--mq-surface)] p-3 text-left shadow-[0_0_24px_color-mix(in_srgb,var(--mq-primary)_25%,transparent)] animate-in fade-in zoom-in-95 duration-150"
+            aria-label="Choose Quick Start options"
           >
-            {DIFFICULTY_OPTIONS.map((option) => (
-              <button
-                key={option.key}
-                className="mq-focus rounded-sm border-2 border-[var(--mq-border)] bg-[var(--mq-surface-strong)] px-3 py-3 text-left transition-colors hover:border-[var(--mq-border-strong)] hover:bg-[var(--mq-button-hover)] disabled:cursor-not-allowed disabled:opacity-50"
-                onClick={() => {
-                  playClick();
-                  onQuickStart(option.value);
-                }}
-                disabled={isQuickStarting}
-                data-testid={`button-quick-start-${option.key}`}
-              >
-                <span className="block font-serif text-lg text-[var(--mq-heading)]">
-                  {option.label}
-                </span>
-                <span className="mt-1 block text-xs font-bold uppercase tracking-wide text-[var(--mq-text-muted)]">
-                  {option.displayName}
-                </span>
-              </button>
-            ))}
+            <div>
+              <p className="mb-2 text-xs font-bold uppercase tracking-widest text-[var(--mq-secondary)]">
+                Challenge Level
+              </p>
+              <div className="grid grid-cols-2 gap-2">
+                {DIFFICULTY_OPTIONS.map((option) => (
+                  <button
+                    key={option.key}
+                    className={[
+                      "mq-focus rounded-sm border-2 bg-[var(--mq-surface-strong)] px-3 py-3 text-left transition-colors hover:border-[var(--mq-border-strong)] hover:bg-[var(--mq-button-hover)] disabled:cursor-not-allowed disabled:opacity-50",
+                      quickDifficulty === option.value
+                        ? "border-[var(--mq-border-strong)]"
+                        : "border-[var(--mq-border)]",
+                    ].join(" ")}
+                    onClick={() => {
+                      playClick();
+                      setQuickDifficulty(option.value);
+                    }}
+                    disabled={isQuickStarting}
+                    data-testid={`button-quick-start-${option.key}`}
+                  >
+                    <span className="block font-serif text-lg text-[var(--mq-heading)]">
+                      {option.label}
+                    </span>
+                    <span className="mt-1 block text-xs font-bold uppercase tracking-wide text-[var(--mq-text-muted)]">
+                      {option.displayName}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <p className="mb-2 text-xs font-bold uppercase tracking-widest text-[var(--mq-secondary)]">
+                Quest Length
+              </p>
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                {QUEST_LENGTH_OPTIONS.map((option) => (
+                  <button
+                    key={option.id}
+                    className={[
+                      "mq-focus rounded-sm border-2 bg-[var(--mq-surface-strong)] px-3 py-3 text-left transition-colors hover:border-[var(--mq-border-strong)] hover:bg-[var(--mq-button-hover)] disabled:cursor-not-allowed disabled:opacity-50",
+                      quickMaxTurns === option.maxTurns
+                        ? "border-[var(--mq-border-strong)]"
+                        : "border-[var(--mq-border)]",
+                    ].join(" ")}
+                    onClick={() => {
+                      playClick();
+                      setQuickMaxTurns(option.maxTurns);
+                    }}
+                    disabled={isQuickStarting}
+                    data-testid={`button-quick-start-length-${option.id}`}
+                  >
+                    <span className="block font-serif text-base text-[var(--mq-heading)]">
+                      {option.label.replace(" Quest", "")}
+                    </span>
+                    <span className="mt-1 block text-xs text-[var(--mq-text-muted)]">
+                      {option.maxTurns} challenges
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <button
+              className="mq-focus rs-button w-full px-4 py-3 text-base"
+              onClick={() => {
+                playClick();
+                onQuickStart(quickDifficulty, quickMaxTurns);
+              }}
+              disabled={isQuickStarting}
+              data-testid="button-randomize-hero-begin"
+            >
+              Randomize Hero and Begin
+            </button>
           </div>
         )}
       </div>

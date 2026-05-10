@@ -6,7 +6,11 @@ import {
   HERO_PRONOUNS,
   QUICK_START_SEEDS,
 } from "./adventureOptions";
-import { DEFAULT_COLOR_SCHEME_ID, type ColorSchemeId } from "./colorSchemes";
+import {
+  COLOR_SCHEMES,
+  DEFAULT_COLOR_SCHEME_ID,
+  type ColorSchemeId,
+} from "./colorSchemes";
 import { QUEST_LENGTH_OPTIONS } from "./questLengths";
 import type { Hero } from "./types";
 
@@ -26,6 +30,7 @@ function pickRandom<T>(items: readonly T[], avoid?: (item: T) => boolean): T {
 
 export function buildQuickStartSession(
   difficulty: string,
+  maxTurns: number,
   previous?: QuickStartSession | null,
 ): QuickStartSession {
   const previousPair = previous
@@ -37,14 +42,17 @@ export function buildQuickStartSession(
     HERO_CLASSES,
     (option) => `${ancestry}|${option}` === previousPair,
   );
-  const questLength = pickRandom(
-    QUEST_LENGTH_OPTIONS,
-    (option) => option.maxTurns === previous?.maxTurns,
-  );
+  const questLength =
+    QUEST_LENGTH_OPTIONS.find((option) => option.maxTurns === maxTurns) ??
+    QUEST_LENGTH_OPTIONS[1];
   const seedPool = QUICK_START_SEEDS.length > 0 ? QUICK_START_SEEDS : ADVENTURE_SEEDS;
   const adventureSeed = pickRandom(
     seedPool,
     (option) => option === previous?.adventureSeed,
+  );
+  const colorScheme = pickRandom(
+    COLOR_SCHEMES,
+    (option) => option.id === previous?.colorSchemeId,
   );
 
   return {
@@ -57,6 +65,6 @@ export function buildQuickStartSession(
     difficulty,
     adventureSeed,
     maxTurns: questLength.maxTurns,
-    colorSchemeId: DEFAULT_COLOR_SCHEME_ID,
+    colorSchemeId: colorScheme?.id ?? DEFAULT_COLOR_SCHEME_ID,
   };
 }

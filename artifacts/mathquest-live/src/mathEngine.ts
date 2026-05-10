@@ -566,15 +566,19 @@ function g5ExtremeExpressions(): ProblemCore {
   const subtotal = (a + b) * c;
   const d = randInt(5, Math.max(6, subtotal - 5));
   const answer = (a + b) * c - d;
+  const misconceptionDistractors = [
+    a + b * c - d,
+    (a + b) * (c - d),
+    (a + b) * c + d,
+    answer + c,
+  ].filter((value) => value >= 0 && value !== answer);
   return {
     prompt: `Evaluate (${a} + ${b}) × ${c} - ${d}.`,
     correctAnswer: String(answer),
     wrongAnswers: [
-      a + b * c - d,
-      (a + b) * (c - d),
-      (a + b) * c + d,
-      answer + c,
-    ].map(String),
+      ...misconceptionDistractors.map(String),
+      ...numberDistractors(answer, 12),
+    ],
     hint: "Use order of operations. Parentheses come first, then multiplication, then subtraction.",
     secondHint: "Solve inside the parentheses, multiply that result, then subtract the last number.",
   };

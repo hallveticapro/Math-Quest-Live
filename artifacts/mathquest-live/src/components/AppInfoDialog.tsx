@@ -1,4 +1,5 @@
-import { ExternalLink, Heart, Info } from "lucide-react";
+import type { ComponentType } from "react";
+import { AtSign, ExternalLink, Github, Heart, Info, Instagram, Music2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -80,12 +81,12 @@ export function AppInfoDialog({ variant = "floating" }: AppInfoDialogProps) {
           </section>
 
           <section className="space-y-3">
-            <h3 className="text-lg font-bold uppercase tracking-wide text-[var(--mq-primary-hover)]">Project Links</h3>
+            <h3 className="text-lg font-bold uppercase tracking-wide text-[var(--mq-primary-hover)]">Follow Me On Social Media</h3>
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-              <InfoLink href="https://github.com/hallveticapro/math-quest-live" label="GitHub" />
-              <InfoLink href="https://www.threads.net/@hallveticapro" label="Threads" />
-              <InfoLink href="https://www.instagram.com/hallveticapro" label="Instagram" />
-              <InfoLink href="https://www.tiktok.com/@hallveticapro" label="TikTok" />
+              <InfoLink href="https://github.com/hallveticapro/math-quest-live" label="GitHub" icon={Github} />
+              <InfoLink href="https://www.threads.net/@hallveticapro" label="Threads" icon={AtSign} />
+              <InfoLink href="https://www.instagram.com/hallveticapro" label="Instagram" icon={Instagram} />
+              <InfoLink href="https://www.tiktok.com/@hallveticapro" label="TikTok" icon={Music2} />
             </div>
           </section>
 
@@ -122,7 +123,15 @@ export function AppInfoDialog({ variant = "floating" }: AppInfoDialogProps) {
   );
 }
 
-function InfoLink({ href, label }: { href: string; label: string }) {
+function InfoLink({
+  href,
+  label,
+  icon: Icon,
+}: {
+  href: string;
+  label: string;
+  icon: ComponentType<{ className?: string; "aria-hidden"?: true }>;
+}) {
   return (
     <a
       href={href}
@@ -131,7 +140,10 @@ function InfoLink({ href, label }: { href: string; label: string }) {
       className="mq-focus flex items-center justify-between rounded-sm border border-[var(--mq-border)] bg-[var(--mq-background)] px-3 py-2 text-[var(--mq-text)] transition-colors hover:border-[var(--mq-border-strong)] hover:text-[var(--mq-heading)]"
       aria-label={`Open ${label} in a new tab`}
     >
-      <span>{label}</span>
+      <span className="inline-flex items-center gap-2">
+        <Icon className="h-4 w-4 text-[var(--mq-heading)]" aria-hidden={true} />
+        {label}
+      </span>
       <ExternalLink className="h-4 w-4" aria-hidden="true" />
     </a>
   );

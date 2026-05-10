@@ -65,6 +65,7 @@ export type GameState = {
   wrongAttempts: number;
   showHint: boolean;
   recoveryMode: boolean;
+  practicedSkills: string[];
 };
 
 export const INITIAL_STATE: GameState = {
@@ -90,4 +91,5 @@ export const INITIAL_STATE: GameState = {
   wrongAttempts: 0,
   showHint: false,
   recoveryMode: false,
+  practicedSkills: [],
 };
