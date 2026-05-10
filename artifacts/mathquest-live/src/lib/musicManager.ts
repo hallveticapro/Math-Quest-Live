@@ -25,7 +25,7 @@ function shuffleTracks(tracks: MusicTrack[], previousId: string | null) {
 class BackgroundMusicManager {
   private enabled = true;
   private unlocked = false;
-  private targetVolume = 0.5;
+  private targetVolume = 0.1;
   private playlist: MusicTrack[] = [];
   private currentTrackId: string | null = null;
   private currentAudio: HTMLAudioElement | null = null;

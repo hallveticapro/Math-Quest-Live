@@ -150,7 +150,7 @@ The old root `MUSIC/` folder was only a temporary intake location and should not
 Audio settings are session-only and reset on refresh:
 
 - Background music defaults to on.
-- Background music volume defaults to 50%.
+- Background music volume defaults to 10%.
 - Navigation sound effects default to on.
 
 Music starts only after a user interaction unlocks browser audio. Tracks rotate through a shuffled playlist, avoid immediate repeats when multiple tracks exist, fade in/out, and transition smoothly between songs. If the music folder is empty, gameplay continues without background music.

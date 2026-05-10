@@ -150,7 +150,7 @@ function GameApp() {
   const sessionVersionRef = useRef(0);
   const [isQuickStarting, setIsQuickStarting] = useState(false);
   const [backgroundMusicEnabled, setBackgroundMusicEnabled] = useState(true);
-  const [backgroundMusicVolume, setBackgroundMusicVolume] = useState(0.5);
+  const [backgroundMusicVolume, setBackgroundMusicVolume] = useState(0.1);
   const [soundEffectsEnabled, setSoundEffectsEnabledState] = useState(true);
   const { toast } = useToast();
 
