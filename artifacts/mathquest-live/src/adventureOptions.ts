@@ -13,7 +13,7 @@ export const HERO_NAMES = [
   "Milo",
 ];
 
-export const HERO_PRONOUNS = ["she/her", "he/him", "they/them"];
+export const HERO_PRONOUNS = ["she/her", "he/him"];
 
 export const HERO_ANCESTRIES = [
   "Human",
