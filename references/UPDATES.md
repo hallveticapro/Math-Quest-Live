@@ -2,6 +2,10 @@
 
 Newest entries first. Add a concise timestamped entry for every meaningful project change before creating the related commit.
 
+## 2026-05-11T18:12:00-04:00
+
+- Completed PLAN.md Section 7 by expanding Grade 4 angle decomposition to use varied whole-number angle measures, 90/180/270/360-degree totals, and degree-labeled answer choices.
+
 ## 2026-05-11T18:09:00-04:00
 
 - Completed PLAN.md Section 6 by adding a browser-native `Read Story` / `Stop Reading` control that reads only the current story text and stops on math, scene changes, navigation, or unmount.

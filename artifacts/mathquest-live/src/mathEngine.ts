@@ -138,6 +138,40 @@ function numberDistractors(answer: number, spread: number, count = 5) {
   return [...values];
 }
 
+function degreeAnswer(value: number) {
+  return `${value}°`;
+}
+
+function degreeDistractors(answer: number, candidates: number[], count = 5) {
+  const values = new Set<number>();
+  for (const candidate of candidates) {
+    if (
+      Number.isInteger(candidate) &&
+      candidate > 0 &&
+      candidate <= 360 &&
+      candidate !== answer
+    ) {
+      values.add(candidate);
+    }
+    if (values.size >= count) return [...values].map(degreeAnswer);
+  }
+
+  for (const offset of [5, -5, 10, -10, 15, -15, 20, -20, 30, -30, 45, -45]) {
+    const candidate = answer + offset;
+    if (candidate > 0 && candidate <= 360 && candidate !== answer) {
+      values.add(candidate);
+    }
+    if (values.size >= count) return [...values].map(degreeAnswer);
+  }
+
+  let candidate = 1;
+  while (values.size < count) {
+    if (candidate !== answer) values.add(candidate);
+    candidate += 1;
+  }
+  return [...values].map(degreeAnswer);
+}
+
 function decimalDistractors(
   answer: number,
   places: number,
@@ -1090,44 +1124,45 @@ function g4DecimalCompare(): ProblemCore {
 }
 
 function g4Angles(): ProblemCore {
-  const whole = [90, 120, 180][randInt(0, 2)];
-  const known = randInt(2, whole / 10 - 2) * 10;
+  const whole = [90, 180, 270, 360][randInt(0, 3)];
+  const known = randInt(15, whole - 15);
   const answer = whole - known;
   return {
     prompt: `Two angles make ${whole}°. One angle is ${known}°. What is the other angle?`,
-    correctAnswer: `${answer}°`,
-    wrongAnswers: [
-      `${known}°`,
-      `${whole + known}°`,
-      `${Math.max(10, answer - 10)}°`,
-      `${answer + 10}°`,
-    ],
+    correctAnswer: degreeAnswer(answer),
+    wrongAnswers: degreeDistractors(answer, [
+      known,
+      whole + known,
+      Math.abs(answer - known),
+      answer + 5,
+      answer - 5,
+      answer + 10,
+      answer - 10,
+    ]),
     hint: "The two angles combine to make the whole angle. Use subtraction to find the missing part.",
     secondHint: "Start with the whole angle, then subtract the angle you already know.",
   };
 }
 
 function g4AnglesThreePart(): ProblemCore {
-  const whole = [120, 180, 240, 270][randInt(0, 3)];
-  const first = randInt(2, 8) * 10;
-  const second = randInt(2, 8) * 10;
+  const whole = [90, 180, 270, 360][randInt(0, 3)];
+  const first = randInt(15, Math.min(120, whole - 35));
+  const second = randInt(15, Math.min(140, whole - first - 15));
   const knownSum = first + second;
-  const minimumMissing = 20;
-  if (knownSum >= whole - minimumMissing) {
-    return g4AnglesThreePart();
-  }
   const answer = whole - knownSum;
 
   return {
     prompt: `Three angles make ${whole}°. Two angles are ${first}° and ${second}°. What is the missing angle?`,
-    correctAnswer: `${answer}°`,
-    wrongAnswers: [
-      `${knownSum}°`,
-      `${whole - first}°`,
-      `${whole - second}°`,
-      `${Math.max(10, answer - 10)}°`,
-      `${answer + 10}°`,
-    ],
+    correctAnswer: degreeAnswer(answer),
+    wrongAnswers: degreeDistractors(answer, [
+      knownSum,
+      whole - first,
+      whole - second,
+      answer + 5,
+      answer - 5,
+      answer + 10,
+      answer - 10,
+    ]),
     hint: "The three angle parts combine to make the whole angle.",
     secondHint: "Add the two known angles first. Then subtract that sum from the whole angle.",
   };
