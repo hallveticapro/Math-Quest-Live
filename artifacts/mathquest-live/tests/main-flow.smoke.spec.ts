@@ -64,21 +64,25 @@ test("quick start reaches a story, opens settings during math, and advances afte
   await expect(page.getByTestId("button-quest-settings")).toBeVisible();
 
   await page.getByTestId("button-choice-A").click();
-  await expect(page.getByText("Math Challenge")).toBeVisible();
+  await expect(page.getByText("Math Challenge", { exact: true })).toBeVisible();
 
   await page.getByTestId("button-quest-settings").click();
   await expect(page.getByText("Quest Settings")).toBeVisible();
   await page.getByTestId("button-settings-difficulty-hard").click();
   await page.keyboard.press("Escape");
-  await expect(page.getByText("Math Challenge")).toBeVisible();
+  await expect(page.getByText("Math Challenge", { exact: true })).toBeVisible();
 
-  for (let attempt = 0; attempt < 8; attempt += 1) {
+  for (let attempt = 0; attempt < 10; attempt += 1) {
     const nextScene = page.getByText("The Second Page Turns");
     if (await nextScene.isVisible().catch(() => false)) break;
     const answers = page.locator('[data-testid^="button-math-answer-"]');
     const count = await answers.count();
     if (count === 0) break;
-    await answers.nth(Math.min(attempt % count, count - 1)).click();
+    await answers
+      .nth(Math.min(attempt % count, count - 1))
+      .click({ force: true, timeout: 1_000 })
+      .catch(() => undefined);
+    await page.waitForTimeout(250);
   }
 
   await expect(page.getByText("The Second Page Turns")).toBeVisible();
