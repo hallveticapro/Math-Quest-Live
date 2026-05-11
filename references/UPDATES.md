@@ -2,6 +2,10 @@
 
 Newest entries first. Add a concise timestamped entry for every meaningful project change before creating the related commit.
 
+## 2026-05-11T18:01:00-04:00
+
+- Completed PLAN.md Sections 3 and 3B by adding the safe Snack Escape premise, corresponding fallback/image safety handling, and prompt guidance for playable scenes to end with natural next-step questions.
+
 ## 2026-05-11T17:57:00-04:00
 
 - Completed PLAN.md Section 2 setup option expansion by adding Hamster, Guinea Pig, Wolf, and Mango person ancestries with backend validation and Mango person story/image safety guidance.

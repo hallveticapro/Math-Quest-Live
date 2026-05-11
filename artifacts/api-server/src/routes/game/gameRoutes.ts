@@ -25,7 +25,7 @@ const router = Router();
 const FALLBACK_SCENE = {
   sceneTitle: "The Puzzle Path",
   storyText:
-    "The path ahead glows with gentle puzzle magic. Your hero studies the symbols and notices three safe ways forward. Ancient runes shimmer on the walls, each one a clue to the mystery ahead. The air hums with quiet energy, and somewhere in the distance, a friendly creature calls out in encouragement.",
+    "The path ahead glows with gentle puzzle magic. Your hero studies the symbols and notices three safe ways forward. Ancient runes shimmer on the walls, each one a clue to the mystery ahead. The air hums with quiet energy, and somewhere in the distance, a friendly creature calls out in encouragement. What should the hero try next?",
   choices: [
     { id: "A", label: "Study the symbols carefully" },
     { id: "B", label: "Ask a friendly guide for help" },
@@ -93,6 +93,10 @@ const FALLBACK_SCENE_LINES: Record<string, string[]> = {
     "Chalk lines swirl into arrows while the classroom hums with safe magic.",
     "A bookmark fairy taps the page where the next clue should be.",
   ],
+  "Snack Escape": [
+    "A napkin flutters like a sail while giant picnic footsteps thump far away.",
+    "A blueberry scout points toward a crumb trail that leads away from the lunch line.",
+  ],
 };
 
 const FALLBACK_ENDING_LINES: Record<string, string[]> = {
@@ -144,6 +148,10 @@ const FALLBACK_ENDING_LINES: Record<string, string[]> = {
     "The class mural remembers its colors, and stars sparkle over every desk.",
     "The runaway lesson cards settle neatly as the bell chimes a joyful finale.",
   ],
+  "Snack Escape": [
+    "The hero reaches the safe snack clubhouse, where every tiny treat cheers under a banner of napkins.",
+    "The picnic basket door swings open, and the whole snack-sized crew celebrates far from the lunch line.",
+  ],
 };
 
 function pickFallbackLine(lines: Record<string, string[]>, genre: string, salt: string) {
@@ -167,7 +175,7 @@ function buildGenreFallbackScene(plan?: EpisodePlan): typeof FALLBACK_SCENE {
   );
   return {
     sceneTitle: `${opening.genre} Puzzle Path`,
-    storyText: `The path through ${opening.setting} glows with gentle puzzle magic. ${genreLine} The clue ahead still points toward the quest goal: ${opening.objective}. A helpful ${opening.helpers} notices ${opening.detail.toLowerCase()} and gestures toward three safe ways forward. The adventure stays bright, calm, and full of clever choices.`,
+    storyText: `The path through ${opening.setting} glows with gentle puzzle magic. ${genreLine} The clue ahead still points toward the quest goal: ${opening.objective}. A helpful ${opening.helpers} notices ${opening.detail.toLowerCase()} and gestures toward three safe ways forward. The adventure stays bright, calm, and full of clever choices. What should the hero try next?`,
     choices: [
       { id: "A", label: "Study the glowing clue carefully" },
       { id: "B", label: `Ask the ${opening.helpers} for help` },

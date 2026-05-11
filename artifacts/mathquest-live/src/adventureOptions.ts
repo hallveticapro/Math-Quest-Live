@@ -68,6 +68,7 @@ export const QUEST_GENRES = [
   "Spooky Mystery / Friendly Ghosts",
   "Tiny World",
   "Magical School",
+  "Snack Escape",
 ];
 
 export const CONCRETE_QUEST_GENRES = QUEST_GENRES.filter(

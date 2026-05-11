@@ -22,6 +22,11 @@ function ancestrySafetyNote(context: ImageRequestContext) {
   return "If the hero is shown as a Mango person, depict a cheerful cartoon fruit-person adventurer with friendly storybook charm, never gross, creepy, realistic, or body-horror.";
 }
 
+function adventureSafetyNote(context: ImageRequestContext) {
+  if (context.adventureSeed.trim().toLowerCase() !== "snack escape") return "";
+  return "For Snack Escape, show silly cartoon picnic or kitchen escape energy only; no biting, chewing, mouths about to eat anyone, injuries, horror, or realistic danger.";
+}
+
 export function buildImageAlt(context: ImageRequestContext) {
   return `A colorful cartoon fantasy storybook illustration of ${heroDescription(context)} in ${context.adventureSeed}.`;
 }
@@ -41,6 +46,7 @@ export function buildImagePrompt(context: ImageRequestContext) {
     "No gore, injuries, death, horror, romance, frightening realism, or realistic weapons harming people.",
     "No stereotypes tied to ancestry, species, gender, or class. No real people. No student likenesses.",
     ancestrySafetyNote(context),
+    adventureSafetyNote(context),
     `Adventure: ${cleanText(context.adventureSeed, "a magical quest")}.`,
     `Moment: ${context.kind}.`,
     `Scene title: ${cleanText(context.sceneTitle, "A MathQuest adventure scene")}.`,

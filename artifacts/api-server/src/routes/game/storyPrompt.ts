@@ -78,7 +78,8 @@ type QuestGenre =
   | "Ancient Ruins"
   | "Spooky Mystery / Friendly Ghosts"
   | "Tiny World"
-  | "Magical School";
+  | "Magical School"
+  | "Snack Escape";
 
 type GenreProfile = {
   settings: string[];
@@ -184,6 +185,13 @@ const GENRE_PROFILES: Record<QuestGenre, GenreProfile> = {
     helpers: ["pencil sprite", "friendly hall monitor owl", "chalkboard dragon", "bookmark fairy"],
     details: ["desks shuffle into helpful patterns", "chalk lines become arrows", "lockers hum cheerful clues", "stars sparkle over correct plans"],
     avoid: "mean teachers, punishment, embarrassment, unsafe magic",
+  },
+  "Snack Escape": {
+    settings: ["a giant picnic blanket", "a storybook kitchen counter", "a cafeteria tray raceway", "a market basket maze"],
+    objectives: ["help a snack-sized hero reach the safe fruit parade", "roll a tiny supply cart away from the lunch line", "guide the picnic treats back to their cozy basket", "find the crumb trail to the safe snack clubhouse"],
+    helpers: ["blueberry scout", "toast crumb cartographer", "friendly napkin kite", "tiny spoon sled"],
+    details: ["giant footsteps thump like drums far away", "a napkin flutters like a sail", "crumbs make boulder-sized stepping stones", "a lunch bell rings in silly cartoon echoes"],
+    avoid: "cannibalism, horror, graphic eating, biting, chewing, injury, realistic danger, scary humans",
   },
 };
 
@@ -345,6 +353,7 @@ IMPORTANT RULES:
 - Problems resolved through: math, observation, kindness, creativity, teamwork, courage
 - Ancestry/species only affects appearance and fantasy flavor — never implies intelligence or ability
 - If the hero is a Mango person, describe them as a cheerful whimsical fruit-person adventurer with cartoon-safe charm; never use gross, creepy, body-horror, or realistic eating imagery.
+- If the genre is Snack Escape, frame it as silly cartoon picnic or cafeteria chaos with distant hungry giants/humans; never use cannibalism, horror, biting, chewing, injury, gore, or realistic predator danger.
 - Pronouns only affect pronoun use in the story
 - Write in fun, adventurous middle-grade tone like a fantasy novel
 - The student can ONLY choose from buttons — no freeform input
@@ -359,6 +368,8 @@ IMPORTANT RULES:
 - Each choice label must be under 90 characters
 - The chosen action from the student must visibly change the next scene. Do not ignore it.
 - New choices must be grounded in objects, helpers, clues, places, or problems that were explicitly established in the current scene.
+- Each playable storyText should end with one brief in-world question inviting the next decision, such as asking what the hero should try next. Vary the wording and keep it forward-looking.
+- The story-ending question must not mention math, benchmarks, standards, buttons, apps, or which choice is correct.
 - Do not offer vague choices like "continue forward" unless the scene clearly supports that action.`;
 
 export function buildStartPrompt(data: StartGameData, episodePlan = createEpisodePlan(data)): string {
@@ -392,7 +403,8 @@ This is the OPENING SCENE. Write ${reading.sceneWords}.
 Your task: Write a vivid, immersive opening that does THREE things:
 1. Introduces ${hero.name} as a character — give them personality, a brief backstory hint, and a reason why they are the right hero for this quest. Use their class and ancestry to flavor their appearance and style (appearance only, never personality or ability).
 2. Sets the scene — paint a picture of where the adventure begins, using rich sensory details.
-3. Launches the adventure — give them a clear quest goal and end with exactly 3 action choices.
+3. Launches the adventure — give them a clear quest goal.
+4. End storyText with a short, natural question that invites the next choice, then provide exactly 3 action choices.
 
 Make the student feel like they are stepping into the pages of a fantasy story. Use vivid, descriptive language. Refer to ${hero.name} by name and use ${hero.pronouns.split("/")[0]} pronouns correctly.
 Each choice must clearly connect to a specific thing established in this opening scene, such as a helper, clue, doorway, tool, sound, map, or magical obstacle.
@@ -452,6 +464,7 @@ ${data.lastMathSkill ? `Math skill flavor: The student just practiced ${data.las
 Continue the adventure from where we left off. ${hero.name} solved the math challenge and can now act. Write ${reading.sceneWords} of exciting story. The first paragraph must show how the student's chosen action changes what happens next. ${turnsLeft <= 2 ? "The adventure is nearing its climax — bring back established clues and build urgently toward the intended resolution." : turnsLeft <= 4 ? "The adventure is past its midpoint — raise the stakes with a complication tied to earlier details." : "Keep the adventure moving forward with a new discovery tied to the episode plan."}
 
 Choice rules:
+- End storyText with a short, natural in-world question that invites the next choice.
 - End with exactly 3 new safe action choices.
 - Each choice must name or imply a specific scene detail from the storyText you just wrote.
 - Do not introduce choices that ignore the chosen action or reset the story.
