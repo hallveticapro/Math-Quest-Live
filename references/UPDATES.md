@@ -2,6 +2,10 @@
 
 Newest entries first. Add a concise timestamped entry for every meaningful project change before creating the related commit.
 
+## 2026-05-11T18:23:00-04:00
+
+- Completed PLAN.md Section 9 by converting the Grade 4 and Grade 5 FAST/B.E.S.T. reference sheet PDFs into Markdown reference files under `references/` and removing the temporary root PDFs.
+
 ## 2026-05-11T18:20:00-04:00
 
 - Completed PLAN.md Section 8 by adding unit labels to measurement, time, area, volume, data, money-adjacent fraction, and advanced Grade 5 answer choices while preserving deterministic checking.
