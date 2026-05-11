@@ -37,13 +37,14 @@ export function EndingScreen({ state, onPlayAgain, onNewHero, topControls }: End
 
   return (
     <div className="min-h-[100dvh] w-full flex flex-col bg-[var(--mq-background)] p-4 md:p-8 animate-in fade-in duration-1000">
+      <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col">
       {topControls && (
-        <div className="mb-4 flex items-center justify-end gap-3 px-1 pt-[env(safe-area-inset-top)]">
+        <div className="mb-4 flex w-full items-center justify-end gap-3 px-1 pt-[env(safe-area-inset-top)]">
           {topControls}
         </div>
       )}
       <div className="flex flex-1 items-center justify-center">
-      <div className="max-w-3xl w-full space-y-10 text-center">
+      <div className="w-full space-y-10 text-center">
 
         <div className="space-y-6">
           <div className="inline-flex flex-col items-center p-8 bg-[var(--mq-surface)] border-4 border-[var(--mq-border-strong)] shadow-[0_0_50px_color-mix(in_srgb,var(--mq-primary)_35%,transparent)] mx-auto relative overflow-hidden">
@@ -127,6 +128,7 @@ export function EndingScreen({ state, onPlayAgain, onNewHero, topControls }: End
           </button>
         </div>
 
+      </div>
       </div>
       </div>
     </div>
