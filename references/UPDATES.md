@@ -2,6 +2,10 @@
 
 Newest entries first. Add a concise timestamped entry for every meaningful project change before creating the related commit.
 
+## 2026-05-11T18:05:00-04:00
+
+- Completed PLAN.md Section 5 by restoring the fresh-session background music volume default to 50% and updating audio documentation to match.
+
 ## 2026-05-11T18:03:00-04:00
 
 - Completed PLAN.md Section 4 by removing `they/them` from the student-facing pronoun options while leaving backend handling tolerant of stale in-session values.

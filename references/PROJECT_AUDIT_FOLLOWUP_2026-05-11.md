@@ -30,7 +30,7 @@ The previous audit was added in commit `de2bfd3` and later moved into `reference
 
 Other current-state work visible in the codebase includes:
 
-- Frontend background music with session-only audio settings, Vite auto-discovered MP3 assets, shuffled rotation, fades, and default 10% volume.
+- Frontend background music with session-only audio settings, Vite auto-discovered MP3 assets, shuffled rotation, fades, and adjustable session volume.
 - Session-only color schemes and settings across setup/game/ending screens.
 - Cover/outro image mode as the documented default, with milestone/every-scene modes still available.
 - Expanded Grade 3-5 standards reference files under `references/`.

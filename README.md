@@ -175,7 +175,7 @@ To add more quest music later, drop `.mp3` files into that folder and rebuild th
 Audio settings are session-only and reset on refresh:
 
 - Background music defaults to on.
-- Background music volume defaults to 5%.
+- Background music volume defaults to 50%.
 - Navigation sound effects default to on.
 
 Music starts only after a user interaction unlocks browser audio. Tracks rotate through a shuffled playlist, avoid immediate repeats when multiple tracks exist, fade in/out, and transition smoothly between songs. If the music folder is empty, gameplay continues without background music.
