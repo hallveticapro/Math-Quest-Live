@@ -19,11 +19,13 @@ The app’s core constraints matter:
 - `package.json` for root workspace commands.
 - `artifacts/mathquest-live/src/App.tsx` for browser game state and API flow.
 - `artifacts/mathquest-live/src/mathEngine.ts` and `artifacts/mathquest-live/src/math/floridaBestMath.ts` for deterministic math generation and standards metadata.
+- `artifacts/mathquest-live/src/components/MathRichDisplay.tsx` for student-facing fraction/table visuals driven by math problem metadata.
 - `artifacts/api-server/src/routes/game/` for story routes, prompt construction, and safety/fallback behavior.
 - `artifacts/api-server/src/images/` for optional backend image generation.
 - `artifacts/mathquest-live/src/lib/sounds.ts`, `artifacts/mathquest-live/src/lib/musicManager.ts`, and `artifacts/mathquest-live/src/assets/music/` for frontend audio.
 - `lib/api-spec/openapi.yaml` plus generated files in `lib/api-client-react/src/generated/` and `lib/api-zod/src/generated/` for API client/schema contracts.
 - `references/` for standards references, planning docs, and future Markdown reference material.
+- `UPDATES.md` for the newest durable project change notes and agent handoff breadcrumbs.
 
 ## Commands
 
@@ -76,6 +78,7 @@ pnpm --filter @workspace/api-spec run codegen
 - Difficulty is a standards band, not a student grade selector.
 - Keep Extreme inside Grade 5 expectations. Do not add Grade 6 content such as negative numbers, slope, linear equations, or middle-school ratios/proportional relationships.
 - Every math problem should include difficulty, grade band, standards system, benchmark metadata, skill label, problem type, hints, and a stable signature.
+- Fraction/table-style problems may include optional `richDisplay` metadata. Keep it visual-only and aligned with the plain-text prompt; answer checking and signatures should still use deterministic problem data, not rendered markup.
 - Signatures should identify the mathematical problem and ignore answer choice order.
 - Duplicate prevention is session-only browser memory; do not add persistence unless explicitly requested.
 - Normal student UI should not be cluttered with benchmark codes.
@@ -90,12 +93,16 @@ pnpm --filter @workspace/api-spec run codegen
 - Image generation is optional, backend-only, disabled by default, and stores temporary/disposable images in memory.
 - Image prompt text should be built from controlled game metadata only, not student freeform input.
 - Image failures, timeouts, invalid providers, or rate limits must not block gameplay permanently.
+- Intro/cover and outro images may intentionally gate scene presentation behind themed loading copy; normal in-story images should remain non-blocking unless a task explicitly changes that behavior.
 
 ## UI Conventions
 
 - Keep the Chronicler setup flow preset/button-based.
+- Do not reintroduce the removed standalone pre-quest writing screen; first-story/cover preparation belongs in the game loading state.
 - Preserve session-only color schemes; do not add `localStorage` unless specifically requested.
-- Preserve session-only audio settings. Background music files belong in `artifacts/mathquest-live/src/assets/music/` and are auto-discovered by Vite from `.mp3` files; do not add a hand-maintained music manifest.
+- Preserve session-only audio settings. Background music defaults to a quiet fresh-session volume of 5%. Background music files belong in `artifacts/mathquest-live/src/assets/music/` and are auto-discovered by Vite from `.mp3` files; do not add a hand-maintained music manifest.
+- Site/social preview assets belong in `artifacts/mathquest-live/public/images/`; keep social metadata centralized in `artifacts/mathquest-live/index.html`.
+- Rotating Chronicle/loading copy should stay readable. Use a calm cadence around 4-5 seconds unless a task needs faster feedback.
 - Keep mobile layouts and focus states in mind. Buttons/cards should remain large enough for Chromebooks and tablets.
 - Use existing components and styles in `artifacts/mathquest-live/src/components/` and `artifacts/mathquest-live/src/index.css` before inventing new patterns.
 
@@ -112,6 +119,7 @@ For most code changes, a task is done when:
 
 - The requested behavior is implemented without violating the no-accounts/no-database/no-saved-student-data/no-freeform-input constraints.
 - Relevant docs are updated when commands, environment variables, standards usage, deployment behavior, or developer workflow changes.
+- `UPDATES.md` has a newest-first timestamped note before each meaningful commit or checkpoint.
 - `npm run build` succeeds.
 - `npm run validate:math` succeeds for math changes.
 - `npm run validate:images` succeeds for image-mode changes.
