@@ -47,7 +47,6 @@ const DECISION_STEPS: SetupStep[] = [
   "colors",
 ];
 const STEP_ORDER: SetupStep[] = ["intro", ...DECISION_STEPS];
-const WRITING_TRANSITION_MS = 1900;
 const SETUP_TRANSITION_OUT_MS = 140;
 const SETUP_TRANSITION_IN_MS = 180;
 
@@ -129,24 +128,6 @@ const CONFIRMATION_POOLS: Partial<Record<SetupStep, ConfirmationTemplate[]>> = {
     ({ colorSchemeName }) => `The quill paints the margins in ${colorSchemeName}.`,
   ],
 };
-
-const WRITING_LINE_POOLS = [
-  [
-    "The Chronicler dips the quill in starlight...",
-    "A new chapter begins...",
-    "Writing your quest...",
-  ],
-  [
-    "The pages flutter into place...",
-    "Puzzle sparks gather in the margins...",
-    "Opening the first chapter...",
-  ],
-  [
-    "The quill traces a glowing doorway...",
-    "Your hero steps toward the first clue...",
-    "Preparing the adventure...",
-  ],
-];
 
 type SetupScreenProps = {
   onStart: (
@@ -279,8 +260,6 @@ export function SetupScreen({
   const [colorSchemeId, setColorSchemeId] = useState<ColorSchemeId>(
     DEFAULT_COLOR_SCHEME_ID,
   );
-  const [isWriting, setIsWriting] = useState(false);
-  const [writingLines, setWritingLines] = useState(WRITING_LINE_POOLS[0]);
   const [isStageTransitioning, setIsStageTransitioning] = useState(false);
   const transitionTimersRef = useRef<Array<ReturnType<typeof setTimeout>>>([]);
   const lastConfirmationIndexRef = useRef<Partial<Record<SetupStep, number>>>({});
@@ -445,19 +424,13 @@ export function SetupScreen({
 
   const handleBeginStory = () => {
     resetScrollForTransition();
-    setWritingLines(
-      WRITING_LINE_POOLS[Math.floor(Math.random() * WRITING_LINE_POOLS.length)],
+    onStart(
+      { name, pronouns, ancestry, className },
+      difficulty,
+      pickConcreteGenre(seed),
+      maxTurns,
+      colorSchemeId,
     );
-    setIsWriting(true);
-    setTimeout(() => {
-      onStart(
-        { name, pronouns, ancestry, className },
-        difficulty,
-        pickConcreteGenre(seed),
-        maxTurns,
-        colorSchemeId,
-      );
-    }, WRITING_TRANSITION_MS);
   };
 
   const canContinue =
@@ -470,29 +443,6 @@ export function SetupScreen({
     (step === "length" && Boolean(maxTurns)) ||
     (step === "seed" && Boolean(seed)) ||
     (step === "colors" && Boolean(colorSchemeId));
-
-  if (isWriting) {
-    return (
-      <div className="min-h-[100dvh] w-full flex flex-col p-4 md:p-8 animate-in fade-in duration-300">
-        {topControls && (
-          <div className="mb-4 flex items-center justify-end gap-3 px-1 pt-[env(safe-area-inset-top)]">
-            {topControls}
-          </div>
-        )}
-        <div className="flex flex-1 items-center justify-center">
-        <div className="rs-panel max-w-2xl p-8 text-center space-y-6">
-          <div className="mx-auto h-16 w-16 border-4 border-[var(--mq-border)] border-t-[var(--mq-heading)] border-b-[var(--mq-secondary)] animate-spin"></div>
-          <h2 className="rs-title text-4xl md:text-5xl">The Chronicle Opens</h2>
-          <div className="story-text space-y-2 text-xl">
-            {writingLines.map((line) => (
-              <p key={line}>{line}</p>
-            ))}
-          </div>
-        </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-[100dvh] w-full flex flex-col p-4 md:p-5 xl:p-6 animate-in fade-in duration-500">

@@ -2,6 +2,10 @@
 
 Newest entries first. Add a concise timestamped entry for every meaningful project change before creating the related commit.
 
+## 2026-05-11T06:36:26-04:00
+
+- Removed the extra pre-quest writing screen so setup now hands directly into the game loading state for first story and cover preparation.
+
 ## 2026-05-11T06:35:35-04:00
 
 - Matched the Exit Quest button and inline exit-confirmation height so the control no longer nudges the game header when toggled.
