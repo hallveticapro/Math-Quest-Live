@@ -16,11 +16,13 @@ import {
 import { resetScrollForTransition } from "../lib/scroll";
 import { playClick } from "../lib/sounds";
 import {
-  ADVENTURE_SEEDS,
   HERO_ANCESTRIES,
   HERO_CLASSES,
   HERO_NAMES,
   HERO_PRONOUNS,
+  QUEST_GENRES,
+  SURPRISE_GENRE,
+  pickConcreteGenre,
 } from "../adventureOptions";
 
 type SetupStep =
@@ -57,7 +59,7 @@ type ConfirmationContext = {
   difficultyLabel: string;
   questLengthLabel: string;
   questLengthTurns: number;
-  seed: string;
+  genre: string;
   colorSchemeName: string;
 };
 
@@ -101,22 +103,22 @@ const CONFIRMATION_POOLS: Partial<Record<SetupStep, ConfirmationTemplate[]>> = {
     ({ questLengthLabel }) => `The chapter ribbon settles on ${questLengthLabel}.`,
   ],
   seed: [
-    ({ seed }) =>
-      seed === "Random"
-        ? "The Chronicle chooses a surprising path."
-        : `The Chronicle opens to ${seed}.`,
-    ({ seed }) =>
-      seed === "Random"
-        ? "The map turns itself toward a mystery."
-        : `${seed} glimmers in the margin of the page.`,
-    ({ seed }) =>
-      seed === "Random"
-        ? "A hidden destination waits behind the next page."
-        : `The first doorway now leads toward ${seed}.`,
-    ({ seed }) =>
-      seed === "Random"
-        ? "The quill spins once and picks a safe surprise."
-        : `The Chronicle marks ${seed} as the opening scene.`,
+    ({ genre }) =>
+      genre === SURPRISE_GENRE
+        ? "The Chronicle chooses a safe surprise genre for this quest."
+        : `The Chronicle tunes the quest toward ${genre}.`,
+    ({ genre }) =>
+      genre === SURPRISE_GENRE
+        ? "The genre sigil spins once and settles out of sight."
+        : `${genre} glimmers across the chapter ribbon.`,
+    ({ genre }) =>
+      genre === SURPRISE_GENRE
+        ? "A hidden kind of adventure waits behind the next page."
+        : `The first chapter now carries the feeling of ${genre}.`,
+    ({ genre }) =>
+      genre === SURPRISE_GENRE
+        ? "The quill grins and picks a playful surprise."
+        : `The Chronicle marks ${genre} as the quest's guiding genre.`,
   ],
   colors: [
     ({ colorSchemeName }) =>
@@ -378,10 +380,10 @@ export function SetupScreen({
       pronouns,
       ancestry: ancestry || "mysterious",
       className,
-      difficultyLabel: difficultyOption?.label ?? difficulty,
+      difficultyLabel: difficultyOption?.displayName ?? difficulty,
       questLengthLabel: questLength.label,
       questLengthTurns: questLength.maxTurns,
-      seed,
+      genre: seed,
       colorSchemeName: colorScheme.name,
     };
   };
@@ -418,10 +420,11 @@ export function SetupScreen({
   const continueAfterConfirmation = () => {
     playClick();
     if (step === "seed") {
+      const preparedGenre = pickConcreteGenre(seed);
       onPrepareStart(
         { name, pronouns, ancestry, className },
         difficulty,
-        seed,
+        preparedGenre,
         maxTurns,
       );
     }
@@ -450,7 +453,7 @@ export function SetupScreen({
       onStart(
         { name, pronouns, ancestry, className },
         difficulty,
-        seed,
+        pickConcreteGenre(seed),
         maxTurns,
         colorSchemeId,
       );
@@ -470,7 +473,13 @@ export function SetupScreen({
 
   if (isWriting) {
     return (
-      <div className="min-h-[100dvh] w-full flex items-center justify-center p-4 md:p-8 animate-in fade-in duration-300">
+      <div className="min-h-[100dvh] w-full flex flex-col p-4 md:p-8 animate-in fade-in duration-300">
+        {topControls && (
+          <div className="mb-4 flex items-center justify-end gap-3 px-1 pt-[env(safe-area-inset-top)]">
+            {topControls}
+          </div>
+        )}
+        <div className="flex flex-1 items-center justify-center">
         <div className="rs-panel max-w-2xl p-8 text-center space-y-6">
           <div className="mx-auto h-16 w-16 border-4 border-[var(--mq-border)] border-t-[var(--mq-heading)] border-b-[var(--mq-secondary)] animate-spin"></div>
           <h2 className="rs-title text-4xl md:text-5xl">The Chronicle Opens</h2>
@@ -479,6 +488,7 @@ export function SetupScreen({
               <p key={line}>{line}</p>
             ))}
           </div>
+        </div>
         </div>
       </div>
     );
@@ -663,6 +673,10 @@ export function SetupScreen({
                       {option.description}
                     </span>
                     <span className="mt-1 text-xs text-[var(--mq-text-muted)] md:text-sm">
+                      Florida B.E.S.T. Grade {option.gradeBand} standards
+                      {option.key === "extreme" ? ", still within Grade 5" : ""}
+                    </span>
+                    <span className="mt-1 text-xs text-[var(--mq-text-muted)] md:text-sm">
                       {option.studentSummary}
                     </span>
                   </button>
@@ -699,14 +713,14 @@ export function SetupScreen({
           )}
 
           {mode === "question" && step === "seed" && (
-            <Question title="Where shall the Chronicle open?">
+            <Question title="What kind of quest shall the Chronicle tell?">
               <ChoiceGrid>
-                {ADVENTURE_SEEDS.map((option) => (
+                {QUEST_GENRES.map((option) => (
                   <button
                     key={option}
                     className={optionClass(seed === option)}
                     onClick={() => selectOption(() => setSeed(option))}
-                    data-testid={`button-seed-${option.replace(/\W+/g, "-").toLowerCase()}`}
+                    data-testid={`button-genre-${option.replace(/\W+/g, "-").toLowerCase()}`}
                   >
                     <OptionHeader selected={seed === option}>
                       <span className="text-lg font-serif text-[var(--mq-heading)]">

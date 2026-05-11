@@ -8,7 +8,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { DIFFICULTY_OPTIONS } from "../math/floridaBestMath";
 
 type AppInfoDialogProps = {
   variant?: "floating" | "inline";
@@ -52,6 +51,34 @@ export function AppInfoDialog({ variant = "floating" }: AppInfoDialogProps) {
           </section>
 
           <section className="space-y-2">
+            <h3 className="text-lg font-bold uppercase tracking-wide text-[var(--mq-primary-hover)]">How A Quest Works</h3>
+            <p>
+              Pick a hero, choose a quest genre, then follow the Chronicle. Every story action is a preset button, and each action opens a math gate before the next page appears.
+            </p>
+          </section>
+
+          <section className="space-y-2">
+            <h3 className="text-lg font-bold uppercase tracking-wide text-[var(--mq-primary-hover)]">Safe By Design</h3>
+            <p>
+              The app keeps student input preset and button-based. Stories are guided toward age-appropriate adventure, teamwork, curiosity, and problem solving.
+            </p>
+          </section>
+
+          <section className="space-y-2">
+            <h3 className="text-lg font-bold uppercase tracking-wide text-[var(--mq-primary-hover)]">Privacy</h3>
+            <p>
+              MathQuest Live does not require student accounts, logins, rosters, ads, analytics, or saved student progress.
+            </p>
+          </section>
+
+          <section className="space-y-2">
+            <h3 className="text-lg font-bold uppercase tracking-wide text-[var(--mq-primary-hover)]">AI Story, App Math</h3>
+            <p>
+              AI writes short story scenes and safe choices. The app itself generates, checks, and gates all math problems with deterministic code.
+            </p>
+          </section>
+
+          <section className="space-y-3">
             <h3 className="text-lg font-bold uppercase tracking-wide text-[var(--mq-primary-hover)]">Creator</h3>
             <p>
               Designed by Andrew Hall, @hallveticapro, to help keep kids engaged while they practice math and reading skills.
@@ -88,26 +115,6 @@ export function AppInfoDialog({ variant = "floating" }: AppInfoDialogProps) {
               <InfoLink href="https://www.instagram.com/hallveticapro" label="Instagram" icon={Instagram} />
               <InfoLink href="https://www.tiktok.com/@hallveticapro" label="TikTok" icon={Music2} />
             </div>
-          </section>
-
-          <section className="space-y-3">
-            <h3 className="text-lg font-bold uppercase tracking-wide text-[var(--mq-primary-hover)]">Challenge Levels</h3>
-            <div className="grid gap-3">
-              {DIFFICULTY_OPTIONS.map((mode) => (
-                <div key={mode.key} className="border border-[var(--mq-border)] bg-[var(--mq-background)] p-3">
-                  <div className="font-bold text-[var(--mq-text)]">{mode.label}</div>
-                  <div className="text-sm text-[var(--mq-text-muted)]">{mode.description}</div>
-                  <div className="mt-1 text-sm text-[var(--mq-text-muted)]">{mode.studentSummary}</div>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          <section className="space-y-2">
-            <h3 className="text-lg font-bold uppercase tracking-wide text-[var(--mq-primary-hover)]">Safety And Privacy</h3>
-            <p>
-              Students use preset buttons only. The MVP does not require accounts, logins, rosters, ads, analytics, or saved student progress.
-            </p>
           </section>
 
           <footer className="border-t border-[var(--mq-border)] pt-4 text-center text-sm text-[var(--mq-text-muted)]">

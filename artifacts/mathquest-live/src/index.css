@@ -134,6 +134,42 @@
   color: var(--mq-text);
 }
 
+.story-prose {
+  font-size: 1.4rem;
+  line-height: 1.85;
+}
+
+.loading-bar {
+  width: min(18rem, 80vw);
+  height: 0.55rem;
+  overflow: hidden;
+  border: 1px solid var(--mq-border);
+  border-radius: 999px;
+  background: var(--mq-background);
+  position: relative;
+}
+
+.loading-bar::after {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  left: -45%;
+  width: 45%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--mq-primary), var(--mq-heading));
+  box-shadow: 0 0 18px color-mix(in srgb, var(--mq-primary) 55%, transparent);
+  animation: mq-loading-sweep 1.35s ease-in-out infinite;
+}
+
+@keyframes mq-loading-sweep {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(320%);
+  }
+}
+
 .rs-panel {
   background-color: var(--mq-surface);
   border: 2px solid var(--mq-border);
@@ -340,6 +376,11 @@
   .story-text {
     font-size: 1rem;
     line-height: 1.65;
+  }
+
+  .story-prose {
+    font-size: 1.25rem;
+    line-height: 1.75;
   }
 
   .chronicler-intro-image {

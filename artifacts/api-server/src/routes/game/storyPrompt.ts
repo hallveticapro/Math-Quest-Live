@@ -14,6 +14,7 @@ interface StartGameData {
 
 export interface EpisodePlan {
   episodeTitle: string;
+  genre: string;
   centralProblem: string;
   heroGoal: string;
   stakes: string;
@@ -21,6 +22,7 @@ export interface EpisodePlan {
   intendedResolution: string;
   pacingBeats: string[];
   readingGuidance: string;
+  opening: QuestOpening;
 }
 
 export interface TurnData extends StartGameData {
@@ -64,83 +66,129 @@ function getQuestLengthLabel(maxTurns: number) {
   return QUEST_LENGTH_LABELS[maxTurns] ?? "Custom Quest";
 }
 
-const ADVENTURE_SEEDS: Record<string, { setting: string; objective: string; helpers: string; avoid: string }> = {
-  "The Sky Temple": {
-    setting: "A floating temple above the clouds",
-    objective: "Repair the weather engine before the storm spreads",
-    helpers: "storm sprite, cloud turtle, bronze owl",
-    avoid: "falling deaths, lightning injuries, sacrifice",
+type QuestGenre =
+  | "Fantasy"
+  | "Space Adventure"
+  | "Mystery"
+  | "Pirate Adventure"
+  | "Jungle Adventure"
+  | "Underwater Adventure"
+  | "Sky Islands"
+  | "Clockwork / Invention"
+  | "Ancient Ruins"
+  | "Spooky Mystery / Friendly Ghosts"
+  | "Tiny World"
+  | "Magical School";
+
+type GenreProfile = {
+  settings: string[];
+  objectives: string[];
+  helpers: string[];
+  details: string[];
+  avoid: string;
+};
+
+export type QuestOpening = {
+  name: string;
+  genre: QuestGenre;
+  setting: string;
+  objective: string;
+  helpers: string;
+  detail: string;
+  avoid: string;
+};
+
+const SURPRISE_GENRE = "Surprise Me!";
+
+const GENRE_PROFILES: Record<QuestGenre, GenreProfile> = {
+  Fantasy: {
+    settings: ["a moonlit castle garden", "a crystal forest", "a floating wizard tower", "a valley of singing stones"],
+    objectives: ["restore a missing glow to the guardian lantern", "wake the sleepy bridge before sunset", "return a lost map rune to its page", "help a shy dragon find the courage to ask for help"],
+    helpers: ["crystal fox", "owl librarian", "tiny dragon scout", "moss giant"],
+    details: ["golden ivy curls around every doorway", "friendly sprites leave clues in acorn cups", "the wind sounds like a harp", "every solved puzzle lights another star"],
+    avoid: "dark curses, scary monsters, violence, death",
   },
-  "The Crystal Forest": {
-    setting: "A forest of glowing crystal trees",
-    objective: "Restore the missing light to the forest heart",
-    helpers: "crystal fox, moss giant, singing beetles",
-    avoid: "scary body horror, cursed possession",
+  "Space Adventure": {
+    settings: ["a candy-bright comet station", "a moon garden under glass", "a starship classroom deck", "an asteroid market of floating stalls"],
+    objectives: ["repair the beacon that guides friendly travelers", "sort the mixed-up star maps", "help a lost rover find its charging dock", "restart the constellation projector"],
+    helpers: ["robot navigator", "moon moth", "comet captain", "star puppy"],
+    details: ["planets drift by like glowing marbles", "buttons blink in rainbow patterns", "zero-gravity notebooks float past", "a telescope hums whenever clues line up"],
+    avoid: "space disasters, oxygen danger, scary aliens, realistic crashes",
   },
-  "The Clockwork Volcano": {
-    setting: "A volcano filled with ancient gears and steam pipes",
-    objective: "Cool the overheating machine before it erupts harmlessly into sparkles and steam",
-    helpers: "gear goblin, lava salamander, clockwork bird",
-    avoid: "burns, death, destruction of towns",
+  Mystery: {
+    settings: ["a museum after closing", "a moonlit library", "a puzzle hotel with talking doors", "a train car full of harmless clues"],
+    objectives: ["find who borrowed the missing exhibit label", "follow the trail of glowing footprints", "solve why the portrait keeps changing hats", "return the lost chapter before the bell rings"],
+    helpers: ["book mouse", "friendly detective cat", "map fairy", "talking magnifying glass"],
+    details: ["clues appear as harmless sparkles", "every door asks a riddle politely", "the clock ticks in secret patterns", "a notebook flips to the next clue by itself"],
+    avoid: "crime realism, fear, threats, horror, death",
   },
-  "The Moonlit Library": {
-    setting: "A magical library that rearranges itself at night",
-    objective: "Find the lost chapter before sunrise",
-    helpers: "owl librarian, book mouse, floating candle",
-    avoid: "horror, ghosts that frighten students",
+  "Pirate Adventure": {
+    settings: ["a sunny island cove", "a friendly pirate ship", "a tide-pool treasure map", "a harbor of singing boats"],
+    objectives: ["find the missing compass before the tide turns", "share a treasure of kindness fairly", "repair the sail with puzzle patches", "decode a map of safe harbor lights"],
+    helpers: ["parrot lookout", "jolly captain", "puzzle crab", "rope-knot sprite"],
+    details: ["gold coins are actually chocolate wrappers", "the ship's bell rings when clues are found", "waves clap softly against the dock", "treasure chests giggle when opened"],
+    avoid: "weapons, fighting, stealing, danger at sea",
   },
-  "The Lost Reef City": {
-    setting: "An underwater city protected by glowing coral",
-    objective: "Help repair the coral gate before the current changes",
-    helpers: "merfolk guide, puzzle crab, lantern fish",
-    avoid: "drowning, scary sea monsters",
+  "Jungle Adventure": {
+    settings: ["a bright rainforest trail", "a treehouse observatory", "a vine bridge above a shallow stream", "a hidden garden of giant leaves"],
+    objectives: ["help guide friendly animals to the festival clearing", "repair the sun dial flower", "find the path markers before lunch", "return the rain drum to the canopy stage"],
+    helpers: ["toucan guide", "gentle jaguar cub", "leaf sprite", "frog drummer"],
+    details: ["flowers open when clues are solved", "vines form arrows in the air", "raindrops tap a cheerful rhythm", "butterflies carry tiny map flags"],
+    avoid: "predator attacks, injury, scary jungle danger",
   },
-  "The Floating Market": {
-    setting: "A magical marketplace floating among clouds",
-    objective: "Help the merchant recover scattered enchanted goods before the market closes",
-    helpers: "friendly vendor, cloud parrot, glowing map",
-    avoid: "theft framing, scary magic",
+  "Underwater Adventure": {
+    settings: ["a glowing reef city", "a pearl library", "a kelp maze with friendly signs", "a shell-powered workshop"],
+    objectives: ["fix the coral gate before the current changes", "return a missing pearl bookmark", "guide lantern fish back to their school", "tune the shell bells for the reef parade"],
+    helpers: ["merfolk guide", "puzzle crab", "lantern fish", "sea turtle elder"],
+    details: ["bubbles carry clues upward", "coral windows glow like stained glass", "seaweed writes arrows in the water", "shells hum when the path is right"],
+    avoid: "drowning, scary sea monsters, storms, injury",
   },
-  "The Dragon Egg Rescue": {
-    setting: "A warm mountain cave with ancient dragons",
-    objective: "Return the lost dragon egg safely to its nest",
-    helpers: "young dragon scout, wise elder dragon, ember moth",
-    avoid: "violence, egg destruction",
+  "Sky Islands": {
+    settings: ["a chain of cloud islands", "a sky orchard above the hills", "a floating market", "a windmill village in the clouds"],
+    objectives: ["repair the cloud bridge", "catch runaway kite seeds", "help the windmills turn in rhythm", "deliver a message to the rainbow post office"],
+    helpers: ["cloud turtle", "bronze owl", "wind sprite", "sky llama"],
+    details: ["clouds puff into stepping stones", "rainbows mark safe paths", "bells ring from floating towers", "feathers drift toward the next clue"],
+    avoid: "falling harm, lightning injuries, frightening storms",
   },
-  "The Puzzle Pyramid": {
-    setting: "An ancient desert pyramid full of clever traps and riddles",
-    objective: "Reach the treasure room by solving the pyramid's puzzles",
-    helpers: "sand sphinx, hieroglyph fairy, magic compass",
-    avoid: "curses, mummy horror",
+  "Clockwork / Invention": {
+    settings: ["a clockwork workshop", "a friendly robot lab", "a gear-powered greenhouse", "a steam train of inventions"],
+    objectives: ["restart the kindness-powered engine", "sort gears into the right machine", "help a robot remember its parade steps", "cool a volcano machine into harmless steam"],
+    helpers: ["gear sprite", "clockwork bird", "robot helper", "goggle-wearing squirrel"],
+    details: ["gears click like music", "safe steam puffs into silly shapes", "blueprints fold into arrows", "tiny bells ding after every clever choice"],
+    avoid: "explosions, burns, real machine danger, injury",
   },
-  "The Candy Comet": {
-    setting: "A comet made entirely of magical candy flying through space",
-    objective: "Help the sugar sprites restore the comet's flavor before it fades away",
-    helpers: "sugar sprites, comet captain, fizzy jellyfish",
-    avoid: "sickness, harmful candy",
+  "Ancient Ruins": {
+    settings: ["a sunlit puzzle pyramid", "a marble maze of friendly statues", "a buried garden temple", "a ruin where murals tell jokes"],
+    objectives: ["match the mural tiles before sunset", "open the kindness gate", "restore the compass statue's missing gem", "find the festival path through the ruins"],
+    helpers: ["sand sphinx", "hieroglyph fairy", "magic compass", "stone turtle"],
+    details: ["tiles glow when patterns make sense", "statues offer polite hints", "sunbeams point at safe clues", "ancient bells hum softly in the walls"],
+    avoid: "curses, mummy horror, traps that hurt people, tomb danger",
   },
-  "The Tiny Giant's Garden": {
-    setting: "A giant's garden where the hero has been magically shrunk",
-    objective: "Find the reverse potion to return to normal size",
-    helpers: "friendly ant, ladybug scout, flower fairy",
-    avoid: "being eaten, harmful insects",
+  "Spooky Mystery / Friendly Ghosts": {
+    settings: ["a friendly ghost lighthouse", "a glowing portrait hallway", "a moonlit schoolhouse with silly shadows", "a library where lanterns float politely"],
+    objectives: ["help a shy ghost pet find its bell", "relight the welcome beacon", "match silly skeleton keys to their doors", "solve why the portraits keep swapping frames"],
+    helpers: ["friendly ghost keeper", "moon moth", "lantern sprite", "smiling skeleton key"],
+    details: ["nothing jumps out; clues glow gently", "shadows wave hello", "the ghost says please and thank you", "candles bob like tiny stars"],
+    avoid: "horror, terror, gore, death-focused plots, nightmare imagery",
   },
-  "The Museum After Midnight": {
-    setting: "A science museum that comes to life at night",
-    objective: "Help the exhibits return to their proper places before morning",
-    helpers: "friendly dinosaur skeleton, glowing robot, map fairy",
-    avoid: "horror, scary exhibits",
+  "Tiny World": {
+    settings: ["a garden where the hero is tiny", "a teacup village", "a mushroom workshop", "a bookshelf city behind a loose page"],
+    objectives: ["find the safe growing charm", "repair the acorn elevator", "help ants organize a picnic parade", "deliver a button wheel to the toy cart"],
+    helpers: ["ladybug scout", "friendly ant", "button mouse", "flower fairy"],
+    details: ["dew drops look like crystal balls", "pencils become bridges", "crumbs are boulder-sized snacks", "petals unfold like maps"],
+    avoid: "being eaten, scary insects, injury",
   },
-  "The Friendly Ghost Lighthouse": {
-    setting: "A lighthouse guided by a friendly ghost keeper",
-    objective: "Relight the beacon so ships can find the safe harbor",
-    helpers: "friendly ghost, seagull scout, moon moth",
-    avoid: "horror, death-focused ghost story",
+  "Magical School": {
+    settings: ["a school of floating staircases", "a classroom inside a giant tree", "a safe spell practice hall", "a hall of glowing lockers"],
+    objectives: ["help the class mural remember its colors", "organize runaway lesson cards", "find the missing bell chime", "prepare the kindness exam celebration"],
+    helpers: ["pencil sprite", "friendly hall monitor owl", "chalkboard dragon", "bookmark fairy"],
+    details: ["desks shuffle into helpful patterns", "chalk lines become arrows", "lockers hum cheerful clues", "stars sparkle over correct plans"],
+    avoid: "mean teachers, punishment, embarrassment, unsafe magic",
   },
 };
 
-const RANDOM_SEEDS = Object.keys(ADVENTURE_SEEDS);
-export const ALLOWED_ADVENTURE_SEEDS = ["Random", ...RANDOM_SEEDS] as const;
+const QUEST_GENRES = Object.keys(GENRE_PROFILES) as QuestGenre[];
+export const ALLOWED_ADVENTURE_SEEDS = [SURPRISE_GENRE, ...QUEST_GENRES] as const;
 
 const DIFFICULTY_READING_GUIDANCE: Record<string, { gradeBand: 3 | 4 | 5; guidance: string; sceneWords: string; endingWords: string }> = {
   easy: {
@@ -173,19 +221,38 @@ export function getReadingGuidance(difficulty: string) {
   return DIFFICULTY_READING_GUIDANCE[difficulty.trim().toLowerCase()] ?? DIFFICULTY_READING_GUIDANCE.medium;
 }
 
+function pickOne<T>(items: readonly T[]): T {
+  return items[Math.floor(Math.random() * items.length)];
+}
+
+export function countQuestOpeningCombinations() {
+  return QUEST_GENRES.reduce((total, genre) => {
+    const profile = GENRE_PROFILES[genre];
+    return (
+      total +
+      profile.settings.length *
+        profile.objectives.length *
+        profile.helpers.length *
+        profile.details.length
+    );
+  }, 0);
+}
+
 export function resolveSeed(adventureSeed: string) {
-  if (adventureSeed === "Random") {
-    const picked = RANDOM_SEEDS[Math.floor(Math.random() * RANDOM_SEEDS.length)];
-    return { name: picked, ...ADVENTURE_SEEDS[picked] };
-  }
-  const found = ADVENTURE_SEEDS[adventureSeed];
-  if (found) return { name: adventureSeed, ...found };
+  const requested =
+    adventureSeed === SURPRISE_GENRE || !(adventureSeed in GENRE_PROFILES)
+      ? pickOne(QUEST_GENRES)
+      : (adventureSeed as QuestGenre);
+  const profile = GENRE_PROFILES[requested];
+
   return {
-    name: adventureSeed,
-    setting: "A magical world full of puzzles and wonder",
-    objective: "Complete the adventure by solving challenges",
-    helpers: "friendly guide, magical creature, wise elder",
-    avoid: "anything unsafe or inappropriate",
+    name: requested,
+    genre: requested,
+    setting: pickOne(profile.settings),
+    objective: pickOne(profile.objectives),
+    helpers: pickOne(profile.helpers),
+    detail: pickOne(profile.details),
+    avoid: profile.avoid,
   };
 }
 
@@ -224,19 +291,23 @@ export function createEpisodePlan(data: StartGameData): EpisodePlan {
 
   return {
     episodeTitle: `${seed.name}: ${hero.name}'s ${lengthLabel}`,
+    genre: seed.genre,
     centralProblem: seed.objective,
     heroGoal: `${hero.name} must help solve the problem in ${seed.setting} by making brave, kind, and clever choices.`,
     stakes: "If the hero does nothing, the magical place will remain tangled or unfinished, but no one should be harmed.",
     keyStoryElements: [
+      `Genre: ${seed.genre}`,
       `Setting: ${seed.setting}`,
       `Objective: ${seed.objective}`,
       `Possible helpers: ${seed.helpers}`,
+      `Opening detail: ${seed.detail}`,
       `Avoid: ${seed.avoid}`,
       `Hero flavor: ${hero.name} is a ${hero.ancestry} ${hero.className}.`,
     ],
     intendedResolution: `${hero.name} should resolve "${seed.objective}" in a joyful, classroom-safe way during the ending, using clues and choices established earlier.`,
     pacingBeats: buildPacingBeats(data.maxTurns),
     readingGuidance: reading.guidance,
+    opening: seed,
   };
 }
 
@@ -290,16 +361,17 @@ IMPORTANT RULES:
 - Do not offer vague choices like "continue forward" unless the scene clearly supports that action.`;
 
 export function buildStartPrompt(data: StartGameData, episodePlan = createEpisodePlan(data)): string {
-  const seed = resolveSeed(data.adventureSeed);
+  const seed = episodePlan.opening;
   const hero = data.hero;
   const reading = getReadingGuidance(data.difficulty);
 
   return `${SYSTEM_PROMPT}
 
-ADVENTURE SEED: ${seed.name}
+QUEST GENRE: ${seed.genre}
 Setting: ${seed.setting}
 Objective: ${seed.objective}
 Possible helpers: ${seed.helpers}
+Opening detail: ${seed.detail}
 Avoid these twists: ${seed.avoid}
 
 HERO: ${hero.name}
@@ -339,17 +411,18 @@ Respond ONLY with valid JSON in this exact format:
 }
 
 export function buildTurnPrompt(data: TurnData): string {
-  const seed = resolveSeed(data.adventureSeed);
+  const seed = data.episodePlan?.opening ?? resolveSeed(data.adventureSeed);
   const hero = data.hero;
   const turnsLeft = data.maxTurns - data.turn;
   const reading = getReadingGuidance(data.difficulty);
 
   return `${SYSTEM_PROMPT}
 
-ADVENTURE SEED: ${seed.name}
+QUEST GENRE: ${seed.genre}
 Setting: ${seed.setting}
 Objective: ${seed.objective}
 Possible helpers: ${seed.helpers}
+Opening detail: ${seed.detail}
 Avoid these twists: ${seed.avoid}
 
 HERO: ${hero.name}
@@ -400,10 +473,15 @@ Respond ONLY with valid JSON in this exact format:
 export function buildEndingPrompt(data: EndingData): string {
   const hero = data.hero;
   const reading = getReadingGuidance(data.difficulty);
+  const seed = data.episodePlan?.opening ?? resolveSeed(data.adventureSeed);
 
   return `${SYSTEM_PROMPT}
 
-ADVENTURE SEED: ${data.adventureSeed}
+QUEST GENRE: ${seed.genre}
+Setting: ${seed.setting}
+Objective: ${seed.objective}
+Possible helpers: ${seed.helpers}
+Opening detail: ${seed.detail}
 HERO: ${hero.name}
 Class: ${hero.className}
 Ancestry/Species: ${hero.ancestry}

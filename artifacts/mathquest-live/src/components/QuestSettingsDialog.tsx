@@ -249,13 +249,14 @@ export function QuestSettingsDialog({
                       {selected && <SelectedBadge />}
                       <div className="pr-24">
                         <div className="font-serif text-xl text-[var(--mq-heading)]">
-                          {option.label} / {option.displayName}
+                          {option.label}
                         </div>
                         <p className="mt-1 text-sm text-[var(--mq-text-muted)]">
                           {option.description}
                         </p>
                         <p className="mt-2 text-sm text-[var(--mq-text)]">
-                          {option.studentSummary}
+                          Florida B.E.S.T. Grade {option.gradeBand} standards
+                          {option.key === "extreme" ? ", still within Grade 5" : ""}
                         </p>
                       </div>
                     </button>

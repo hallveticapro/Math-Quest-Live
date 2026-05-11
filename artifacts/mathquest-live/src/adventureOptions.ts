@@ -48,22 +48,31 @@ export const HERO_CLASSES = [
   "Puzzle Mage",
 ];
 
-export const ADVENTURE_SEEDS = [
-  "Random",
-  "The Sky Temple",
-  "The Crystal Forest",
-  "The Clockwork Volcano",
-  "The Moonlit Library",
-  "The Lost Reef City",
-  "The Floating Market",
-  "The Dragon Egg Rescue",
-  "The Puzzle Pyramid",
-  "The Candy Comet",
-  "The Tiny Giant's Garden",
-  "The Museum After Midnight",
-  "The Friendly Ghost Lighthouse",
+export const SURPRISE_GENRE = "Surprise Me!";
+
+export const QUEST_GENRES = [
+  SURPRISE_GENRE,
+  "Fantasy",
+  "Space Adventure",
+  "Mystery",
+  "Pirate Adventure",
+  "Jungle Adventure",
+  "Underwater Adventure",
+  "Sky Islands",
+  "Clockwork / Invention",
+  "Ancient Ruins",
+  "Spooky Mystery / Friendly Ghosts",
+  "Tiny World",
+  "Magical School",
 ];
 
-export const QUICK_START_SEEDS = ADVENTURE_SEEDS.filter(
-  (seed) => seed !== "Random",
+export const CONCRETE_QUEST_GENRES = QUEST_GENRES.filter(
+  (genre) => genre !== SURPRISE_GENRE,
 );
+
+export function pickConcreteGenre(selectedGenre: string) {
+  if (selectedGenre !== SURPRISE_GENRE && CONCRETE_QUEST_GENRES.includes(selectedGenre)) {
+    return selectedGenre;
+  }
+  return CONCRETE_QUEST_GENRES[Math.floor(Math.random() * CONCRETE_QUEST_GENRES.length)];
+}

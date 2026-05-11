@@ -94,7 +94,8 @@ export function TitleScreen({
                       {option.label}
                     </span>
                     <span className="mt-1 block text-xs font-bold uppercase tracking-wide text-[var(--mq-text-muted)]">
-                      {option.displayName}
+                      Florida B.E.S.T. Grade {option.gradeBand}
+                      {option.key === "extreme" ? ", within Grade 5" : ""}
                     </span>
                   </button>
                 ))}

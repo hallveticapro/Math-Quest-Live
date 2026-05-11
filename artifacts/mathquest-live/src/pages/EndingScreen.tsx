@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import type { ReactNode } from "react";
 import { GameState } from "../types";
 import { playFanfare } from "../lib/sounds";
 import { SceneImage } from "../components/SceneImage";
@@ -8,9 +9,10 @@ interface EndingScreenProps {
   state: GameState;
   onPlayAgain: () => void;
   onNewHero: () => void;
+  topControls?: ReactNode;
 }
 
-export function EndingScreen({ state, onPlayAgain, onNewHero }: EndingScreenProps) {
+export function EndingScreen({ state, onPlayAgain, onNewHero, topControls }: EndingScreenProps) {
   const {
     endingTitle,
     endingText,
@@ -32,7 +34,13 @@ export function EndingScreen({ state, onPlayAgain, onNewHero }: EndingScreenProp
   }, []);
 
   return (
-    <div className="min-h-[100dvh] w-full flex flex-col items-center justify-center p-4 md:p-8 animate-in fade-in duration-1000 bg-[var(--mq-background)]">
+    <div className="min-h-[100dvh] w-full flex flex-col bg-[var(--mq-background)] p-4 md:p-8 animate-in fade-in duration-1000">
+      {topControls && (
+        <div className="mb-4 flex items-center justify-end gap-3 px-1 pt-[env(safe-area-inset-top)]">
+          {topControls}
+        </div>
+      )}
+      <div className="flex flex-1 items-center justify-center">
       <div className="max-w-3xl w-full space-y-10 text-center">
 
         <div className="space-y-6">
@@ -117,6 +125,7 @@ export function EndingScreen({ state, onPlayAgain, onNewHero }: EndingScreenProp
           </button>
         </div>
 
+      </div>
       </div>
     </div>
   );

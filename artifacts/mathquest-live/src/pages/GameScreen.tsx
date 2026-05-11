@@ -5,6 +5,7 @@ import { playClick } from "../lib/sounds";
 import { SceneImage } from "../components/SceneImage";
 import { getQuestLengthByTurns } from "../questLengths";
 import { resetScrollForTransition } from "../lib/scroll";
+import { getDifficultyBand } from "../math/floridaBestMath";
 import type { ReactNode } from "react";
 
 interface GameScreenProps {
@@ -17,6 +18,17 @@ interface GameScreenProps {
 
 const QUEST_TRANSITION_OUT_MS = 180;
 const QUEST_TRANSITION_IN_MS = 320;
+const INTRO_LOADING_MESSAGES = [
+  "The Chronicler is opening the first page of your legend...",
+  "The Illustrator is adding the final colors to your first scene...",
+  "Some tales need a moment for the ink and images to settle...",
+  "The first chapter is finding its shape...",
+];
+const STORY_LOADING_MESSAGES = [
+  "Correct! The path opens.",
+  "The Chronicler is writing the next page...",
+  "Preparing the next story beat and challenge...",
+];
 
 export function GameScreen({
   state,
@@ -41,15 +53,28 @@ export function GameScreen({
   } = state;
   const [confirmExit, setConfirmExit] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
   const transitionTimersRef = useRef<Array<ReturnType<typeof setTimeout>>>([]);
   const questLength = getQuestLengthByTurns(maxTurns);
   const progressPercent = Math.min(100, Math.round((mathSolved / maxTurns) * 100));
+  const challenge = getDifficultyBand(difficulty);
 
   useEffect(() => {
     return () => {
       transitionTimersRef.current.forEach(clearTimeout);
     };
   }, []);
+
+  useEffect(() => {
+    if (!isLoading) {
+      setLoadingMessageIndex(0);
+      return;
+    }
+    const timer = window.setInterval(() => {
+      setLoadingMessageIndex((index) => index + 1);
+    }, 1800);
+    return () => window.clearInterval(timer);
+  }, [isLoading]);
 
   const runQuestTransition = (advance: () => void) => {
     if (isTransitioning) return;
@@ -106,14 +131,12 @@ export function GameScreen({
         ? currentMathProblem.secondHint || currentMathProblem.hint
         : currentMathProblem.hint
       : null;
-  const loadingTitle =
-    mathSolved > 0
-      ? "Correct! The path opens."
-      : "The Chronicler is writing your opening chapter...";
+  const loadingMessages = mathSolved > 0 ? STORY_LOADING_MESSAGES : INTRO_LOADING_MESSAGES;
+  const loadingTitle = loadingMessages[loadingMessageIndex % loadingMessages.length];
   const loadingDetail =
     mathSolved > 0
-      ? "Preparing the next story beat and challenge..."
-      : "A new chapter is taking shape...";
+      ? "The next page will appear as soon as the story is ready."
+      : "The opening story and cover illustration are being prepared.";
 
   return (
     <div className="min-h-[100dvh] w-full flex flex-col p-4 md:p-6 max-w-4xl mx-auto space-y-6 animate-in fade-in duration-500">
@@ -152,7 +175,7 @@ export function GameScreen({
               </span>
             </div>
             <div className="text-xs font-bold uppercase tracking-widest text-[var(--mq-text-muted)]">
-              {questLength.label} · Challenge: {difficulty}
+              {questLength.label} · Challenge: {challenge.displayName}
             </div>
             <div
               className="h-3 overflow-hidden rounded-full border border-[var(--mq-border)] bg-[var(--mq-background)]"
@@ -213,6 +236,7 @@ export function GameScreen({
         {isLoading ? (
           <div className="flex-1 flex flex-col items-center justify-center space-y-8 pt-12">
             <div className="w-16 h-16 border-4 border-[var(--mq-border)] border-t-[var(--mq-heading)] border-b-[var(--mq-secondary)] rounded-sm animate-spin"></div>
+            <div className="loading-bar" aria-hidden="true" />
             <div className="max-w-xl space-y-3 text-center" role="status">
               {mathSolved > 0 && (
                 <CheckCircle2
@@ -235,7 +259,7 @@ export function GameScreen({
                 {sceneTitle}
               </h2>
               <SceneImage image={illustration} />
-              <p className="story-text whitespace-pre-wrap">{storyText}</p>
+              <p className="story-text story-prose whitespace-pre-wrap">{storyText}</p>
             </div>
 
             {!currentMathProblem ? (

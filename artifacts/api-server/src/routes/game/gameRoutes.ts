@@ -44,6 +44,33 @@ const FALLBACK_ENDING = {
   safetyRating: "kid_safe",
 };
 
+function buildGenreFallbackScene(plan?: EpisodePlan): typeof FALLBACK_SCENE {
+  if (!plan?.opening) return FALLBACK_SCENE;
+  const opening = plan.opening;
+  return {
+    sceneTitle: `${opening.genre} Puzzle Path`,
+    storyText: `The path through ${opening.setting} glows with gentle puzzle magic. The clue ahead still points toward the quest goal: ${opening.objective}. A helpful ${opening.helpers} notices ${opening.detail.toLowerCase()} and gestures toward three safe ways forward. The adventure stays bright, calm, and full of clever choices.`,
+    choices: [
+      { id: "A", label: "Study the glowing clue carefully" },
+      { id: "B", label: `Ask the ${opening.helpers} for help` },
+      { id: "C", label: "Look for a hidden pattern nearby" },
+    ],
+    storySummary: `The hero continues a ${opening.genre} quest in ${opening.setting}, working toward ${opening.objective}.`,
+    safetyRating: "kid_safe",
+  };
+}
+
+function buildGenreFallbackEnding(plan?: EpisodePlan): typeof FALLBACK_ENDING {
+  if (!plan?.opening) return FALLBACK_ENDING;
+  const opening = plan.opening;
+  return {
+    endingTitle: `${opening.genre} Victory`,
+    endingText: `With careful thinking and brave choices, the hero solves the final puzzle in ${opening.setting}. The goal is complete: ${opening.objective}. The friendly ${opening.helpers} cheers as lights shimmer across the last page of the Chronicle, and the whole ${opening.genre.toLowerCase()} adventure closes with a bright, joyful celebration.`,
+    badge: `${opening.genre.split(" ")[0]} Champion`,
+    safetyRating: "kid_safe",
+  };
+}
+
 type StoryTurnData = typeof FALLBACK_SCENE & { episodeId?: string; image?: ImageMetadata };
 type EndingData = typeof FALLBACK_ENDING & { image?: ImageMetadata };
 type PreparedTurnResult =
@@ -303,6 +330,7 @@ function validatePreparedGameInput(data: NonNullable<ReturnType<typeof parsePrep
 async function generatePreparedTurn(data: NonNullable<ReturnType<typeof parsePrepareBody>>): Promise<PreparedTurnResult> {
   const episodePlan = resolveEpisodePlan(data, data.episodeId);
   if (data.kind === "ending") {
+    const fallbackEnding = buildGenreFallbackEnding(episodePlan);
     const prompt = buildEndingPrompt({
       hero: data.hero,
       difficulty: data.difficulty,
@@ -317,7 +345,7 @@ async function generatePreparedTurn(data: NonNullable<ReturnType<typeof parsePre
     const raw = await callOpenAI(prompt);
     const parsed = parseJSON(raw);
     if (!checkEndingSafety(parsed)) {
-      return { kind: "ending", turn: data.turn, data: FALLBACK_ENDING };
+      return { kind: "ending", turn: data.turn, data: fallbackEnding };
     }
 
     const endingData = parsed as EndingData;
@@ -325,7 +353,7 @@ async function generatePreparedTurn(data: NonNullable<ReturnType<typeof parsePre
       context: {
         kind: "ending",
         hero: data.hero,
-        adventureSeed: data.adventureSeed,
+        adventureSeed: `${episodePlan.opening.genre}: ${episodePlan.opening.setting}`,
         difficulty: data.difficulty,
         sceneTitle: endingData.endingTitle,
         storyText: endingData.endingText,
@@ -340,6 +368,7 @@ async function generatePreparedTurn(data: NonNullable<ReturnType<typeof parsePre
     return { kind: "ending", turn: data.turn, data: withOptionalImage(endingData, image) as EndingData };
   }
 
+  const fallbackScene = buildGenreFallbackScene(episodePlan);
   const prompt = buildTurnPrompt({
     hero: data.hero,
     difficulty: data.difficulty,
@@ -356,15 +385,15 @@ async function generatePreparedTurn(data: NonNullable<ReturnType<typeof parsePre
   const raw = await callOpenAI(prompt);
   const parsed = parseJSON(raw);
   if (!checkStoryTurnSafety(parsed)) {
-    return { kind: "turn", turn: data.turn, data: FALLBACK_SCENE };
+    return { kind: "turn", turn: data.turn, data: fallbackScene };
   }
 
   const turnData = parsed as StoryTurnData;
   const image = requestSceneImage({
     context: {
-      kind: isMilestoneTurn(data.turn, data.maxTurns) ? "milestone" : "scene",
-      hero: data.hero,
-      adventureSeed: data.adventureSeed,
+        kind: isMilestoneTurn(data.turn, data.maxTurns) ? "milestone" : "scene",
+        hero: data.hero,
+        adventureSeed: `${episodePlan.opening.genre}: ${episodePlan.opening.setting}`,
       difficulty: data.difficulty,
       sceneTitle: turnData.sceneTitle,
       storyText: turnData.storyText,
@@ -389,9 +418,10 @@ router.post("/prepare", (req, res) => {
   const pendingId = `pending_${crypto.randomUUID()}`;
   const promise = generatePreparedTurn(parsed).catch((err) => {
     req.log.error({ err, kind: parsed.kind, turn: parsed.turn }, "Prepared turn generation failed");
+    const plan = resolveEpisodePlan(parsed, parsed.episodeId);
     return parsed.kind === "ending"
-      ? { kind: "ending" as const, turn: parsed.turn, data: FALLBACK_ENDING }
-      : { kind: "turn" as const, turn: parsed.turn, data: FALLBACK_SCENE };
+      ? { kind: "ending" as const, turn: parsed.turn, data: buildGenreFallbackEnding(plan) }
+      : { kind: "turn" as const, turn: parsed.turn, data: buildGenreFallbackScene(plan) };
   });
 
   pendingTurns.set(pendingId, {
@@ -446,7 +476,7 @@ router.post("/start", async (req, res) => {
 
     if (!checkStoryTurnSafety(data)) {
       req.log.warn("AI output failed safety check, using fallback");
-      res.json({ ...FALLBACK_SCENE, episodeId });
+      res.json({ ...buildGenreFallbackScene(episodePlan), episodeId });
       return;
     }
 
@@ -455,7 +485,7 @@ router.post("/start", async (req, res) => {
       context: {
         kind: "intro",
         hero: parsed.data.hero,
-        adventureSeed: parsed.data.adventureSeed,
+        adventureSeed: `${episodePlan.opening.genre}: ${episodePlan.opening.setting}`,
         difficulty: parsed.data.difficulty,
         sceneTitle: turnData.sceneTitle,
         storyText: turnData.storyText,
@@ -470,7 +500,7 @@ router.post("/start", async (req, res) => {
     req.log.error({ err }, "Failed to generate start scene");
     const episodePlan = createEpisodePlan(parsed.data);
     const episodeId = storeEpisodePlan(episodePlan);
-    res.json({ ...FALLBACK_SCENE, episodeId });
+    res.json({ ...buildGenreFallbackScene(episodePlan), episodeId });
   }
 });
 
@@ -499,7 +529,7 @@ router.post("/turn", async (req, res) => {
 
     if (!checkStoryTurnSafety(data)) {
       req.log.warn("AI output failed safety check, using fallback");
-      res.json(FALLBACK_SCENE);
+      res.json(buildGenreFallbackScene(episodePlan));
       return;
     }
 
@@ -508,7 +538,7 @@ router.post("/turn", async (req, res) => {
       context: {
         kind: isMilestoneTurn(parsed.data.turn, parsed.data.maxTurns) ? "milestone" : "scene",
         hero: parsed.data.hero,
-        adventureSeed: parsed.data.adventureSeed,
+        adventureSeed: `${episodePlan.opening.genre}: ${episodePlan.opening.setting}`,
         difficulty: parsed.data.difficulty,
         sceneTitle: turnData.sceneTitle,
         storyText: turnData.storyText,
@@ -522,7 +552,8 @@ router.post("/turn", async (req, res) => {
     res.json(withOptionalImage(turnData, image));
   } catch (err) {
     req.log.error({ err }, "Failed to generate turn scene");
-    res.json(FALLBACK_SCENE);
+    const episodePlan = resolveEpisodePlan(parsed.data, parsed.data.episodeId);
+    res.json(buildGenreFallbackScene(episodePlan));
   }
 });
 
@@ -552,7 +583,7 @@ router.post("/ending", async (req, res) => {
 
     if (!checkEndingSafety(data)) {
       req.log.warn("AI ending failed safety check, using fallback");
-      res.json(FALLBACK_ENDING);
+      res.json(buildGenreFallbackEnding(episodePlan));
       return;
     }
 
@@ -561,7 +592,7 @@ router.post("/ending", async (req, res) => {
       context: {
         kind: "ending",
         hero: parsed.data.hero,
-        adventureSeed: parsed.data.adventureSeed,
+        adventureSeed: `${episodePlan.opening.genre}: ${episodePlan.opening.setting}`,
         difficulty: parsed.data.difficulty,
         sceneTitle: endingData.endingTitle,
         storyText: endingData.endingText,
@@ -575,7 +606,8 @@ router.post("/ending", async (req, res) => {
     res.json(withOptionalImage(endingData, image));
   } catch (err) {
     req.log.error({ err }, "Failed to generate ending");
-    res.json(FALLBACK_ENDING);
+    const episodePlan = resolveEpisodePlan(parsed.data, parsed.data.episodeId);
+    res.json(buildGenreFallbackEnding(episodePlan));
   }
 });
 

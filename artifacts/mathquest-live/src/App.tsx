@@ -754,7 +754,12 @@ function GameApp() {
           onStart={handleStart}
           onPrepareStart={prepareStart}
           onCancel={handleExitToTitle}
-          topControls={<AppInfoDialog variant="inline" />}
+          topControls={
+            <>
+              {settingsDialog}
+              <AppInfoDialog variant="inline" />
+            </>
+          }
         />
       )}
       {state.screen === "game" && (
@@ -786,28 +791,15 @@ function GameApp() {
             usedProblemVarietyGroupsRef.current = new Set();
             setState(INITIAL_STATE);
           }}
+          topControls={
+            <>
+              {settingsDialog}
+              <AppInfoDialog variant="inline" />
+            </>
+          }
         />
       )}
       {state.screen === "title" && (
-        <>
-          <QuestSettingsDialog
-            colorSchemeId={state.colorSchemeId}
-            difficulty={state.difficulty}
-            isMathActive={false}
-            onColorSchemeChange={handleColorSchemeChange}
-            onDifficultyChange={handleDifficultyChange}
-            backgroundMusicEnabled={backgroundMusicEnabled}
-            backgroundMusicVolume={backgroundMusicVolume}
-            soundEffectsEnabled={soundEffectsEnabled}
-            onBackgroundMusicEnabledChange={handleBackgroundMusicEnabledChange}
-            onBackgroundMusicVolumeChange={handleBackgroundMusicVolumeChange}
-            onSoundEffectsEnabledChange={handleSoundEffectsEnabledChange}
-            showChallengeSettings={false}
-          />
-          <AppInfoDialog />
-        </>
-      )}
-      {state.screen === "ending" && (
         <AppInfoDialog />
       )}
     </div>

@@ -74,7 +74,7 @@ export const INITIAL_STATE: GameState = {
   screen: 'title',
   hero: { name: "", pronouns: "", ancestry: "", className: "" },
   difficulty: "Medium",
-  adventureSeed: "Random",
+  adventureSeed: "Fantasy",
   colorSchemeId: "arcaneMidnight",
   turn: 1,
   maxTurns: 8,

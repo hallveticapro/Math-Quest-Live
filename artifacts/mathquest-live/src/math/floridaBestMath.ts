@@ -255,6 +255,20 @@ const OFFICIAL_BENCHMARK_WORDING: Record<string, string> = {
     "Multiply and divide a multi-digit number with decimals to the tenths by one-tenth and one-hundredth with procedural reliability.",
 };
 
+const DOMAIN_BY_CODE_SEGMENT: Record<string, string> = {
+  AR: "Algebraic Reasoning",
+  DP: "Data Analysis and Probability",
+  FR: "Fractions",
+  GR: "Geometric Reasoning",
+  M: "Measurement",
+  NSO: "Number Sense and Operations",
+};
+
+function domainFromBenchmark(benchmark: string) {
+  const segment = benchmark.split(".")[2] ?? "";
+  return DOMAIN_BY_CODE_SEGMENT[segment] ?? NOT_VERIFIED_FROM_SOURCE;
+}
+
 function benchmarkMetadata(
   benchmark: string,
   verificationStatus: BenchmarkVerificationStatus = "verified_from_provided_source",
@@ -262,8 +276,8 @@ function benchmarkMetadata(
   return {
     officialBenchmark:
       OFFICIAL_BENCHMARK_WORDING[benchmark] ?? NOT_VERIFIED_FROM_SOURCE,
-    domain: NOT_VERIFIED_FROM_SOURCE,
-    strand: NOT_VERIFIED_FROM_SOURCE,
+    domain: domainFromBenchmark(benchmark),
+    strand: domainFromBenchmark(benchmark),
     reportingCategory: NOT_VERIFIED_FROM_SOURCE,
     verificationStatus,
     sourceNote:
@@ -283,7 +297,7 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
     displayName: "Adventurer",
     gradeBand: 3,
     standardsSystem: "Florida B.E.S.T. Mathematics",
-    description: "Grade 3 Florida B.E.S.T. math skills",
+    description: "Practice with Grade 3 math skills",
     studentSummary: "Place value, operations, measurement, data, area, simple fractions",
     readingGuidance: "shorter scenes, simpler vocabulary, 60-100 words",
     skills: [
@@ -409,7 +423,7 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
     displayName: "Hero",
     gradeBand: 4,
     standardsSystem: "Florida B.E.S.T. Mathematics",
-    description: "Grade 4 Florida B.E.S.T. math skills",
+    description: "Practice with Grade 4 math skills",
     studentSummary: "Multi-digit operations, fractions, decimals, angles, area/perimeter",
     readingGuidance: "moderate scenes, 90-140 words",
     skills: [
@@ -600,7 +614,7 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
     displayName: "Champion",
     gradeBand: 5,
     standardsSystem: "Florida B.E.S.T. Mathematics",
-    description: "Grade 5 Florida B.E.S.T. math skills",
+    description: "Practice with Grade 5 math skills",
     studentSummary: "Fractions, decimals, volume, coordinate plane, multi-step problems",
     readingGuidance: "richer scenes, 120-180 words",
     skills: [
@@ -763,7 +777,7 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
     displayName: "Legend",
     gradeBand: 5,
     standardsSystem: "Florida B.E.S.T. Mathematics",
-    description: "Advanced Grade 5 Florida B.E.S.T. math challenge",
+    description: "Advanced Grade 5 math challenges",
     studentSummary: "Complex multi-step Grade 5 B.E.S.T. challenges",
     readingGuidance: "120-180 words, still kid-friendly, slightly more complex vocabulary",
     skills: [
@@ -875,4 +889,6 @@ export const DIFFICULTY_OPTIONS = DIFFICULTY_ORDER.map((key) => ({
   key,
   value: FL_BEST_MATH_BANDS[key].label,
   ...FL_BEST_MATH_BANDS[key],
+  label: FL_BEST_MATH_BANDS[key].displayName,
+  internalLabel: FL_BEST_MATH_BANDS[key].label,
 }));

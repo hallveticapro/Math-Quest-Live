@@ -1748,6 +1748,19 @@ export function generateMathProblem(
   }
 }
 
+export function generateMathProblemForSkillId(
+  difficulty: string,
+  skillId: string,
+): MathProblem {
+  const difficultyKey = normalizeDifficulty(difficulty);
+  const band = FL_BEST_MATH_BANDS[difficultyKey];
+  const skill = band.skills.find((candidate) => candidate.id === skillId);
+  if (!skill) {
+    throw new Error(`Unknown math skill "${skillId}" for ${difficultyKey}`);
+  }
+  return buildProblem(difficultyKey, skill);
+}
+
 export function generateUniqueMathProblem(
   difficulty: string,
   usedSignatures: ReadonlySet<string>,

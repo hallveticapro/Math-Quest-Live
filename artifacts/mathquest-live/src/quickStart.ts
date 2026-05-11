@@ -1,10 +1,9 @@
 import {
-  ADVENTURE_SEEDS,
+  CONCRETE_QUEST_GENRES,
   HERO_ANCESTRIES,
   HERO_CLASSES,
   HERO_NAMES,
   HERO_PRONOUNS,
-  QUICK_START_SEEDS,
 } from "./adventureOptions";
 import {
   COLOR_SCHEMES,
@@ -45,9 +44,8 @@ export function buildQuickStartSession(
   const questLength =
     QUEST_LENGTH_OPTIONS.find((option) => option.maxTurns === maxTurns) ??
     QUEST_LENGTH_OPTIONS[1];
-  const seedPool = QUICK_START_SEEDS.length > 0 ? QUICK_START_SEEDS : ADVENTURE_SEEDS;
   const adventureSeed = pickRandom(
-    seedPool,
+    CONCRETE_QUEST_GENRES,
     (option) => option === previous?.adventureSeed,
   );
   const colorScheme = pickRandom(

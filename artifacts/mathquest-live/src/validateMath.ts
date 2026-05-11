@@ -1,7 +1,12 @@
 import { DIFFICULTY_OPTIONS } from "./math/floridaBestMath";
-import { generateUniqueMathProblem } from "./mathEngine";
+import {
+  generateMathProblemForSkillId,
+  generateUniqueMathProblem,
+} from "./mathEngine";
 
 const SAMPLE_COUNT = 20;
+const PER_SKILL_SAMPLE_COUNT = 12;
+const DUPLICATE_CHOICE_STRESS_COUNT = 120;
 
 function assertValid(condition: boolean, message: string) {
   if (!condition) {
@@ -11,7 +16,7 @@ function assertValid(condition: boolean, message: string) {
 
 for (const difficulty of DIFFICULTY_OPTIONS) {
   console.log(
-    `\n${difficulty.label} (${difficulty.displayName}) - ${difficulty.description}`,
+    `\n${difficulty.label} (${difficulty.internalLabel}) - ${difficulty.description}`,
   );
   const usedSignatures = new Set<string>();
 
@@ -20,7 +25,7 @@ for (const difficulty of DIFFICULTY_OPTIONS) {
     const uniqueChoices = new Set(problem.choices);
 
     assertValid(
-      problem.difficulty === difficulty.label,
+      problem.difficulty === difficulty.internalLabel,
       `${difficulty.label}: difficulty mismatch`,
     );
     assertValid(
@@ -122,4 +127,47 @@ for (const difficulty of DIFFICULTY_OPTIONS) {
 
 console.log(
   `\nValidated ${SAMPLE_COUNT} generated problems for each difficulty.`,
+);
+
+for (const difficulty of DIFFICULTY_OPTIONS) {
+  console.log(`\nPer-generator validation for ${difficulty.label}`);
+  for (const skill of difficulty.skills) {
+    for (let i = 0; i < PER_SKILL_SAMPLE_COUNT; i += 1) {
+      const problem = generateMathProblemForSkillId(difficulty.value, skill.id);
+      const uniqueChoices = new Set(problem.choices);
+
+      assertValid(
+        problem.skillId === skill.id,
+        `${skill.id}: generated wrong skill id ${problem.skillId}`,
+      );
+      assertValid(Boolean(problem.prompt), `${skill.id}: missing prompt`);
+      assertValid(Boolean(problem.correctAnswer), `${skill.id}: missing answer`);
+      assertValid(problem.choices.length === 4, `${skill.id}: expected 4 choices`);
+      assertValid(uniqueChoices.size === 4, `${skill.id}: duplicate choices`);
+      assertValid(
+        problem.choices.includes(problem.correctAnswer),
+        `${skill.id}: correct answer missing`,
+      );
+      assertValid(Boolean(problem.hint), `${skill.id}: missing hint`);
+      assertValid(Boolean(problem.secondHint), `${skill.id}: missing second hint`);
+      assertValid(Boolean(problem.signature), `${skill.id}: missing signature`);
+    }
+  }
+}
+
+for (const difficulty of DIFFICULTY_OPTIONS) {
+  for (const skill of difficulty.skills) {
+    for (let i = 0; i < DUPLICATE_CHOICE_STRESS_COUNT; i += 1) {
+      const problem = generateMathProblemForSkillId(difficulty.value, skill.id);
+      const uniqueChoices = new Set(problem.choices);
+      assertValid(
+        uniqueChoices.size === problem.choices.length,
+        `${skill.id}: duplicate answer choices survived stress validation`,
+      );
+    }
+  }
+}
+
+console.log(
+  `Validated every generator with ${PER_SKILL_SAMPLE_COUNT} samples and ${DUPLICATE_CHOICE_STRESS_COUNT} duplicate-choice stress samples.`,
 );
