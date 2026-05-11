@@ -2,6 +2,10 @@
 
 Newest entries first. Add a concise timestamped entry for every meaningful project change before creating the related commit.
 
+## 2026-05-11T17:57:00-04:00
+
+- Completed PLAN.md Section 2 setup option expansion by adding Hamster, Guinea Pig, Wolf, and Mango person ancestries with backend validation and Mango person story/image safety guidance.
+
 ## 2026-05-11T17:55:00-04:00
 
 - Completed PLAN.md Section 1 cleanup: removed separate action recap UI/state, removed redundant Quest Moments outro metadata, and matched ending story text to the main adventure story typography.

@@ -17,6 +17,11 @@ function heroDescription(context: ImageRequestContext) {
   return `${cleanText(hero.name, "a MathQuest hero")}, a ${cleanText(hero.ancestry, "fantasy")} ${cleanText(hero.className, "adventurer")}`;
 }
 
+function ancestrySafetyNote(context: ImageRequestContext) {
+  if (context.hero.ancestry.trim().toLowerCase() !== "mango person") return "";
+  return "If the hero is shown as a Mango person, depict a cheerful cartoon fruit-person adventurer with friendly storybook charm, never gross, creepy, realistic, or body-horror.";
+}
+
 export function buildImageAlt(context: ImageRequestContext) {
   return `A colorful cartoon fantasy storybook illustration of ${heroDescription(context)} in ${context.adventureSeed}.`;
 }
@@ -35,6 +40,7 @@ export function buildImagePrompt(context: ImageRequestContext) {
     "Decorative unreadable magical glyphs, abstract runes, and ornamental markings are allowed only if they do not form real letters, words, or numbers.",
     "No gore, injuries, death, horror, romance, frightening realism, or realistic weapons harming people.",
     "No stereotypes tied to ancestry, species, gender, or class. No real people. No student likenesses.",
+    ancestrySafetyNote(context),
     `Adventure: ${cleanText(context.adventureSeed, "a magical quest")}.`,
     `Moment: ${context.kind}.`,
     `Scene title: ${cleanText(context.sceneTitle, "A MathQuest adventure scene")}.`,

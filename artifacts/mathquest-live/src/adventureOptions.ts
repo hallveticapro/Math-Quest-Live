@@ -30,6 +30,10 @@ export const HERO_ANCESTRIES = [
   "Stonekin",
   "Cloudling",
   "Foxfolk",
+  "Hamster",
+  "Guinea Pig",
+  "Wolf",
+  "Mango person",
 ];
 
 export const HERO_CLASSES = [

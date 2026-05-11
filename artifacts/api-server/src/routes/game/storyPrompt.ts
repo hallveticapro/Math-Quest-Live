@@ -51,7 +51,7 @@ export interface EndingData extends StartGameData {
 
 export const ALLOWED_HERO_NAMES = ["Astra", "Kael", "Nova", "Mira", "Jax", "Luna", "Orion", "Sage", "Zara", "Theo", "Elara", "Milo"] as const;
 export const ALLOWED_PRONOUNS = ["she/her", "he/him", "they/them"] as const;
-export const ALLOWED_ANCESTRIES = ["Human", "Elf", "Dwarf", "Dragonborn", "Fae", "Robot", "Merfolk", "Beastfolk", "Starborn", "Gnome", "Sprite", "Stonekin", "Cloudling", "Foxfolk"] as const;
+export const ALLOWED_ANCESTRIES = ["Human", "Elf", "Dwarf", "Dragonborn", "Fae", "Robot", "Merfolk", "Beastfolk", "Starborn", "Gnome", "Sprite", "Stonekin", "Cloudling", "Foxfolk", "Hamster", "Guinea Pig", "Wolf", "Mango person"] as const;
 export const ALLOWED_CLASSES = ["Wizard", "Warrior", "Explorer", "Rogue", "Inventor", "Healer", "Beast Tamer", "Elementalist", "Guardian", "Cartographer", "Stargazer", "Alchemist", "Puzzle Mage"] as const;
 export const ALLOWED_DIFFICULTIES = ["Easy", "Medium", "Hard", "Extreme"] as const;
 export const ALLOWED_MAX_TURNS = [8, 12, 16] as const;
@@ -344,6 +344,7 @@ IMPORTANT RULES:
 - Allowed: cartoon adventure danger, puzzles, magical obstacles, friendly creatures, storms, locked doors, mysteries
 - Problems resolved through: math, observation, kindness, creativity, teamwork, courage
 - Ancestry/species only affects appearance and fantasy flavor — never implies intelligence or ability
+- If the hero is a Mango person, describe them as a cheerful whimsical fruit-person adventurer with cartoon-safe charm; never use gross, creepy, body-horror, or realistic eating imagery.
 - Pronouns only affect pronoun use in the story
 - Write in fun, adventurous middle-grade tone like a fantasy novel
 - The student can ONLY choose from buttons — no freeform input
