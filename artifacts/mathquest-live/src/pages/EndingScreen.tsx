@@ -4,6 +4,7 @@ import { GameState } from "../types";
 import { playFanfare } from "../lib/sounds";
 import { SceneImage } from "../components/SceneImage";
 import { getQuestLengthByTurns } from "../questLengths";
+import { getDifficultyBand } from "../math/floridaBestMath";
 
 interface EndingScreenProps {
   state: GameState;
@@ -25,6 +26,7 @@ export function EndingScreen({ state, onPlayAgain, onNewHero, topControls }: End
     practicedSkills,
   } = state;
   const questLength = getQuestLengthByTurns(maxTurns);
+  const challenge = getDifficultyBand(difficulty);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -77,7 +79,7 @@ export function EndingScreen({ state, onPlayAgain, onNewHero, topControls }: End
             <div className="mt-4 grid gap-3 text-sm sm:grid-cols-3">
               <div>
                 <div className="font-bold uppercase tracking-wider text-[var(--mq-heading)]">Challenge</div>
-                <div className="text-[var(--mq-text)]">{difficulty}</div>
+                <div className="text-[var(--mq-text)]">{challenge.displayName}</div>
               </div>
               <div>
                 <div className="font-bold uppercase tracking-wider text-[var(--mq-heading)]">Length</div>

@@ -6,9 +6,9 @@ MathQuest Live is a classroom-safe AI math adventure game for elementary student
 
 The MVP does not require student accounts, login, a database, saved progress, rosters, or stored student data. Game state lives in browser memory and resets on refresh.
 
-Students begin with a step-by-step Chronicler setup flow instead of a single form. During setup they choose preset hero details, challenge level, quest length, adventure theme, and a session-only color scheme. Color schemes preview live while students choose them and remain active through the current game session. They affect visual appearance only; they do not affect difficulty, standards alignment, math content, AI safety rules, story outcome, or saved data. Refreshing the page resets the MVP session.
+Students begin with a step-by-step Chronicler setup flow instead of a single form. During setup they choose preset hero details, challenge level, quest length, quest genre, and a session-only color scheme. Color schemes preview live while students choose them and remain active through the current game session. They affect visual appearance only; they do not affect difficulty, standards alignment, math content, AI safety rules, story outcome, or saved data. Refreshing the page resets the MVP session.
 
-Core features include preset-only student choices, deterministic app-generated math, Florida B.E.S.T. standards-band challenge levels, skill-specific hints, repeated-question prevention within a quest, session-only color themes, optional backend-only AI images, and a Quick Start path for faster classroom launch.
+Core features include preset-only student choices, deterministic app-generated math, Florida B.E.S.T. standards-band challenge levels, skill-specific hints, repeated-question prevention within a quest, session-only color themes, genre-based story starts, optional backend-only AI images, and a Quick Start path for faster launch.
 
 Made for educators with love by Andrew Hall ❤️
 
@@ -20,6 +20,25 @@ Made for educators with love by Andrew Hall ❤️
 
 © 2026 MathQuest Live
 
+---
+
+## Table of Contents
+
+- [Quest Lengths](#quest-lengths)
+- [Quest Genres](#quest-genres)
+- [Environment Variables](#environment-variables)
+- [Local Development](#local-development)
+- [Developer And Codex Notes](#developer-and-codex-notes)
+- [Frontend Audio](#frontend-audio)
+- [Challenge Levels And Florida B.E.S.T. Alignment](#challenge-levels-and-florida-best-alignment)
+- [Optional AI Image Generation](#optional-ai-image-generation)
+- [Production Build](#production-build)
+- [Docker Local Testing](#docker-local-testing)
+- [Unraid Deployment Notes](#unraid-deployment-notes)
+- [Security Notes](#security-notes)
+
+---
+
 ## Quest Lengths
 
 Quest length is measured by successful math-gated story chapters, not setup, intro text, wrong-answer retries, or the ending screen. Each counted chapter requires one correctly solved math challenge before the story advances.
@@ -29,6 +48,12 @@ Quest length is measured by successful math-gated story chapters, not setup, int
 - `Full Quest` - 16 math-gated chapters.
 
 The game screen shows visible progress as `Math Challenges: solved / total`. Progress advances only after a correct math answer moves the story forward.
+
+## Quest Genres
+
+The Chronicler setup asks students what kind of quest they want instead of asking for an exact starting location. `Surprise Me!` picks one safe concrete genre for that session and keeps it consistent for the opening, episode plan, story continuation, image prompts, and fallbacks.
+
+Current genre options include fantasy, space adventure, mystery, pirate adventure, jungle adventure, underwater adventure, sky islands, clockwork/invention, ancient ruins, friendly-spooky mystery, tiny world, and magical school. Friendly-spooky content is kept playful and non-horror.
 
 ## Environment Variables
 
@@ -115,6 +140,8 @@ Common verification commands:
 npm run build
 npm run validate:math
 npm run validate:images
+npm run validate:quest-starts
+npm run test:smoke
 ```
 
 Targeted checks:
@@ -145,8 +172,6 @@ artifacts/mathquest-live/src/assets/music/
 
 To add more quest music later, drop `.mp3` files into that folder and rebuild the app. The frontend discovers all MP3 files in that folder at build time with Vite, so there is no manually maintained music manifest.
 
-The old root `MUSIC/` folder was only a temporary intake location and should not remain in the repo after files are moved.
-
 Audio settings are session-only and reset on refresh:
 
 - Background music defaults to on.
@@ -155,24 +180,24 @@ Audio settings are session-only and reset on refresh:
 
 Music starts only after a user interaction unlocks browser audio. Tracks rotate through a shuffled playlist, avoid immediate repeats when multiple tracks exist, fade in/out, and transition smoothly between songs. If the music folder is empty, gameplay continues without background music.
 
-## Difficulty and Florida B.E.S.T. Standards Alignment
+## Challenge Levels And Florida B.E.S.T. Alignment
 
 Students choose a challenge level, not a grade level. The student-facing labels map to Florida B.E.S.T. Mathematics content bands in code:
 
-- `Easy` / `Adventurer` maps to Grade 3 Florida B.E.S.T. math skills.
-- `Medium` / `Hero` maps to Grade 4 Florida B.E.S.T. math skills.
-- `Hard` / `Champion` maps to Grade 5 Florida B.E.S.T. math skills.
-- `Extreme` / `Legend` uses advanced Grade 5 Florida B.E.S.T. skills and does not jump into middle school standards.
+- `Adventurer` maps to Grade 3 Florida B.E.S.T. math skills.
+- `Hero` maps to Grade 4 Florida B.E.S.T. math skills.
+- `Champion` maps to Grade 5 Florida B.E.S.T. math skills.
+- `Legend` uses advanced Grade 5 Florida B.E.S.T. skills and does not jump into middle school standards.
 
-The standards map lives in `artifacts/mathquest-live/src/math/floridaBestMath.ts`. It defines each difficulty band, grade band, benchmark codes, conservative teacher-readable benchmark descriptions, skill labels, allowed generators, and verification metadata. These labels are intended to support classroom practice and teacher transparency. They do not claim exhaustive coverage of every benchmark in a grade.
+The standards map lives in `artifacts/mathquest-live/src/math/floridaBestMath.ts`. It defines each difficulty band, grade band, benchmark codes, conservative benchmark descriptions, skill labels, allowed generators, and verification metadata. These labels are intended to support classroom practice and alignment transparency. They do not claim exhaustive coverage of every benchmark in a grade.
 
-Math problems include Florida B.E.S.T. benchmark metadata for teacher visibility and internal alignment. Current benchmark metadata has been cross-checked against user-provided CPALMS course-export PDFs for Grades 3-5. Some generators intentionally cover a focused subset of a benchmark, and a few generator/benchmark pairings are marked for review before formal standards reporting. Benchmark descriptions are intentionally conservative and should be verified against CPALMS/FDOE before public release, formal standards reporting, or commercial standards claims.
+Math problems include Florida B.E.S.T. benchmark metadata for internal alignment and transparency. Current benchmark metadata has been cross-checked against user-provided CPALMS course-export PDFs for Grades 3-5. Some generators intentionally cover a focused subset of a benchmark, and a few generator/benchmark pairings are marked for review before formal standards reporting. Benchmark descriptions are intentionally conservative and should be verified against CPALMS/FDOE before public release, formal standards reporting, or commercial standards claims.
 
-All math problems are generated by app code in `artifacts/mathquest-live/src/mathEngine.ts`. The AI does not generate, solve, or validate math problems. Each generated problem includes metadata for future teacher/debug views:
+All math problems are generated by app code in `artifacts/mathquest-live/src/mathEngine.ts`. The AI does not generate, solve, or validate math problems. Each generated problem includes metadata for internal validation and future debug views:
 
 ```ts
 {
-  difficulty: "Easy",
+  difficulty: "Easy", // internal key used by the math engine
   gradeBand: 3,
   standardsSystem: "Florida B.E.S.T. Mathematics",
   benchmark: "MA.3.AR.1.2",
@@ -410,4 +435,4 @@ Do not hardcode domain names in the app.
 - Do not commit `.env`.
 - Do not store student personal data in the MVP.
 - Keep the app behind NGINX Proxy Manager, Cloudflare, or equivalent controls if exposing it publicly.
-- Consider authentication later only if adding teacher dashboards, saved progress, rosters, admin settings, or other persistent classroom management features.
+- Consider authentication later only if adding saved progress, rosters, admin settings, or other persistent management features.

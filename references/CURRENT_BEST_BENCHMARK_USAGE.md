@@ -16,7 +16,7 @@ This file documents the benchmarks currently used by MathQuest Live. Benchmark d
 - `artifacts/mathquest-live/src/mathEngine.ts`: deterministic problem generators, problem metadata shape, hints, signatures, answer choices, and recovery problem generation.
 - `artifacts/mathquest-live/src/validateMath.ts`: developer validation of benchmark metadata on generated problems.
 - `README.md`: public documentation and one sample metadata object.
-- `artifacts/mathquest-live/src/components/AppInfoDialog.tsx`: student/teacher information modal with challenge-level descriptions.
+- `artifacts/mathquest-live/src/components/AppInfoDialog.tsx`: general information modal explaining safety, privacy, and AI story versus app-generated math.
 - `artifacts/mathquest-live/src/components/QuestSettingsDialog.tsx`: in-game challenge-level descriptions.
 - `artifacts/mathquest-live/src/pages/SetupScreen.tsx`: Chronicler setup challenge-level descriptions.
 
@@ -71,7 +71,7 @@ All new items use benchmark codes already present in the Grade 3, Grade 4, or Gr
 
 ## Current Domains / Strands
 
-The generated problem metadata includes `domain`, `strand`, and `reportingCategory` fields, but the current values remain conservative placeholders unless a later source provides official wording for those fields.
+The generated problem metadata includes `domain`, `strand`, and `reportingCategory` fields. Domain and strand are now populated from verified Florida B.E.S.T. benchmark-code families where available, such as `NSO`, `AR`, `FR`, `M`, `GR`, and `DP`. Reporting category remains conservative placeholder text unless a later official source provides the exact reporting-category wording.
 
 The app currently implies broad content areas through:
 
