@@ -298,7 +298,7 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
     gradeBand: 3,
     standardsSystem: "Florida B.E.S.T. Mathematics",
     description: "Practice with Grade 3 math skills",
-    studentSummary: "Place value, operations, measurement, data, area, simple fractions",
+    studentSummary: "Place value, operations, measurement, data, geometry, area, simple fractions",
     readingGuidance: "shorter scenes, simpler vocabulary, 60-100 words",
     skills: [
       {
@@ -309,6 +309,24 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
         skill: "place value",
         generator: "g3PlaceValueDigit",
         ...benchmarkMetadata("MA.3.NSO.1.2"),
+      },
+      {
+        id: "g3_expanded_form",
+        benchmark: "MA.3.NSO.1.1",
+        description:
+          "Practice matching whole numbers to expanded form within Grade 3 expectations.",
+        skill: "expanded form",
+        generator: "g3ExpandedForm",
+        ...benchmarkMetadata("MA.3.NSO.1.1"),
+      },
+      {
+        id: "g3_whole_number_compare",
+        benchmark: "MA.3.NSO.1.3",
+        description:
+          "Practice comparing whole numbers up to 10,000 within Grade 3 expectations.",
+        skill: "whole-number comparison",
+        generator: "g3WholeNumberCompare",
+        ...benchmarkMetadata("MA.3.NSO.1.3"),
       },
       {
         id: "g3_add_sub_1000",
@@ -338,6 +356,24 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
         ...benchmarkMetadata("MA.3.AR.1.2"),
       },
       {
+        id: "g3_missing_factor_equations",
+        benchmark: "MA.3.AR.2.3",
+        description:
+          "Practice finding the unknown whole number in multiplication or division equations within Grade 3 expectations.",
+        skill: "missing factor equations",
+        generator: "g3MissingFactorEquation",
+        ...benchmarkMetadata("MA.3.AR.2.3"),
+      },
+      {
+        id: "g3_multiples",
+        benchmark: "MA.3.AR.3.2",
+        description:
+          "Practice identifying multiples of one-digit numbers within Grade 3 expectations.",
+        skill: "multiples",
+        generator: "g3Multiples",
+        ...benchmarkMetadata("MA.3.AR.3.2"),
+      },
+      {
         id: "g3_area_perimeter",
         benchmark: "MA.3.GR.2.3",
         description:
@@ -345,6 +381,24 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
         skill: "area and perimeter with whole numbers",
         generator: "g3AreaPerimeter",
         ...benchmarkMetadata("MA.3.GR.2.3"),
+      },
+      {
+        id: "g3_composite_area",
+        benchmark: "MA.3.GR.2.4",
+        description:
+          "Practice finding area of non-overlapping composite rectangles within Grade 3 expectations.",
+        skill: "composite rectangle area",
+        generator: "g3CompositeArea",
+        ...benchmarkMetadata("MA.3.GR.2.4"),
+      },
+      {
+        id: "g3_quadrilateral_attributes",
+        benchmark: "MA.3.GR.1.2",
+        description:
+          "Practice identifying quadrilaterals by defining attributes within Grade 3 expectations.",
+        skill: "quadrilateral attributes",
+        generator: "g3QuadrilateralAttributes",
+        ...benchmarkMetadata("MA.3.GR.1.2"),
       },
       {
         id: "g3_simple_fractions",

@@ -233,6 +233,13 @@ function fractionDisplay(
   };
 }
 
+function formatExpandedForm(parts: number[]) {
+  return parts
+    .filter((part) => part !== 0)
+    .map((part) => part.toLocaleString())
+    .join(" + ");
+}
+
 function dataTableDisplay(
   caption: string,
   rows: Array<[string, number | string]>,
@@ -340,6 +347,113 @@ function g3PlaceValueDigit(): ProblemCore {
   };
 }
 
+function g3ExpandedForm(): ProblemCore {
+  const thousands = randInt(1, 9);
+  let hundreds = randInt(1, 9);
+  while (hundreds === thousands) hundreds = randInt(1, 9);
+  let tens = randInt(1, 9);
+  while (tens === thousands || tens === hundreds) tens = randInt(1, 9);
+  let ones = randInt(1, 9);
+  while (ones === thousands || ones === hundreds || ones === tens) {
+    ones = randInt(1, 9);
+  }
+  const number = thousands * 1000 + hundreds * 100 + tens * 10 + ones;
+  const correct = formatExpandedForm([
+    thousands * 1000,
+    hundreds * 100,
+    tens * 10,
+    ones,
+  ]);
+
+  return {
+    prompt: `Which expanded form matches ${number.toLocaleString()}?`,
+    correctAnswer: correct,
+    wrongAnswers: [
+      formatExpandedForm([thousands * 100, hundreds * 1000, tens * 10, ones]),
+      formatExpandedForm([thousands * 1000, hundreds * 10, tens * 100, ones]),
+      formatExpandedForm([thousands * 1000, hundreds * 100, tens, ones * 10]),
+      `${thousands} + ${hundreds} + ${tens} + ${ones}`,
+      formatExpandedForm([thousands * 1000, hundreds * 100, tens * 10]),
+    ],
+    hint: "Expanded form shows the value of each digit by place value.",
+    secondHint: "Use thousands, hundreds, tens, and ones. For example, a 7 in the hundreds place is worth 700.",
+  };
+}
+
+function g3WholeNumberCompare(): ProblemCore {
+  const a = randInt(1000, 9999);
+  let b = randInt(1000, 9999);
+  while (b === a) b = randInt(1000, 9999);
+  const greater = Math.max(a, b);
+  const lesser = Math.min(a, b);
+  const askGreater = Math.random() < 0.6;
+
+  return {
+    prompt: `Which number is ${askGreater ? "greater" : "less"}: ${a.toLocaleString()} or ${b.toLocaleString()}?`,
+    correctAnswer: (askGreater ? greater : lesser).toLocaleString(),
+    wrongAnswers: [
+      (askGreater ? lesser : greater).toLocaleString(),
+      "They are equal",
+      (greater + 10).toLocaleString(),
+      Math.max(0, lesser - 10).toLocaleString(),
+      `${a.toLocaleString()} and ${b.toLocaleString()}`,
+    ],
+    hint: "Compare from left to right, starting with the thousands place.",
+    secondHint: "The first place where the digits are different tells which whole number is greater.",
+  };
+}
+
+function g3MissingFactorEquation(): ProblemCore {
+  const factor = randInt(2, 12);
+  const missing = randInt(2, 12);
+  const product = factor * missing;
+  const formats = [
+    `□ × ${factor} = ${product}`,
+    `${factor} × □ = ${product}`,
+    `${product} ÷ ${factor} = □`,
+  ];
+  const promptEquation = formats[randInt(0, formats.length - 1)];
+
+  return {
+    prompt: `What number makes this equation true: ${promptEquation}?`,
+    correctAnswer: String(missing),
+    wrongAnswers: [
+      factor,
+      missing + 1,
+      Math.max(1, missing - 1),
+      product,
+      factor + missing,
+    ].map(String),
+    hint: "Use the relationship between multiplication and division.",
+    secondHint: `${factor} times the missing number equals ${product}. Think of the related division fact.`,
+  };
+}
+
+function g3Multiples(): ProblemCore {
+  const factor = randInt(2, 9);
+  const multiplier = randInt(2, 16);
+  const answer = factor * multiplier;
+  const wrongs = new Set<number>();
+  for (const offset of [1, -1, 2, -2, factor + 1, factor - 1, 10]) {
+    const candidate = answer + offset;
+    if (candidate > 0 && candidate <= 144 && candidate % factor !== 0) {
+      wrongs.add(candidate);
+    }
+  }
+  while (wrongs.size < 5) {
+    const candidate = randInt(1, 144);
+    if (candidate % factor !== 0) wrongs.add(candidate);
+  }
+
+  return {
+    prompt: `Which number is a multiple of ${factor}?`,
+    correctAnswer: String(answer),
+    wrongAnswers: [...wrongs].map(String),
+    hint: "A multiple is the result of multiplying by a whole number.",
+    secondHint: `Skip-count by ${factor}. The correct answer appears in that counting pattern.`,
+  };
+}
+
 function g3AddSub1000(): ProblemCore {
   const add = Math.random() < 0.5;
   if (add) {
@@ -428,6 +542,58 @@ function g3AreaPerimeter(): ProblemCore {
       ? "Use length × width. Do not add the sides when the question asks for area."
       : "Use length + width + length + width, or 2 × (length + width).",
   };
+}
+
+function g3CompositeArea(): ProblemCore {
+  const firstLength = randInt(4, 10);
+  const firstWidth = randInt(3, 8);
+  const secondLength = randInt(3, 8);
+  const secondWidth = randInt(2, 6);
+  const firstArea = firstLength * firstWidth;
+  const secondArea = secondLength * secondWidth;
+  const totalArea = firstArea + secondArea;
+
+  return {
+    prompt: `A quest garden is made from two non-overlapping rectangles. One is ${firstLength} by ${firstWidth}, and the other is ${secondLength} by ${secondWidth}. What is the total area?`,
+    correctAnswer: unitAnswer(totalArea, "square unit", "square units"),
+    wrongAnswers: [
+      firstArea,
+      secondArea,
+      firstLength + firstWidth + secondLength + secondWidth,
+      totalArea + firstWidth,
+      Math.max(1, totalArea - secondWidth),
+    ].map((value) => unitAnswer(value, "square unit", "square units")),
+    hint: "Find the area of each rectangle first.",
+    secondHint: "Multiply length × width for each rectangle, then add the two areas because they do not overlap.",
+  };
+}
+
+function g3QuadrilateralAttributes(): ProblemCore {
+  const questions = [
+    {
+      prompt: "Which quadrilateral has four equal sides and four right angles?",
+      correctAnswer: "square",
+      wrongAnswers: ["rectangle", "trapezoid", "rhombus", "triangle"],
+      hint: "Look for both equal side lengths and right angles.",
+      secondHint: "A square has four equal sides and four right angles.",
+    },
+    {
+      prompt: "Which quadrilateral has exactly one pair of parallel sides?",
+      correctAnswer: "trapezoid",
+      wrongAnswers: ["square", "rectangle", "rhombus", "pentagon"],
+      hint: "Parallel sides stay the same distance apart and never meet.",
+      secondHint: "A trapezoid has exactly one pair of parallel sides in this classification.",
+    },
+    {
+      prompt: "Which quadrilateral has four equal sides, but does not have to have four right angles?",
+      correctAnswer: "rhombus",
+      wrongAnswers: ["rectangle", "trapezoid", "kite", "right triangle"],
+      hint: "Focus on side lengths first, not the size of the angles.",
+      secondHint: "A rhombus has four equal sides. A square is a special rhombus with right angles.",
+    },
+  ];
+
+  return questions[randInt(0, questions.length - 1)];
 }
 
 function g3FractionCompare(): ProblemCore {
@@ -1888,10 +2054,16 @@ function g5ExtremeDataRange(): ProblemCore {
 
 const GENERATORS: Record<string, ProblemGenerator> = {
   g3PlaceValueDigit,
+  g3ExpandedForm,
+  g3WholeNumberCompare,
+  g3MissingFactorEquation,
+  g3Multiples,
   g3AddSub1000,
   g3MultiplicationFacts,
   g3DivisionFacts,
   g3AreaPerimeter,
+  g3CompositeArea,
+  g3QuadrilateralAttributes,
   g3FractionCompare,
   g3EquivalentFractions,
   g3Rounding,

@@ -2,6 +2,10 @@
 
 Newest entries first. Add a concise timestamped entry for every meaningful project change before creating the related commit.
 
+## 2026-05-11T18:39:00-04:00
+
+- Completed PLAN.md Section 14 by expanding Easy / Grade 3 math variety with expanded form, whole-number comparison, missing-factor equations, multiples, composite area, and quadrilateral-attribute problems.
+
 ## 2026-05-11T18:31:00-04:00
 
 - Completed PLAN.md Section 12 by rendering fraction and mixed-number answer choices with stacked visual fractions while preserving the underlying answer strings for checking.
