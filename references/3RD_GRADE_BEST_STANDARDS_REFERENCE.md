@@ -28,7 +28,7 @@ It was created from the user-provided CPALMS course export PDF:
 | MA.3.AR.2.3  | Determine the unknown whole number in a multiplication or division equation, relating three whole numbers, with the unknown in any position.                                                            | Possible future generator: missing-number multiplication/division equations.                   |
 | MA.3.AR.3.1  | Determine and explain whether a whole number from 1 to 1,000 is even or odd.                                                                                                                            | Possible future generator: even/odd reasoning using place value or patterns.                   |
 | MA.3.AR.3.2  | Determine whether a whole number from 1 to 144 is a multiple of a given one-digit number.                                                                                                               | Possible future generator: identify multiples within Grade 3 limits.                           |
-| MA.3.AR.3.3  | Identify, create and extend numerical patterns.                                                                                                                                                         | Possible future generator: extend addition, subtraction, multiplication, or division patterns. |
+| MA.3.AR.3.3  | Identify, create and extend numerical patterns.                                                                                                                                                         | Current generator: extend addition/subtraction numerical patterns.                            |
 | MA.3.DP.1.1  | Collect and represent numerical and categorical data with whole-number values using tables, scaled pictographs, scaled bar graphs or line plots. Use appropriate titles, labels and units.              | Possible future generator: complete a table or scaled graph representation.                    |
 | MA.3.DP.1.2  | Interpret data with whole-number values represented with tables, scaled pictographs, circle graphs, scaled bar graphs or line plots by solving one- and two-step problems.                              | Currently used for Easy simple table interpretation.                                           |
 | MA.3.FR.1.1  | Represent and interpret unit fractions in the form 1/n as the quantity formed by one part when a whole is partitioned into n equal parts.                                                               | Possible future generator: identify unit fractions from simple context or model descriptions.  |
@@ -66,6 +66,7 @@ It was created from the user-provided CPALMS course export PDF:
 | `g3_division_equal_groups`       | `g3DivisionFacts`       | MA.3.AR.1.2  |
 | `g3_area_perimeter`              | `g3AreaPerimeter`       | MA.3.GR.2.3  |
 | `g3_simple_fractions`            | `g3FractionCompare`     | MA.3.FR.2.1  |
+| `g3_number_patterns`             | `g3NumberPatterns`      | MA.3.AR.3.3  |
 | `g3_measurement_length`          | `g3MeasurementLength`   | MA.3.M.1.2   |
 | `g3_time_elapsed`                | `g3ElapsedTime`         | MA.3.M.2.2   |
 | `g3_time_elapsed_two_step`       | `g3ElapsedTimeTwoStep`  | MA.3.M.2.2   |

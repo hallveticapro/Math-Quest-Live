@@ -22,9 +22,9 @@ This file documents the benchmarks currently used by MathQuest Live. Benchmark d
 
 ## Summary
 
-- Unique benchmark codes currently used: 46
-- Total skill entries currently mapped to benchmarks: 60
-- Grade 3 / Easy skill entries: 13
+- Unique benchmark codes currently used: 47
+- Total skill entries currently mapped to benchmarks: 61
+- Grade 3 / Easy skill entries: 14
 - Grade 4 / Medium skill entries: 20
 - Grade 5 / Hard skill entries: 17
 - Advanced Grade 5 / Extreme skill entries: 10
@@ -63,6 +63,7 @@ The current engine now includes a session-only `varietyGroup` on each generated 
 Newly added or expanded generator coverage:
 
 - Easy / Grade 3: `g3MeasurementMassVolume` under `MA.3.M.1.2`.
+- Easy / Grade 3: `g3NumberPatterns` under `MA.3.AR.3.3`.
 - Medium / Grade 4: `g4SamePerimeterArea`, `g4FractionDecomposition`, `g4FractionTenthsHundredthsAdd`, `g4FractionTimesWhole`, `g4MeasurementConversion`, `g4DataInterpretation`, and `g4DecimalCompare`.
 - Hard / Grade 5: `g5WholeNumberMultiplication`, `g5WholeNumberDivision`, `g5GeometryClassification`, and `g5DataStatistics`.
 - Extreme / Advanced Grade 5: `g5ExtremeFractionUnlikeMultiStep` and `g5ExtremeDataRange`.
@@ -95,6 +96,7 @@ The summary table is the current authoritative inventory after the Grade 3, Grad
 | Easy | 3 | MA.3.FR.2.1 | Compare fractional numbers with common numerators or denominators. | simple fraction comparison | same-denominator fraction comparison | g3FractionCompare | Internal metadata | Verified from provided source |
 | Easy | 3 | MA.3.FR.2.2 | Practice identifying equivalent fractions within Grade 3 expectations. | equivalent fractions | equivalent fractions | g3EquivalentFractions | Internal metadata; developer validation | Verified from provided source |
 | Easy | 3 | MA.3.NSO.1.4 | Practice rounding whole numbers from 0 to 1,000 to the nearest 10 or 100. | rounding whole numbers | whole-number rounding | g3Rounding | Internal metadata; developer validation | Verified from provided source |
+| Easy | 3 | MA.3.AR.3.3 | Practice extending numerical patterns within Grade 3 expectations. | number patterns | extend numerical pattern | g3NumberPatterns | Internal metadata; developer validation | Verified from provided source |
 | Easy | 3 | MA.3.M.1.2 | Practice solving real-world length measurement problems within Grade 3 expectations. | length measurement | length total or comparison | g3MeasurementLength | Internal metadata; developer validation | Verified from provided source |
 | Easy | 3 | MA.3.M.2.2 | Practice elapsed-time problem solving within Grade 3 expectations. | elapsed time | elapsed time in minutes | g3ElapsedTime | Internal metadata | Verified from provided source |
 | Easy | 3 | MA.3.M.2.2 | Practice two-step elapsed-time problem solving within Grade 3 expectations. | two-step elapsed time | two-step elapsed time with a missing part | g3ElapsedTimeTwoStep | Internal metadata | Verified from provided source |
@@ -211,6 +213,19 @@ The summary table is the current authoritative inventory after the Grade 3, Grad
 - Generator: `g3FractionCompare`
 - Problem type: same-denominator fraction comparison
 - Example problem shape: Students choose which of two fractions with the same denominator is greater.
+- Current use: internal problem metadata and developer validation.
+- Verification status: Verified from provided source.
+
+### MA.3.AR.3.3
+
+- Current app description: Practice extending numerical patterns within Grade 3 expectations.
+- Difficulty band: Easy / Adventurer
+- Grade band: 3
+- Skill id: `g3_number_patterns`
+- Skill label: number patterns
+- Generator: `g3NumberPatterns`
+- Problem type: extend numerical pattern
+- Example problem shape: Students identify the next number in a pattern that adds or subtracts a fixed amount.
 - Current use: internal problem metadata and developer validation.
 - Verification status: Verified from provided source.
 

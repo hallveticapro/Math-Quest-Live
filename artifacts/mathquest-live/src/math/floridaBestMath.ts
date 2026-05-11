@@ -374,6 +374,15 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
         ...benchmarkMetadata("MA.3.NSO.1.4"),
       },
       {
+        id: "g3_number_patterns",
+        benchmark: "MA.3.AR.3.3",
+        description:
+          "Practice extending numerical patterns within Grade 3 expectations.",
+        skill: "number patterns",
+        generator: "g3NumberPatterns",
+        ...benchmarkMetadata("MA.3.AR.3.3"),
+      },
+      {
         id: "g3_measurement_length",
         benchmark: "MA.3.M.1.2",
         description:

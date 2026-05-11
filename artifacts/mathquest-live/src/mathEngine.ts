@@ -388,6 +388,35 @@ function g3Rounding(): ProblemCore {
   };
 }
 
+function g3NumberPatterns(): ProblemCore {
+  const increasing = Math.random() < 0.75;
+  const step = [2, 3, 4, 5, 6, 10][randInt(0, 5)];
+  const start = increasing ? randInt(2, 28) : randInt(45, 96);
+  const pattern = Array.from({ length: 4 }, (_, index) =>
+    increasing ? start + index * step : start - index * step,
+  );
+  const answer = increasing
+    ? pattern[pattern.length - 1] + step
+    : pattern[pattern.length - 1] - step;
+  const direction = increasing ? "adds" : "subtracts";
+
+  return {
+    prompt: `The rune pattern is ${pattern.join(", ")}. It ${direction} ${step} each time. What number comes next?`,
+    correctAnswer: String(answer),
+    wrongAnswers: [
+      pattern[pattern.length - 1],
+      increasing ? answer + step : answer - step,
+      increasing ? answer - 1 : answer + 1,
+      increasing ? answer + 1 : answer - 1,
+      Math.max(0, start + step),
+    ].map(String),
+    hint: "Look for the rule that changes each number into the next number.",
+    secondHint: increasing
+      ? `Add ${step} to the last number in the pattern.`
+      : `Subtract ${step} from the last number in the pattern.`,
+  };
+}
+
 function g3MeasurementLength(): ProblemCore {
   const first = randInt(12, 48);
   const second = randInt(8, 36);
@@ -1744,6 +1773,7 @@ const GENERATORS: Record<string, ProblemGenerator> = {
   g3FractionCompare,
   g3EquivalentFractions,
   g3Rounding,
+  g3NumberPatterns,
   g3MeasurementLength,
   g3MeasurementMassVolume,
   g3ElapsedTime,
