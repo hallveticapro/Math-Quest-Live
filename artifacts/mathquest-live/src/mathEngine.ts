@@ -3061,6 +3061,7 @@ export function generateUniqueMathProblem(
   usedSignatures: ReadonlySet<string>,
   usedVarietyGroupsOrMaxRetries?: ReadonlySet<string> | number,
   maxRetries = DEFAULT_UNIQUE_RETRY_COUNT,
+  recentDomains: readonly string[] = [],
 ): MathProblem {
   let lastProblem: MathProblem | null = null;
   const retryCount =
@@ -3080,8 +3081,25 @@ export function generateUniqueMathProblem(
           .filter((group) => !usedVarietyGroups.has(group)),
       )
     : undefined;
+  const recentDomainSet = new Set(recentDomains.filter(Boolean));
+  const unusedGroupsOutsideRecentDomains =
+    usedVarietyGroups && recentDomainSet.size > 0
+      ? new Set(
+          band.skills
+            .filter(
+              (skill) =>
+                !usedVarietyGroups.has(getVarietyGroup(skill)) &&
+                !recentDomainSet.has(skill.domain),
+            )
+            .map(getVarietyGroup),
+        )
+      : undefined;
   const preferredGroups =
-    unusedGroups && unusedGroups.size > 0 ? unusedGroups : undefined;
+    unusedGroupsOutsideRecentDomains && unusedGroupsOutsideRecentDomains.size > 0
+      ? unusedGroupsOutsideRecentDomains
+      : unusedGroups && unusedGroups.size > 0
+        ? unusedGroups
+        : undefined;
 
   for (let attempt = 0; attempt < retryCount; attempt += 1) {
     const problem = generateMathProblem(difficulty, preferredGroups);
@@ -3115,6 +3133,7 @@ export function generateUniqueRecoveryProblem(
   usedSignatures: ReadonlySet<string>,
   usedVarietyGroupsOrMaxRetries?: ReadonlySet<string> | number,
   maxRetries = DEFAULT_UNIQUE_RETRY_COUNT,
+  recentDomains: readonly string[] = [],
 ): MathProblem {
   const diffMap: Record<DifficultyKey, DifficultyKey> = {
     extreme: "hard",
@@ -3129,5 +3148,6 @@ export function generateUniqueRecoveryProblem(
     usedSignatures,
     usedVarietyGroupsOrMaxRetries,
     maxRetries,
+    recentDomains,
   );
 }

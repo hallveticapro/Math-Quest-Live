@@ -2,6 +2,10 @@
 
 Newest entries first. Add a concise timestamped entry for every meaningful project change before creating the related commit.
 
+## 2026-05-11T19:09:00-04:00
+
+- Completed PLAN.md Section 18 by adding session-only recent-domain tracking so math generation prefers unused problem groups from different recent domains when alternatives exist.
+
 ## 2026-05-11T19:05:00-04:00
 
 - Completed PLAN.md Section 17 by expanding Extreme / advanced Grade 5 math variety with unit-fraction division, decimal powers-of-ten, expression translation/evaluation, input-output tables, product-size reasoning, combined volume, and capacity/weight conversion problems.

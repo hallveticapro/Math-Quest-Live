@@ -166,6 +166,7 @@ function GameApp() {
   } | null>(null);
   const usedProblemSignaturesRef = useRef<Set<string>>(new Set());
   const usedProblemVarietyGroupsRef = useRef<Set<string>>(new Set());
+  const recentProblemDomainsRef = useRef<string[]>([]);
   const lastQuickStartRef = useRef<QuickStartSession | null>(null);
   const quickStartLockRef = useRef(false);
   const startLockRef = useRef(false);
@@ -237,6 +238,12 @@ function GameApp() {
   const rememberMathProblem = (problem: MathProblem) => {
     usedProblemSignaturesRef.current.add(problem.signature);
     usedProblemVarietyGroupsRef.current.add(problem.varietyGroup);
+    recentProblemDomainsRef.current = [
+      ...recentProblemDomainsRef.current.filter(
+        (domain) => domain !== problem.domain,
+      ),
+      problem.domain,
+    ].slice(-2);
     return problem;
   };
 
@@ -247,6 +254,8 @@ function GameApp() {
         difficulty,
         usedProblemSignaturesRef.current,
         usedProblemVarietyGroupsRef.current,
+        undefined,
+        recentProblemDomainsRef.current,
       ),
     );
   };
@@ -258,6 +267,8 @@ function GameApp() {
         difficulty,
         usedProblemSignaturesRef.current,
         usedProblemVarietyGroupsRef.current,
+        undefined,
+        recentProblemDomainsRef.current,
       ),
     );
   };
@@ -280,6 +291,7 @@ function GameApp() {
     playTransition();
     usedProblemSignaturesRef.current = new Set();
     usedProblemVarietyGroupsRef.current = new Set();
+    recentProblemDomainsRef.current = [];
     setState((s) => ({
       ...s,
       hero,
@@ -729,6 +741,7 @@ function GameApp() {
     pendingStartRef.current = null;
     usedProblemSignaturesRef.current = new Set();
     usedProblemVarietyGroupsRef.current = new Set();
+    recentProblemDomainsRef.current = [];
     applyColorScheme(DEFAULT_COLOR_SCHEME_ID);
     setState(INITIAL_STATE);
   };
@@ -789,6 +802,7 @@ function GameApp() {
             mathAnswerLockRef.current = false;
             usedProblemSignaturesRef.current = new Set();
             usedProblemVarietyGroupsRef.current = new Set();
+            recentProblemDomainsRef.current = [];
             setState(INITIAL_STATE);
           }}
           topControls={
