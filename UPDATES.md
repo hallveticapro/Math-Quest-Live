@@ -2,6 +2,10 @@
 
 Newest entries first. Add a concise timestamped entry for every meaningful project change before creating the related commit.
 
+## 2026-05-11T06:44:03-04:00
+
+- Added a ChatGPT project handoff reference with current guardrails, architecture, UX conventions, math model notes, and verification commands.
+
 ## 2026-05-11T06:43:25-04:00
 
 - Updated AGENTS guidance with the new update-log, rich math display, social metadata, loading-flow, and audio conventions for future Codex sessions.
