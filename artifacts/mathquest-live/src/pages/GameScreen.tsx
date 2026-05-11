@@ -3,6 +3,7 @@ import { CheckCircle2, Lightbulb } from "lucide-react";
 import { GameState } from "../types";
 import { playClick } from "../lib/sounds";
 import { SceneImage } from "../components/SceneImage";
+import { MathRichDisplay } from "../components/MathRichDisplay";
 import { getQuestLengthByTurns } from "../questLengths";
 import { resetScrollForTransition } from "../lib/scroll";
 import { getDifficultyBand } from "../math/floridaBestMath";
@@ -306,6 +307,7 @@ export function GameScreen({
                   <h3 className="text-2xl md:text-5xl font-bold font-sans py-2 md:py-4 text-[var(--mq-text)] tracking-wide leading-tight break-words">
                     {currentMathProblem.prompt}
                   </h3>
+                  <MathRichDisplay items={currentMathProblem.richDisplay} />
 
                   {wrongAttempts > 0 && (
                     <div

@@ -29,7 +29,23 @@ export type MathProblem = {
   signature: string;
   hint: string;
   secondHint: string;
+  richDisplay?: RichMathDisplay[];
 };
+
+export type RichMathDisplay =
+  | {
+      type: "fraction";
+      numerator: number | string;
+      denominator: number | string;
+      label?: string;
+      ariaLabel?: string;
+    }
+  | {
+      type: "table";
+      caption?: string;
+      headers: string[];
+      rows: Array<Array<number | string>>;
+    };
 
 type ProblemCore = {
   prompt: string;
@@ -37,6 +53,7 @@ type ProblemCore = {
   wrongAnswers: string[];
   hint: string;
   secondHint: string;
+  richDisplay?: RichMathDisplay[];
 };
 
 type ProblemGenerator = () => ProblemCore;
@@ -155,6 +172,32 @@ function money(cents: number) {
 function parseFraction(value: string) {
   const [n, d] = value.split("/").map(Number);
   return { numerator: n, denominator: d };
+}
+
+function fractionDisplay(
+  numerator: number | string,
+  denominator: number | string,
+  label?: string,
+): RichMathDisplay {
+  return {
+    type: "fraction",
+    numerator,
+    denominator,
+    label,
+    ariaLabel: `${label ? `${label}: ` : ""}${numerator} over ${denominator}`,
+  };
+}
+
+function dataTableDisplay(
+  caption: string,
+  rows: Array<[string, number | string]>,
+): RichMathDisplay {
+  return {
+    type: "table",
+    caption,
+    headers: ["Item", "Count"],
+    rows,
+  };
 }
 
 function g3PlaceValueDigit(): ProblemCore {
@@ -296,6 +339,10 @@ function g3FractionCompare(): ProblemCore {
     ],
     hint: "These fractions have the same denominator, so the pieces are the same size. Compare the numerators.",
     secondHint: "With the same denominator, the fraction with the larger numerator is greater.",
+    richDisplay: [
+      fractionDisplay(a, denominator, "First fraction"),
+      fractionDisplay(b, denominator, "Second fraction"),
+    ],
   };
 }
 
@@ -317,6 +364,7 @@ function g3EquivalentFractions(): ProblemCore {
     ],
     hint: "Equivalent fractions name the same amount, even when the numbers look different.",
     secondHint: "Multiply the numerator and denominator by the same number to make an equivalent fraction.",
+    richDisplay: [fractionDisplay(numerator, denominator, "Starting fraction")],
   };
 }
 
@@ -482,6 +530,13 @@ function g3DataInterpretation(): ProblemCore {
   while (valueB === valueA) valueB = randInt(4, 16);
   const valueC = randInt(3, 14);
   const compare = Math.random() < 0.55;
+  const richDisplay = [
+    dataTableDisplay("Quest table", [
+      [categoryA, valueA],
+      [categoryB, valueB],
+      [categoryC, valueC],
+    ]),
+  ];
 
   if (compare) {
     const largerCategory = valueA > valueB ? categoryA : categoryB;
@@ -501,6 +556,7 @@ function g3DataInterpretation(): ProblemCore {
       ].map(String),
       hint: "Find the two categories named in the question first. 'How many more' means compare them.",
       secondHint: "Subtract the smaller data value from the larger data value.",
+      richDisplay,
     };
   }
 
@@ -517,6 +573,7 @@ function g3DataInterpretation(): ProblemCore {
     ].map(String),
     hint: "Find the categories named in the question. 'Altogether' means add those values.",
     secondHint: `Add the ${categoryA} value and the ${categoryB} value. Do not include categories the question did not ask for.`,
+    richDisplay,
   };
 }
 
@@ -789,6 +846,10 @@ function g4FractionAddLikeDenominators(): ProblemCore {
       ],
       hint: "The denominators are the same, so subtract the numerators.",
       secondHint: "Keep the denominator the same. Only the top numbers change.",
+      richDisplay: [
+        fractionDisplay(n1, denominator, "First fraction"),
+        fractionDisplay(n2, denominator, "Second fraction"),
+      ],
     };
   }
 
@@ -806,6 +867,10 @@ function g4FractionAddLikeDenominators(): ProblemCore {
     ],
     hint: "The denominators are the same, so add the numerators.",
     secondHint: "Keep the denominator the same. Add only the top numbers.",
+    richDisplay: [
+      fractionDisplay(n1, denominator, "First fraction"),
+      fractionDisplay(n2, denominator, "Second fraction"),
+    ],
   };
 }
 
@@ -827,6 +892,7 @@ function g4FractionDecomposition(): ProblemCore {
     ],
     hint: "Decompose means break one fraction into a sum of fractions.",
     secondHint: "Keep the denominator the same and make sure the numerators add to the original numerator.",
+    richDisplay: [fractionDisplay(numerator, denominator, "Fraction to decompose")],
   };
 }
 
@@ -848,6 +914,10 @@ function g4FractionTenthsHundredthsAdd(): ProblemCore {
     ],
     hint: "Convert tenths to hundredths before adding.",
     secondHint: `${tenths}/10 is ${tenths * 10}/100. Add the hundredths after the denominators match.`,
+    richDisplay: [
+      fractionDisplay(tenths, 10, "Tenths"),
+      fractionDisplay(hundredths, 100, "Hundredths"),
+    ],
   };
 }
 
@@ -868,6 +938,7 @@ function g4FractionTimesWhole(): ProblemCore {
     ],
     hint: "This is repeated groups of the same fraction.",
     secondHint: "Multiply the whole number by the numerator. Keep the denominator the same.",
+    richDisplay: [fractionDisplay(numerator, denominator, "Ribbon per banner")],
   };
 }
 
@@ -926,6 +997,12 @@ function g4MeasurementConversion(): ProblemCore {
 function g4DataInterpretation(): ProblemCore {
   const values = [randInt(8, 20), randInt(10, 24), randInt(12, 28), randInt(6, 18)];
   const labels = ["crystals", "keys", "scrolls", "coins"];
+  const richDisplay = [
+    dataTableDisplay(
+      "Quest data",
+      labels.map((label, index) => [label, values[index]]),
+    ),
+  ];
   const askRange = Math.random() < 0.5;
   if (askRange) {
     const answer = Math.max(...values) - Math.min(...values);
@@ -940,6 +1017,7 @@ function g4DataInterpretation(): ProblemCore {
       ].map(String),
       hint: "Range tells how spread out the data are.",
       secondHint: "Subtract the smallest value from the largest value.",
+      richDisplay,
     };
   }
 
@@ -958,6 +1036,7 @@ function g4DataInterpretation(): ProblemCore {
     ].map(String),
     hint: "Find the two categories named in the question first.",
     secondHint: "Altogether means add only those two values, not every value in the table.",
+    richDisplay,
   };
 }
 
@@ -1143,6 +1222,10 @@ function g5FractionAddUnlike(): ProblemCore {
     ],
     hint: "For unlike denominators, first make equivalent fractions with a common denominator.",
     secondHint: "Multiply to make matching denominator sizes, then add the numerators only.",
+    richDisplay: [
+      fractionDisplay(n1, d1, "First fraction"),
+      fractionDisplay(n2, d2, "Second fraction"),
+    ],
   };
 }
 
@@ -1171,6 +1254,10 @@ function g5FractionSubtractUnlike(): ProblemCore {
     ],
     hint: "For unlike denominators, make equivalent fractions with a common denominator before subtracting.",
     secondHint: "Use the common denominator, subtract the numerators, and keep the denominator the same.",
+    richDisplay: [
+      fractionDisplay(n1, d1, "Amount filled"),
+      fractionDisplay(n2, d2, "Amount used"),
+    ],
   };
 }
 
@@ -1190,6 +1277,7 @@ function g5FractionTimesWhole(): ProblemCore {
     ],
     hint: "A fraction for each batch means repeated groups of that fraction. Multiply the whole number by the numerator.",
     secondHint: "Keep the denominator the same, and multiply the whole number by the top number.",
+    richDisplay: [fractionDisplay(numerator, denominator, "Spice per batch")],
   };
 }
 
@@ -1211,6 +1299,10 @@ function g5FractionTimesFraction(): ProblemCore {
     ],
     hint: "To multiply fractions, multiply the numerators and multiply the denominators.",
     secondHint: "Top times top, bottom times bottom. Simplify the fraction if possible.",
+    richDisplay: [
+      fractionDisplay(n1, d1, "First factor"),
+      fractionDisplay(n2, d2, "Second factor"),
+    ],
   };
 }
 
@@ -1369,6 +1461,12 @@ function g5DataStatistics(): ProblemCore {
     const finalValue = targetMean * 4 - values.reduce((sum, value) => sum + value, 0);
     if (finalValue < 5 || finalValue > 30) return g5DataStatistics();
     const allValues = shuffle([...values, finalValue]);
+    const richDisplay = [
+      dataTableDisplay(
+        "Team scores",
+        allValues.map((value, index) => [`Score ${index + 1}`, value]),
+      ),
+    ];
     return {
       prompt: `The team recorded these whole-number scores: ${allValues.join(", ")}. What is the mean score?`,
       correctAnswer: String(targetMean),
@@ -1381,11 +1479,18 @@ function g5DataStatistics(): ProblemCore {
       ].map(String),
       hint: "Mean is the fair-share average.",
       secondHint: "Add all the values, then divide by how many values there are.",
+      richDisplay,
     };
   }
 
   const values = shuffle([randInt(6, 12), randInt(13, 18), randInt(20, 28), randInt(30, 38)]);
   const answer = Math.max(...values) - Math.min(...values);
+  const richDisplay = [
+    dataTableDisplay(
+      "Distances",
+      values.map((value, index) => [`Distance ${index + 1}`, value]),
+    ),
+  ];
   return {
     prompt: `The table shows whole-number distances: ${values.join(", ")}. What is the range?`,
     correctAnswer: String(answer),
@@ -1397,6 +1502,7 @@ function g5DataStatistics(): ProblemCore {
     ].map(String),
     hint: "Range shows the distance between the greatest and least data values.",
     secondHint: "Subtract the smallest value from the largest value.",
+    richDisplay,
   };
 }
 
@@ -1423,6 +1529,10 @@ function g5ExtremeFractionCombo(): ProblemCore {
     ],
     hint: "Break this into steps: add the fractions first, then add the whole crystals.",
     secondHint: "Use a common denominator for the fractions. After that, add the whole-number amount.",
+    richDisplay: [
+      fractionDisplay(n1, d1, "First crystal"),
+      fractionDisplay(n2, d2, "Second crystal"),
+    ],
   };
 }
 
@@ -1588,6 +1698,10 @@ function g5ExtremeFractionUnlikeMultiStep(): ProblemCore {
     ],
     hint: "Combine the unlike-denominator fractions first.",
     secondHint: "Find a common denominator, add the fractions, then include the whole-number cup.",
+    richDisplay: [
+      fractionDisplay(n1, d1, "Moon flour"),
+      fractionDisplay(n2, d2, "Star sugar"),
+    ],
   };
 }
 
@@ -1599,6 +1713,12 @@ function g5ExtremeDataRange(): ProblemCore {
   const values = shuffle([day1, day2, day3, day4]);
   const range = Math.max(...values) - Math.min(...values);
   const afterBonus = range + randInt(3, 9);
+  const richDisplay = [
+    dataTableDisplay(
+      "Crystals found",
+      values.map((value, index) => [`Day ${index + 1}`, value]),
+    ),
+  ];
 
   return {
     prompt: `A team tracks crystals found over four days: ${values.join(", ")}. The final gate number is the range plus ${afterBonus - range}. What is the final gate number?`,
@@ -1611,6 +1731,7 @@ function g5ExtremeDataRange(): ProblemCore {
     ],
     hint: "This is a two-step data problem. Find the range first.",
     secondHint: "Subtract the smallest value from the largest value, then add the bonus number.",
+    richDisplay,
   };
 }
 
@@ -1717,6 +1838,7 @@ function buildProblem(
     signature,
     hint: core.hint,
     secondHint: core.secondHint,
+    richDisplay: core.richDisplay,
   };
 }
 

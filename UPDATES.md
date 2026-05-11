@@ -2,6 +2,10 @@
 
 Newest entries first. Add a concise timestamped entry for every meaningful project change before creating the related commit.
 
+## 2026-05-11T06:41:31-04:00
+
+- Added rich math display metadata and rendering for selected fraction and data-table problems, including stacked fractions and accessible tables in the math challenge view.
+
 ## 2026-05-11T06:36:26-04:00
 
 - Removed the extra pre-quest writing screen so setup now hands directly into the game loading state for first story and cover preparation.
