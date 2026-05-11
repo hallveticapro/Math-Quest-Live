@@ -2689,6 +2689,186 @@ function g5ExtremeDataRange(): ProblemCore {
   };
 }
 
+function g5ExtremeUnitFractionDivision(): ProblemCore {
+  const denominator = randInt(3, 12);
+  const stations = randInt(2, 6);
+  const batches = randInt(2, 5);
+  const piecesPerBatch = denominator * batches;
+  const totalPieces = piecesPerBatch * stations;
+  return {
+    prompt: `${stations} quest stations each have ${batches} miles of ribbon. The ribbon is cut into pieces that are 1/${denominator} mile long. How many pieces are made in all?`,
+    correctAnswer: unitAnswer(totalPieces, "piece", "pieces"),
+    wrongAnswers: [
+      piecesPerBatch,
+      denominator * stations,
+      stations + batches + denominator,
+      totalPieces + denominator,
+      Math.max(1, totalPieces - piecesPerBatch),
+    ].map((value) => unitAnswer(value, "piece", "pieces")),
+    hint: "Find how many unit-fraction pieces are in one station first.",
+    secondHint: `Each mile has ${denominator} pieces of size 1/${denominator}. Multiply by miles, then by stations.`,
+    richDisplay: [fractionDisplay(1, denominator, "Piece size")],
+  };
+}
+
+function g5ExtremeDecimalPowerOfTen(): ProblemCore {
+  const value = randInt(125, 985) / 100;
+  const first = Math.random() < 0.5 ? 0.1 : 0.01;
+  const second = first === 0.1 ? 0.01 : 0.1;
+  const answer = value / first + value * second;
+  return {
+    prompt: `A spell starts with ${value.toFixed(2)} energy. It divides that amount by ${first}, then adds ${value.toFixed(2)} × ${second}. What is the total energy?`,
+    correctAnswer: answer.toFixed(3),
+    wrongAnswers: decimalDistractors(answer, 3, [0.01, 0.1, 1, 10]),
+    hint: "Work in two parts and pay attention to multiplying or dividing by a number less than 1.",
+    secondHint: "Dividing by one-tenth or one-hundredth makes the value larger. Multiplying by them makes it smaller.",
+  };
+}
+
+function g5ExtremeExpressionTranslationEvaluate(): ProblemCore {
+  const a = randInt(5, 14);
+  const b = randInt(3, 9);
+  const c = randInt(2, 6);
+  const d = randInt(8, 30);
+  const answer = (a + b) * c - d;
+  return {
+    prompt: `Translate and evaluate: add ${a} and ${b}, multiply the result by ${c}, then subtract ${d}.`,
+    correctAnswer: String(answer),
+    wrongAnswers: [
+      a + b * c - d,
+      (a + b) * (c - d),
+      (a * b + c) - d,
+      answer + d,
+      answer + c,
+    ]
+      .filter((value) => value >= 0 && value !== answer)
+      .map(String),
+    hint: "Translate the words into an expression before evaluating.",
+    secondHint: `The expression is (${a} + ${b}) × ${c} - ${d}. Parentheses happen first.`,
+  };
+}
+
+function g5ExtremeInputOutputTable(): ProblemCore {
+  const multiplier = randInt(3, 8);
+  const addend = randInt(5, 20);
+  const inputs = [2, 4, 6, 8];
+  const missingIndex = randInt(0, inputs.length - 1);
+  const answer = inputs[missingIndex] * multiplier + addend;
+  const rows = inputs.map((input, index) => [
+    input,
+    index === missingIndex ? "?" : input * multiplier + addend,
+  ]);
+  return {
+    prompt: `Use the input-output table below. The rule is ${multiplier}n + ${addend}. What output is missing?`,
+    correctAnswer: String(answer),
+    wrongAnswers: [
+      inputs[missingIndex] + multiplier + addend,
+      inputs[missingIndex] * addend + multiplier,
+      answer + multiplier,
+      Math.max(1, answer - multiplier),
+      multiplier + addend,
+    ].map(String),
+    hint: "Substitute the missing row's input into the rule.",
+    secondHint: `Multiply the input by ${multiplier}, then add ${addend}.`,
+    richDisplay: [
+      {
+        type: "table",
+        caption: "Advanced input-output table",
+        headers: ["Input n", "Output"],
+        rows,
+      },
+    ],
+  };
+}
+
+function g5ExtremeProductSizeReasoning(): ProblemCore {
+  const whole = randInt(12, 48);
+  const lessThanOne = Math.random() < 0.5;
+  const numerator = lessThanOne ? randInt(1, 4) : randInt(6, 11);
+  const denominator = lessThanOne ? randInt(numerator + 1, 9) : randInt(2, numerator - 1);
+  const answer = lessThanOne
+    ? "less than the starting number"
+    : "greater than the starting number";
+  return {
+    prompt: `Without calculating exactly, ${whole} is multiplied by ${numerator}/${denominator}. What will happen to the product?`,
+    correctAnswer: answer,
+    wrongAnswers: [
+      lessThanOne ? "greater than the starting number" : "less than the starting number",
+      "equal to the starting number",
+      "always a whole number",
+      "always zero",
+    ],
+    hint: "Think about whether the fraction factor is less than 1, equal to 1, or greater than 1.",
+    secondHint:
+      lessThanOne
+        ? "Multiplying by a fraction less than 1 makes the product smaller."
+        : "Multiplying by a fraction greater than 1 makes the product larger.",
+    richDisplay: [fractionDisplay(numerator, denominator, "Multiplier")],
+  };
+}
+
+function g5ExtremeVolumeTwoPrisms(): ProblemCore {
+  const first = { l: randInt(4, 10), w: randInt(3, 8), h: randInt(2, 6) };
+  const second = { l: randInt(3, 8), w: randInt(3, 7), h: randInt(2, 5) };
+  const firstVolume = first.l * first.w * first.h;
+  const secondVolume = second.l * second.w * second.h;
+  const answer = firstVolume + secondVolume;
+  return {
+    prompt: `Two rectangular treasure boxes are filled. Box A is ${first.l} by ${first.w} by ${first.h}. Box B is ${second.l} by ${second.w} by ${second.h}. What is their total volume?`,
+    correctAnswer: unitAnswer(answer, "cubic unit", "cubic units"),
+    wrongAnswers: [
+      firstVolume,
+      secondVolume,
+      firstVolume - secondVolume,
+      answer + first.h,
+      Math.max(1, answer - second.h),
+    ].map((value) => unitAnswer(Math.abs(value), "cubic unit", "cubic units")),
+    hint: "Find the volume of each prism, then combine the volumes.",
+    secondHint: "Use length × width × height for each box. Then add both results.",
+  };
+}
+
+function g5ExtremeMeasurementCapacityWeight(): ProblemCore {
+  const useCapacity = Math.random() < 0.5;
+  if (useCapacity) {
+    const gallons = randInt(2, 6);
+    const quarts = randInt(1, 3);
+    const extraPints = randInt(2, 8);
+    const totalPints = gallons * 8 + quarts * 2 + extraPints;
+    return {
+      prompt: `Use the reference table below. A potion barrel has ${gallons} gallons ${quarts} quarts, then ${extraPints} more pints are added. How many pints is that?`,
+      correctAnswer: `${totalPints} pints`,
+      wrongAnswers: [
+        `${gallons + quarts + extraPints} pints`,
+        `${gallons * 4 + quarts * 2 + extraPints} pints`,
+        `${gallons * 8 + quarts} pints`,
+        `${totalPints + 2} pints`,
+      ],
+      hint: "Convert gallons and quarts to pints before adding.",
+      secondHint: "One gallon is 8 pints and one quart is 2 pints.",
+      richDisplay: [customaryReferenceTableDisplay("capacity", 5)],
+    };
+  }
+
+  const pounds = randInt(3, 12);
+  const ounces = randInt(1, 15);
+  const extraOunces = randInt(8, 48);
+  const totalOunces = pounds * 16 + ounces + extraOunces;
+  return {
+    prompt: `Use the reference table below. A supply pack weighs ${pounds} pounds ${ounces} ounces, then gains ${extraOunces} ounces. How many ounces is it now?`,
+    correctAnswer: `${totalOunces} ounces`,
+    wrongAnswers: [
+      `${pounds + ounces + extraOunces} ounces`,
+      `${pounds * 12 + ounces + extraOunces} ounces`,
+      `${pounds * 16 + ounces} ounces`,
+      `${totalOunces + 16} ounces`,
+    ],
+    hint: "Convert pounds to ounces before adding.",
+    secondHint: "One pound is 16 ounces. Multiply pounds by 16, then add the ounces.",
+    richDisplay: [customaryReferenceTableDisplay("weight", 5)],
+  };
+}
+
 const GENERATORS: Record<string, ProblemGenerator> = {
   g3PlaceValueDigit,
   g3ExpandedForm,
@@ -2773,13 +2953,20 @@ const GENERATORS: Record<string, ProblemGenerator> = {
   g5ThreeDClassification,
   g5DataStatistics,
   g5ExtremeFractionCombo,
+  g5ExtremeUnitFractionDivision,
   g5ExtremeWholeNumberRemainders,
   g5ExtremeDecimalCombo,
+  g5ExtremeDecimalPowerOfTen,
   g5ExtremeVolume,
+  g5ExtremeVolumeTwoPrisms,
   g5ExtremeMeasurementConversion,
+  g5ExtremeMeasurementCapacityWeight,
   g5ExtremeMoneyDecimal,
   g5ExtremeCoordinate,
   g5ExtremeExpressions,
+  g5ExtremeExpressionTranslationEvaluate,
+  g5ExtremeInputOutputTable,
+  g5ExtremeProductSizeReasoning,
   g5ExtremeFractionUnlikeMultiStep,
   g5ExtremeDataRange,
 };

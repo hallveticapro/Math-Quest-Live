@@ -1078,6 +1078,15 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
         ...benchmarkMetadata("MA.5.AR.1.2"),
       },
       {
+        id: "g5_extreme_unit_fraction_division",
+        benchmark: "MA.5.AR.1.3",
+        description:
+          "Practice multi-step real-world unit-fraction division contexts within Grade 5 expectations.",
+        skill: "advanced unit-fraction division",
+        generator: "g5ExtremeUnitFractionDivision",
+        ...benchmarkMetadata("MA.5.AR.1.3"),
+      },
+      {
         id: "g5_extreme_whole_number_remainders",
         benchmark: "MA.5.AR.1.1",
         description:
@@ -1096,6 +1105,15 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
         ...benchmarkMetadata("MA.5.NSO.2.3"),
       },
       {
+        id: "g5_extreme_decimal_power_of_ten",
+        benchmark: "MA.5.NSO.2.5",
+        description:
+          "Practice multi-step decimal reasoning with one-tenth and one-hundredth within Grade 5 expectations.",
+        skill: "advanced decimal powers of ten",
+        generator: "g5ExtremeDecimalPowerOfTen",
+        ...benchmarkMetadata("MA.5.NSO.2.5"),
+      },
+      {
         id: "g5_extreme_volume_missing_dimension",
         benchmark: "MA.5.GR.3.3",
         description:
@@ -1105,12 +1123,30 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
         ...benchmarkMetadata("MA.5.GR.3.3"),
       },
       {
+        id: "g5_extreme_volume_two_prisms",
+        benchmark: "MA.5.GR.3.3",
+        description:
+          "Practice multi-step real-world volume reasoning with right rectangular prisms within Grade 5 expectations.",
+        skill: "advanced combined volume",
+        generator: "g5ExtremeVolumeTwoPrisms",
+        ...benchmarkMetadata("MA.5.GR.3.3"),
+      },
+      {
         id: "g5_extreme_measurement_conversion",
         benchmark: "MA.5.M.1.1",
         description:
           "Practice multi-step real-world measurement conversion problems within a single system.",
         skill: "advanced measurement conversion",
         generator: "g5ExtremeMeasurementConversion",
+        ...benchmarkMetadata("MA.5.M.1.1"),
+      },
+      {
+        id: "g5_extreme_measurement_capacity_weight",
+        benchmark: "MA.5.M.1.1",
+        description:
+          "Practice multi-step capacity or weight conversion problems within a single system.",
+        skill: "advanced capacity and weight conversion",
+        generator: "g5ExtremeMeasurementCapacityWeight",
         ...benchmarkMetadata("MA.5.M.1.1"),
       },
       {
@@ -1138,6 +1174,33 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
         skill: "advanced Grade 5 expression reasoning",
         generator: "g5ExtremeExpressions",
         ...benchmarkMetadata("MA.5.AR.2.2"),
+      },
+      {
+        id: "g5_extreme_expression_translation_evaluate",
+        benchmark: "MA.5.AR.2.1",
+        description:
+          "Practice translating and evaluating multi-step numerical expressions within Grade 5 expectations.",
+        skill: "advanced expression translation",
+        generator: "g5ExtremeExpressionTranslationEvaluate",
+        ...benchmarkMetadata("MA.5.AR.2.1"),
+      },
+      {
+        id: "g5_extreme_input_output_table",
+        benchmark: "MA.5.AR.3.2",
+        description:
+          "Practice using advanced input-output tables within Grade 5 expectations.",
+        skill: "advanced input-output tables",
+        generator: "g5ExtremeInputOutputTable",
+        ...benchmarkMetadata("MA.5.AR.3.2"),
+      },
+      {
+        id: "g5_extreme_product_size_reasoning",
+        benchmark: "MA.5.FR.2.3",
+        description:
+          "Practice reasoning about product size when multiplying by fractions within Grade 5 expectations.",
+        skill: "advanced fraction product-size reasoning",
+        generator: "g5ExtremeProductSizeReasoning",
+        ...benchmarkMetadata("MA.5.FR.2.3"),
       },
       {
         id: "g5_extreme_fraction_unlike_multi_step",
