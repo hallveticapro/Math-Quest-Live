@@ -13,30 +13,6 @@ interface EndingScreenProps {
   topControls?: ReactNode;
 }
 
-function buildQuestMoments(state: GameState) {
-  const moments = [
-    `${state.hero.name} completed a ${getQuestLengthByTurns(state.maxTurns).label} in ${state.adventureSeed}.`,
-    `The Chronicle awarded ${state.badge} for solving ${state.mathSolved} math challenge${state.mathSolved === 1 ? "" : "s"}.`,
-  ];
-
-  if (state.practicedSkills.length > 0) {
-    moments.push(
-      `Key skills practiced: ${state.practicedSkills.slice(0, 3).join(", ")}.`,
-    );
-  }
-
-  const storyScenes = state.storyHistory
-    .split(/\n{2,}/)
-    .filter((entry) => entry.startsWith("Scene:"));
-  const finalScene = storyScenes[storyScenes.length - 1];
-  if (finalScene) {
-    const title = finalScene.split("\n")[0]?.replace(/^Scene:\s*/, "").trim();
-    if (title) moments.push(`Final chapter before the ending: ${title}.`);
-  }
-
-  return moments.slice(0, 4);
-}
-
 export function EndingScreen({ state, onPlayAgain, onNewHero, topControls }: EndingScreenProps) {
   const {
     endingTitle,
@@ -51,7 +27,6 @@ export function EndingScreen({ state, onPlayAgain, onNewHero, topControls }: End
   } = state;
   const questLength = getQuestLengthByTurns(maxTurns);
   const challenge = getDifficultyBand(difficulty);
-  const questMoments = buildQuestMoments(state);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -89,29 +64,13 @@ export function EndingScreen({ state, onPlayAgain, onNewHero, topControls }: End
         <div className="rs-panel p-8 md:p-10 text-left space-y-8">
           <SceneImage image={illustration} />
 
-          <p className="story-text text-xl md:text-2xl leading-loose">
+          <p className="story-text story-prose whitespace-pre-wrap">
             {endingText}
           </p>
 
           <div className="border-t-2 border-b-2 border-[var(--mq-secondary)] py-6 flex flex-col md:flex-row items-center justify-between bg-[var(--mq-background)]/50 px-6">
             <span className="text-xl font-bold text-[var(--mq-secondary)] uppercase tracking-widest mb-2 md:mb-0">Challenges Overcome</span>
             <span className="text-5xl font-black font-sans text-[var(--mq-secondary)] drop-shadow-[0_0_10px_var(--mq-secondary)]">{mathSolved}</span>
-          </div>
-
-          <div className="rounded-sm border border-[var(--mq-secondary)] bg-[var(--mq-background)]/60 p-5">
-            <h2 className="text-center text-sm font-bold uppercase tracking-[0.25em] text-[var(--mq-secondary)]">
-              Quest Moments
-            </h2>
-            <ul className="mt-4 space-y-3 text-left story-text text-base md:text-lg">
-              {questMoments.map((moment) => (
-                <li
-                  key={moment}
-                  className="border-l-2 border-[var(--mq-heading)] pl-4"
-                >
-                  {moment}
-                </li>
-              ))}
-            </ul>
           </div>
 
           <div className="rounded-sm border border-[var(--mq-border)] bg-[var(--mq-background)]/60 p-5 text-center">

@@ -53,7 +53,6 @@ export function GameScreen({
     maxTurns,
     sceneTitle,
     storyText,
-    actionRecap,
     illustration,
     choices,
     currentMathProblem,
@@ -273,11 +272,6 @@ export function GameScreen({
         ) : (
           <div className="flex-1 flex flex-col space-y-6">
             <div className="rs-panel p-6 md:p-8 space-y-6">
-              {actionRecap && (
-                <div className="rounded-sm border border-[var(--mq-secondary)] bg-[var(--mq-background)]/70 px-4 py-3 text-center font-serif text-base text-[var(--mq-text)] shadow-[0_0_18px_color-mix(in_srgb,var(--mq-secondary)_20%,transparent)] md:text-lg">
-                  {actionRecap}
-                </div>
-              )}
               <h2 className="rs-title text-3xl md:text-4xl text-center pb-4 border-b border-[var(--mq-border)]">
                 {sceneTitle}
               </h2>

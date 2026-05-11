@@ -2,6 +2,10 @@
 
 Newest entries first. Add a concise timestamped entry for every meaningful project change before creating the related commit.
 
+## 2026-05-11T17:55:00-04:00
+
+- Completed PLAN.md Section 1 cleanup: removed separate action recap UI/state, removed redundant Quest Moments outro metadata, and matched ending story text to the main adventure story typography.
+
 ## 2026-05-11T06:52:54-04:00
 
 - Moved the project update log into `references/` and updated agent/handoff guidance to point future sessions to `references/UPDATES.md`.

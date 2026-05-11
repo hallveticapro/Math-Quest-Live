@@ -60,7 +60,6 @@ export type GameState = {
   choices: Array<{ id: string; label: string }>;
   currentMathProblem: MathProblem | null;
   chosenAction: string | null;
-  actionRecap: string | null;
   isLoading: boolean;
   endingTitle: string;
   endingText: string;
@@ -89,7 +88,6 @@ export const INITIAL_STATE: GameState = {
   choices: [],
   currentMathProblem: null,
   chosenAction: null,
-  actionRecap: null,
   isLoading: false,
   endingTitle: "",
   endingText: "",
