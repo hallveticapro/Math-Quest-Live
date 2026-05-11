@@ -44,12 +44,130 @@ const FALLBACK_ENDING = {
   safetyRating: "kid_safe",
 };
 
+const FALLBACK_SCENE_LINES: Record<string, string[]> = {
+  Fantasy: [
+    "A ribbon of golden ivy curls into an arrow beside the path.",
+    "Tiny lantern sparks gather around a clue etched into the stone.",
+  ],
+  "Space Adventure": [
+    "A friendly console blinks in comet-blue patterns beside the next hatch.",
+    "A star map rotates gently, highlighting a safe route forward.",
+  ],
+  Mystery: [
+    "A harmless trail of sparkles loops around the newest clue.",
+    "The notebook flips open by itself and points to a detail everyone missed.",
+  ],
+  "Pirate Adventure": [
+    "The ship bell rings once as the map shifts toward a sunny clue.",
+    "A puzzle crab taps three safe marks into the sand.",
+  ],
+  "Jungle Adventure": [
+    "Vines twist into helpful arrows while bright flowers open nearby.",
+    "A cheerful rhythm taps from the rain drum and points down the trail.",
+  ],
+  "Underwater Adventure": [
+    "Bubbles rise in careful rows, revealing a clue near the coral gate.",
+    "A shell bell hums as lantern fish gather around the safest path.",
+  ],
+  "Sky Islands": [
+    "Clouds puff into stepping stones beside a ribbon of rainbow light.",
+    "Wind bells chime softly, showing which bridge is ready.",
+  ],
+  "Clockwork / Invention": [
+    "Gears click into a friendly rhythm and nudge a blueprint into view.",
+    "A safe puff of steam curls into an arrow over the workshop floor.",
+  ],
+  "Ancient Ruins": [
+    "Sunbeams slide across the mural and brighten one careful clue.",
+    "A polite statue tilts its head toward the next puzzle tile.",
+  ],
+  "Spooky Mystery / Friendly Ghosts": [
+    "A friendly lantern floats closer and gently lights the next clue.",
+    "The shy ghost guide waves from a moonlit doorway with a helpful smile.",
+  ],
+  "Tiny World": [
+    "A dew drop shines like a crystal lens over the next tiny clue.",
+    "Petals unfold into a map just wide enough for a brave small hero.",
+  ],
+  "Magical School": [
+    "Chalk lines swirl into arrows while the classroom hums with safe magic.",
+    "A bookmark fairy taps the page where the next clue should be.",
+  ],
+};
+
+const FALLBACK_ENDING_LINES: Record<string, string[]> = {
+  Fantasy: [
+    "Lantern light returns to the garden, and the Chronicle stamps the final page in gold.",
+    "The crystal forest glows gently as every helper cheers the solved puzzle.",
+  ],
+  "Space Adventure": [
+    "The beacon shines across the stars, guiding friendly travelers home.",
+    "The constellation projector wakes, filling the deck with bright safe colors.",
+  ],
+  Mystery: [
+    "The final clue clicks into place, and every harmless mystery smiles open.",
+    "The missing label returns to its frame as the notebook closes with a satisfied flutter.",
+  ],
+  "Pirate Adventure": [
+    "The compass points to a shared treasure, and the sunny harbor rings with cheers.",
+    "The sail lifts in a happy breeze as the map folds itself into a ribbon.",
+  ],
+  "Jungle Adventure": [
+    "The festival clearing glows as flowers open in a bright circle.",
+    "The canopy path is restored, and friendly drums tap a celebration rhythm.",
+  ],
+  "Underwater Adventure": [
+    "The reef bells ring softly, and bubbles carry the good news through the city.",
+    "The coral gate glows again while lantern fish swirl in a cheerful parade.",
+  ],
+  "Sky Islands": [
+    "The cloud bridge settles into place, shining under a calm rainbow.",
+    "The floating market cheers as windmills turn in a steady, friendly rhythm.",
+  ],
+  "Clockwork / Invention": [
+    "The kindness-powered engine ticks to life with a bright little chime.",
+    "The workshop gears spin smoothly, ringing tiny bells across the final page.",
+  ],
+  "Ancient Ruins": [
+    "The mural tiles glow in order, and the sunlit gate opens with a warm hum.",
+    "The compass statue shines as ancient bells celebrate the completed path.",
+  ],
+  "Spooky Mystery / Friendly Ghosts": [
+    "The lighthouse beacon glows warmly, and every friendly ghost waves good night.",
+    "The silly shadows bow politely as the final clue settles into place.",
+  ],
+  "Tiny World": [
+    "The acorn elevator dings at the top, and the garden village cheers below.",
+    "Button wheels spin, petals unfold, and the tiny world celebrates in bright color.",
+  ],
+  "Magical School": [
+    "The class mural remembers its colors, and stars sparkle over every desk.",
+    "The runaway lesson cards settle neatly as the bell chimes a joyful finale.",
+  ],
+};
+
+function pickFallbackLine(lines: Record<string, string[]>, genre: string, salt: string) {
+  const options = lines[genre] ?? [
+    "A safe magical clue glows brighter, showing a clever way forward.",
+  ];
+  const hash = [...`${genre}|${salt}`].reduce(
+    (total, char) => total + char.charCodeAt(0),
+    0,
+  );
+  return options[hash % options.length];
+}
+
 function buildGenreFallbackScene(plan?: EpisodePlan): typeof FALLBACK_SCENE {
   if (!plan?.opening) return FALLBACK_SCENE;
   const opening = plan.opening;
+  const genreLine = pickFallbackLine(
+    FALLBACK_SCENE_LINES,
+    opening.genre,
+    `${opening.setting}|${opening.objective}`,
+  );
   return {
     sceneTitle: `${opening.genre} Puzzle Path`,
-    storyText: `The path through ${opening.setting} glows with gentle puzzle magic. The clue ahead still points toward the quest goal: ${opening.objective}. A helpful ${opening.helpers} notices ${opening.detail.toLowerCase()} and gestures toward three safe ways forward. The adventure stays bright, calm, and full of clever choices.`,
+    storyText: `The path through ${opening.setting} glows with gentle puzzle magic. ${genreLine} The clue ahead still points toward the quest goal: ${opening.objective}. A helpful ${opening.helpers} notices ${opening.detail.toLowerCase()} and gestures toward three safe ways forward. The adventure stays bright, calm, and full of clever choices.`,
     choices: [
       { id: "A", label: "Study the glowing clue carefully" },
       { id: "B", label: `Ask the ${opening.helpers} for help` },
@@ -63,9 +181,14 @@ function buildGenreFallbackScene(plan?: EpisodePlan): typeof FALLBACK_SCENE {
 function buildGenreFallbackEnding(plan?: EpisodePlan): typeof FALLBACK_ENDING {
   if (!plan?.opening) return FALLBACK_ENDING;
   const opening = plan.opening;
+  const genreLine = pickFallbackLine(
+    FALLBACK_ENDING_LINES,
+    opening.genre,
+    `${opening.objective}|${opening.helpers}`,
+  );
   return {
     endingTitle: `${opening.genre} Victory`,
-    endingText: `With careful thinking and brave choices, the hero solves the final puzzle in ${opening.setting}. The goal is complete: ${opening.objective}. The friendly ${opening.helpers} cheers as lights shimmer across the last page of the Chronicle, and the whole ${opening.genre.toLowerCase()} adventure closes with a bright, joyful celebration.`,
+    endingText: `With careful thinking and brave choices, the hero solves the final puzzle in ${opening.setting}. The goal is complete: ${opening.objective}. ${genreLine} The friendly ${opening.helpers} cheers as lights shimmer across the last page of the Chronicle, and the whole ${opening.genre.toLowerCase()} adventure closes with a bright, joyful celebration.`,
     badge: `${opening.genre.split(" ")[0]} Champion`,
     safetyRating: "kid_safe",
   };

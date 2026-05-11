@@ -2,6 +2,10 @@
 
 Newest entries first. Add a concise timestamped entry for every meaningful project change before creating the related commit.
 
+## 2026-05-11T06:47:07-04:00
+
+- Expanded safe genre-specific fallback scene and ending copy so degraded story responses stay varied and aligned with the selected quest genre.
+
 ## 2026-05-11T06:46:02-04:00
 
 - Added session-only action recaps so the next story page briefly reflects the choice that opened it.
