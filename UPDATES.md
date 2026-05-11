@@ -2,6 +2,10 @@
 
 Newest entries first. Add a concise timestamped entry for every meaningful project change before creating the related commit.
 
+## 2026-05-11T06:42:09-04:00
+
+- Moved the rich social preview image into the frontend public images folder and updated page metadata/tagline for richer embeds.
+
 ## 2026-05-11T06:41:31-04:00
 
 - Added rich math display metadata and rendering for selected fraction and data-table problems, including stacked fractions and accessible tables in the math challenge view.

@@ -33,7 +33,7 @@ export function TitleScreen({
         <div className="rs-hr my-4"></div>
         
         <p className="text-2xl md:text-3xl text-[var(--mq-text)] font-serif italic max-w-2xl mx-auto" style={{ fontFamily: "var(--app-font-story)" }}>
-          A new math adventure every time.
+          Where math practice becomes an adventure.
         </p>
         
         <div className="rs-hr my-4"></div>

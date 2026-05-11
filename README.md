@@ -2,7 +2,7 @@
 
 ## Overview
 
-MathQuest Live is a classroom-safe AI math adventure game for elementary students. Students choose from preset hero and story options, solve code-generated math challenges, and advance through short AI-written adventure scenes.
+MathQuest Live is a classroom-safe AI math adventure game for elementary students: where math practice becomes an adventure. Students choose from preset hero and story options, solve code-generated math challenges, and advance through short AI-written adventure scenes.
 
 The MVP does not require student accounts, login, a database, saved progress, rosters, or stored student data. Game state lives in browser memory and resets on refresh.
 
