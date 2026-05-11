@@ -38,6 +38,7 @@ Use this file to give a future ChatGPT or Codex session fast project context wit
 - The old standalone pre-quest writing screen was removed. Setup now transitions directly into the game loading state for first story/cover preparation.
 - Color schemes preview live during setup and can be changed in settings during play. They are session-only.
 - Background music and navigation sound effects are session-only. Music files are auto-discovered by Vite from `.mp3` files in `artifacts/mathquest-live/src/assets/music/`; the fresh-session music volume defaults to 50%.
+- Story read-aloud uses browser-native speech synthesis only. It reads the current story scene text from the frontend and stops on math, scene changes, or navigation.
 - Loading copy rotates slowly enough to read, currently around a 4.5-second cadence.
 - Intro/cover and outro images may block scene presentation behind themed loading copy; normal in-story images should remain non-blocking unless deliberately changed.
 - Social embed metadata is centralized in `artifacts/mathquest-live/index.html`; rich social image assets live in `artifacts/mathquest-live/public/images/`.

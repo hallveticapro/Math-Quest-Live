@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { CheckCircle2, Lightbulb } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { CheckCircle2, Lightbulb, Square, Volume2 } from "lucide-react";
 import { GameState } from "../types";
 import { playClick } from "../lib/sounds";
 import { SceneImage } from "../components/SceneImage";
@@ -63,16 +63,43 @@ export function GameScreen({
   const [confirmExit, setConfirmExit] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
+  const [speechSupported, setSpeechSupported] = useState(false);
+  const [isReadingStory, setIsReadingStory] = useState(false);
   const transitionTimersRef = useRef<Array<ReturnType<typeof setTimeout>>>([]);
+  const speechUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const questLength = getQuestLengthByTurns(maxTurns);
   const progressPercent = Math.min(100, Math.round((mathSolved / maxTurns) * 100));
   const challenge = getDifficultyBand(difficulty);
 
+  const stopStorySpeech = useCallback((updateState = true) => {
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
+    speechUtteranceRef.current = null;
+    if (updateState) {
+      setIsReadingStory(false);
+    }
+  }, []);
+
   useEffect(() => {
     return () => {
       transitionTimersRef.current.forEach(clearTimeout);
+      stopStorySpeech(false);
     };
+  }, [stopStorySpeech]);
+
+  useEffect(() => {
+    setSpeechSupported(
+      typeof window !== "undefined" &&
+        "speechSynthesis" in window &&
+        "SpeechSynthesisUtterance" in window,
+    );
   }, []);
+
+  useEffect(() => {
+    stopStorySpeech(false);
+    setIsReadingStory(false);
+  }, [currentMathProblem, isLoading, sceneTitle, storyText, stopStorySpeech]);
 
   useEffect(() => {
     if (!isLoading) {
@@ -118,6 +145,36 @@ export function GameScreen({
 
   const handleChoiceClick = (choiceId: string, choiceLabel: string) => {
     onChoiceSelect(choiceId, choiceLabel);
+  };
+
+  const handleReadStoryClick = () => {
+    playClick();
+    if (!speechSupported || !storyText.trim()) return;
+
+    if (isReadingStory) {
+      stopStorySpeech();
+      return;
+    }
+
+    stopStorySpeech(false);
+    const utterance = new SpeechSynthesisUtterance(storyText.trim());
+    utterance.rate = 0.95;
+    utterance.pitch = 1;
+    utterance.onend = () => {
+      if (speechUtteranceRef.current === utterance) {
+        speechUtteranceRef.current = null;
+        setIsReadingStory(false);
+      }
+    };
+    utterance.onerror = utterance.onend;
+    speechUtteranceRef.current = utterance;
+    setIsReadingStory(true);
+    try {
+      window.speechSynthesis.speak(utterance);
+    } catch {
+      speechUtteranceRef.current = null;
+      setIsReadingStory(false);
+    }
   };
 
   const handleMathClick = (answer: string) => {
@@ -277,6 +334,23 @@ export function GameScreen({
               </h2>
               <SceneImage image={illustration} />
               <p className="story-text story-prose whitespace-pre-wrap">{storyText}</p>
+              {speechSupported && !currentMathProblem && storyText.trim() && (
+                <div className="flex justify-center pt-1">
+                  <button
+                    type="button"
+                    className="mq-focus inline-flex items-center gap-2 rounded-sm border border-[var(--mq-border)] bg-[var(--mq-surface-strong)] px-4 py-2 text-sm font-bold uppercase tracking-widest text-[var(--mq-text)] shadow-[0_0_16px_color-mix(in_srgb,var(--mq-primary)_18%,transparent)] transition hover:border-[var(--mq-border-strong)] hover:text-[var(--mq-heading)]"
+                    onClick={handleReadStoryClick}
+                    aria-pressed={isReadingStory}
+                  >
+                    {isReadingStory ? (
+                      <Square className="h-4 w-4" aria-hidden="true" />
+                    ) : (
+                      <Volume2 className="h-4 w-4" aria-hidden="true" />
+                    )}
+                    {isReadingStory ? "Stop Reading" : "Read Story"}
+                  </button>
+                </div>
+              )}
             </div>
 
             {!currentMathProblem ? (

@@ -2,6 +2,10 @@
 
 Newest entries first. Add a concise timestamped entry for every meaningful project change before creating the related commit.
 
+## 2026-05-11T18:09:00-04:00
+
+- Completed PLAN.md Section 6 by adding a browser-native `Read Story` / `Stop Reading` control that reads only the current story text and stops on math, scene changes, navigation, or unmount.
+
 ## 2026-05-11T18:05:00-04:00
 
 - Completed PLAN.md Section 5 by restoring the fresh-session background music volume default to 50% and updating audio documentation to match.

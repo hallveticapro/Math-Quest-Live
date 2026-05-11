@@ -101,6 +101,7 @@ pnpm --filter @workspace/api-spec run codegen
 - Do not reintroduce the removed standalone pre-quest writing screen; first-story/cover preparation belongs in the game loading state.
 - Preserve session-only color schemes; do not add `localStorage` unless specifically requested.
 - Preserve session-only audio settings. Background music defaults to 50% fresh-session volume. Background music files belong in `artifacts/mathquest-live/src/assets/music/` and are auto-discovered by Vite from `.mp3` files; do not add a hand-maintained music manifest.
+- Story read-aloud is browser-native Web Speech API only and belongs in frontend UI. Do not add backend TTS, paid TTS APIs, persistence, or speech logs.
 - Site/social preview assets belong in `artifacts/mathquest-live/public/images/`; keep social metadata centralized in `artifacts/mathquest-live/index.html`.
 - Rotating Chronicle/loading copy should stay readable. Use a calm cadence around 4-5 seconds unless a task needs faster feedback.
 - Keep mobile layouts and focus states in mind. Buttons/cards should remain large enough for Chromebooks and tablets.

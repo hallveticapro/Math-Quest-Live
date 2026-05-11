@@ -8,7 +8,7 @@ The MVP does not require student accounts, login, a database, saved progress, ro
 
 Students begin with a step-by-step Chronicler setup flow instead of a single form. During setup they choose preset hero details, challenge level, quest length, quest genre, and a session-only color scheme. Color schemes preview live while students choose them and remain active through the current game session. They affect visual appearance only; they do not affect difficulty, standards alignment, math content, AI safety rules, story outcome, or saved data. Refreshing the page resets the MVP session.
 
-Core features include preset-only student choices, deterministic app-generated math, Florida B.E.S.T. standards-band challenge levels, skill-specific hints, repeated-question prevention within a quest, session-only color themes, genre-based story starts, optional backend-only AI images, and a Quick Start path for faster launch.
+Core features include preset-only student choices, deterministic app-generated math, Florida B.E.S.T. standards-band challenge levels, skill-specific hints, repeated-question prevention within a quest, session-only color themes, browser-native story read-aloud, genre-based story starts, optional backend-only AI images, and a Quick Start path for faster launch.
 
 Made for educators with love by Andrew Hall ❤️
 
@@ -179,6 +179,8 @@ Audio settings are session-only and reset on refresh:
 - Navigation sound effects default to on.
 
 Music starts only after a user interaction unlocks browser audio. Tracks rotate through a shuffled playlist, avoid immediate repeats when multiple tracks exist, fade in/out, and transition smoothly between songs. If the music folder is empty, gameplay continues without background music.
+
+Story scenes include a browser-native `Read Story` button when speech synthesis is supported. It reads only the current story text, uses the browser Web Speech API, and stops when the student stops it, moves into a math challenge, changes scenes, or leaves the game screen.
 
 ## Challenge Levels And Florida B.E.S.T. Alignment
 
