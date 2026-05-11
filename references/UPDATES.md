@@ -2,6 +2,10 @@
 
 Newest entries first. Add a concise timestamped entry for every meaningful project change before creating the related commit.
 
+## 2026-05-11T18:31:00-04:00
+
+- Completed PLAN.md Section 12 by rendering fraction and mixed-number answer choices with stacked visual fractions while preserving the underlying answer strings for checking.
+
 ## 2026-05-11T18:28:00-04:00
 
 - Completed PLAN.md Section 11 by removing duplicated visible table rows from data prompts while keeping rich table displays as the source for the displayed values.

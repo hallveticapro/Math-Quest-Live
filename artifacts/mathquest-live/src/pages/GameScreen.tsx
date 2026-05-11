@@ -3,7 +3,7 @@ import { CheckCircle2, Lightbulb, Square, Volume2 } from "lucide-react";
 import { GameState } from "../types";
 import { playClick } from "../lib/sounds";
 import { SceneImage } from "../components/SceneImage";
-import { MathRichDisplay } from "../components/MathRichDisplay";
+import { MathAnswerChoice, MathRichDisplay } from "../components/MathRichDisplay";
 import { getQuestLengthByTurns } from "../questLengths";
 import { resetScrollForTransition } from "../lib/scroll";
 import { getDifficultyBand } from "../math/floridaBestMath";
@@ -423,7 +423,7 @@ export function GameScreen({
                         <span className="text-[var(--mq-secondary)] font-bold mr-4 text-lg md:mr-6 md:text-xl">
                           {letters[idx]}
                         </span>
-                        {ans}
+                        <MathAnswerChoice value={ans} />
                       </button>
                     );
                   })}

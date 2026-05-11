@@ -4,6 +4,77 @@ type MathRichDisplayProps = {
   items?: RichMathDisplay[];
 };
 
+type MathAnswerChoiceProps = {
+  value: string;
+};
+
+const FRACTION_TOKEN_PATTERN = /(\d+\s+\d+\/\d+|\d+\/\d+)/g;
+const FRACTION_TOKEN_EXACT_PATTERN = /^(\d+\s+\d+\/\d+|\d+\/\d+)$/;
+
+function InlineFraction({ token }: { token: string }) {
+  const mixedMatch = token.match(/^(\d+)\s+(\d+)\/(\d+)$/);
+  const fractionMatch = token.match(/^(\d+)\/(\d+)$/);
+
+  if (mixedMatch) {
+    const [, whole, numerator, denominator] = mixedMatch;
+
+    return (
+      <span className="math-answer-mixed-fraction" aria-hidden="true">
+        <span className="math-answer-whole">{whole}</span>
+        <span className="math-answer-fraction">
+          <span className="math-answer-fraction-numerator">{numerator}</span>
+          <span className="math-answer-fraction-line" />
+          <span className="math-answer-fraction-denominator">
+            {denominator}
+          </span>
+        </span>
+      </span>
+    );
+  }
+
+  if (fractionMatch) {
+    const [, numerator, denominator] = fractionMatch;
+
+    return (
+      <span className="math-answer-fraction" aria-hidden="true">
+        <span className="math-answer-fraction-numerator">{numerator}</span>
+        <span className="math-answer-fraction-line" />
+        <span className="math-answer-fraction-denominator">{denominator}</span>
+      </span>
+    );
+  }
+
+  return <span>{token}</span>;
+}
+
+export function MathAnswerChoice({ value }: MathAnswerChoiceProps) {
+  const parts = value.split(FRACTION_TOKEN_PATTERN).filter(Boolean);
+
+  if (parts.length <= 1 || !value.includes("/")) {
+    return <>{value}</>;
+  }
+
+  return (
+    <span className="math-answer-rich" aria-label={value}>
+      {parts.map((part, index) => {
+        if (FRACTION_TOKEN_EXACT_PATTERN.test(part)) {
+          return <InlineFraction key={`${part}-${index}`} token={part} />;
+        }
+
+        return (
+          <span
+            className="math-answer-token"
+            aria-hidden="true"
+            key={`${part}-${index}`}
+          >
+            {part}
+          </span>
+        );
+      })}
+    </span>
+  );
+}
+
 export function MathRichDisplay({ items }: MathRichDisplayProps) {
   if (!items?.length) return null;
 
