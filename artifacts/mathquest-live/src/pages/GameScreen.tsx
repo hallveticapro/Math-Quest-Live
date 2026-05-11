@@ -29,6 +29,12 @@ const STORY_LOADING_MESSAGES = [
   "The Chronicler is writing the next page...",
   "Preparing the next story beat and challenge...",
 ];
+const ENDING_LOADING_MESSAGES = [
+  "The Chronicle is writing your ending...",
+  "Every great quest needs a final page...",
+  "The Illustrator is preparing your victory scene...",
+  "Your reward is taking shape in starlight...",
+];
 
 export function GameScreen({
   state,
@@ -131,10 +137,18 @@ export function GameScreen({
         ? currentMathProblem.secondHint || currentMathProblem.hint
         : currentMathProblem.hint
       : null;
-  const loadingMessages = mathSolved > 0 ? STORY_LOADING_MESSAGES : INTRO_LOADING_MESSAGES;
+  const isEndingLoading =
+    isLoading && mathSolved >= maxTurns && state.turn >= maxTurns;
+  const loadingMessages = isEndingLoading
+    ? ENDING_LOADING_MESSAGES
+    : mathSolved > 0
+      ? STORY_LOADING_MESSAGES
+      : INTRO_LOADING_MESSAGES;
   const loadingTitle = loadingMessages[loadingMessageIndex % loadingMessages.length];
   const loadingDetail =
-    mathSolved > 0
+    isEndingLoading
+      ? "The final page and ending illustration may take a few seconds."
+      : mathSolved > 0
       ? "The next page will appear as soon as the story is ready."
       : "The opening story and cover illustration are being prepared.";
 
@@ -238,7 +252,7 @@ export function GameScreen({
             <div className="w-16 h-16 border-4 border-[var(--mq-border)] border-t-[var(--mq-heading)] border-b-[var(--mq-secondary)] rounded-sm animate-spin"></div>
             <div className="loading-bar" aria-hidden="true" />
             <div className="max-w-xl space-y-3 text-center" role="status">
-              {mathSolved > 0 && (
+              {(mathSolved > 0 || isEndingLoading) && (
                 <CheckCircle2
                   className="mx-auto h-10 w-10 text-[var(--mq-success)]"
                   aria-hidden="true"
