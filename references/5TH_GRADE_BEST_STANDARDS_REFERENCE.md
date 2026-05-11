@@ -64,7 +64,11 @@ It was created from the user-provided CPALMS course export PDF:
 | Skill ID | Generator | Benchmark |
 |---|---|---|
 | `g5_decimal_place_value` | `g5DecimalPlaceValue` | MA.5.NSO.1.3 |
+| `g5_decimal_place_value_shift` | `g5DecimalPlaceValueShift` | MA.5.NSO.1.1 |
+| `g5_decimal_expanded_form` | `g5DecimalExpandedForm` | MA.5.NSO.1.2 |
 | `g5_decimal_operations` | `g5DecimalOperations` | MA.5.NSO.2.3 |
+| `g5_decimal_estimate_product` | `g5DecimalEstimateProduct` | MA.5.NSO.2.4 |
+| `g5_decimal_power_of_ten` | `g5DecimalPowerOfTen` | MA.5.NSO.2.5 |
 | `g5_decimal_subtraction` | `g5DecimalSubtraction` | MA.5.NSO.2.3 |
 | `g5_decimal_compare` | `g5DecimalCompare` | MA.5.NSO.1.4 |
 | `g5_decimal_rounding` | `g5DecimalRounding` | MA.5.NSO.1.5 |
@@ -72,18 +76,39 @@ It was created from the user-provided CPALMS course export PDF:
 | `g5_fraction_subtract_unlike_denominators` | `g5FractionSubtractUnlike` | MA.5.FR.2.1 |
 | `g5_fraction_whole_number` | `g5FractionTimesWhole` | MA.5.AR.1.2 |
 | `g5_fraction_times_fraction` | `g5FractionTimesFraction` | MA.5.FR.2.2 |
+| `g5_unit_fraction_division` | `g5UnitFractionDivision` | MA.5.AR.1.3 |
 | `g5_volume` | `g5Volume` | MA.5.GR.3.2 |
+| `g5_volume_unit_cubes` | `g5VolumeUnitCubes` | MA.5.GR.3.1 |
 | `g5_coordinate_point` | `g5CoordinatePoint` | MA.5.GR.4.2 |
 | `g5_coordinate_axes` | `g5CoordinateAxes` | MA.5.GR.4.1 |
 | `g5_expressions` | `g5Expressions` | MA.5.AR.2.2 |
+| `g5_expression_translation` | `g5ExpressionTranslation` | MA.5.AR.2.1 |
+| `g5_equation_true_false` | `g5EquationTrueFalse` | MA.5.AR.2.3 |
+| `g5_unknown_number_equation` | `g5UnknownNumberEquation` | MA.5.AR.2.4 |
+| `g5_pattern_rule_expression` | `g5PatternRuleExpression` | MA.5.AR.3.1 |
+| `g5_input_output_table` | `g5InputOutputTable` | MA.5.AR.3.2 |
+| `g5_whole_number_multiplication` | `g5WholeNumberMultiplication` | MA.5.NSO.2.1 |
+| `g5_whole_number_division` | `g5WholeNumberDivision` | MA.5.NSO.2.2 |
+| `g5_geometry_classification` | `g5GeometryClassification` | MA.5.GR.1.1 |
+| `g5_three_d_classification` | `g5ThreeDClassification` | MA.5.GR.1.2 |
+| `g5_data_statistics` | `g5DataStatistics` | MA.5.DP.1.2 |
 | `g5_extreme_fraction_combo` | `g5ExtremeFractionCombo` | MA.5.AR.1.2 |
+| `g5_extreme_unit_fraction_division` | `g5ExtremeUnitFractionDivision` | MA.5.AR.1.3 |
 | `g5_extreme_whole_number_remainders` | `g5ExtremeWholeNumberRemainders` | MA.5.AR.1.1 |
 | `g5_extreme_decimal_combo` | `g5ExtremeDecimalCombo` | MA.5.NSO.2.3 |
+| `g5_extreme_decimal_power_of_ten` | `g5ExtremeDecimalPowerOfTen` | MA.5.NSO.2.5 |
 | `g5_extreme_volume_missing_dimension` | `g5ExtremeVolume` | MA.5.GR.3.3 |
+| `g5_extreme_volume_two_prisms` | `g5ExtremeVolumeTwoPrisms` | MA.5.GR.3.3 |
 | `g5_extreme_measurement_conversion` | `g5ExtremeMeasurementConversion` | MA.5.M.1.1 |
+| `g5_extreme_measurement_capacity_weight` | `g5ExtremeMeasurementCapacityWeight` | MA.5.M.1.1 |
 | `g5_extreme_money_decimal` | `g5ExtremeMoneyDecimal` | MA.5.M.2.1 |
 | `g5_extreme_coordinate_reasoning` | `g5ExtremeCoordinate` | MA.5.GR.4.2 |
 | `g5_extreme_expression_reasoning` | `g5ExtremeExpressions` | MA.5.AR.2.2 |
+| `g5_extreme_expression_translation_evaluate` | `g5ExtremeExpressionTranslationEvaluate` | MA.5.AR.2.1 |
+| `g5_extreme_input_output_table` | `g5ExtremeInputOutputTable` | MA.5.AR.3.2 |
+| `g5_extreme_product_size_reasoning` | `g5ExtremeProductSizeReasoning` | MA.5.FR.2.3 |
+| `g5_extreme_fraction_unlike_multi_step` | `g5ExtremeFractionUnlikeMultiStep` | MA.5.FR.2.1 |
+| `g5_extreme_data_range` | `g5ExtremeDataRange` | MA.5.DP.1.2 |
 
 ## Guardrails For Future Grade 5 Work
 

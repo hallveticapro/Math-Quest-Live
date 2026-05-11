@@ -26,6 +26,8 @@ Current coverage is based on:
 - `artifacts/mathquest-live/src/math/floridaBestMath.ts`
 - `artifacts/mathquest-live/src/mathEngine.ts`
 
+May 11 implementation note: the generator expansion batch substantially broadened all four challenge bands. The complete current skill list now lives in `artifacts/mathquest-live/src/math/floridaBestMath.ts`; `references/CURRENT_BEST_BENCHMARK_USAGE.md` records the current counts and the most recent newly added generator names.
+
 ### Easy / Grade 3
 
 Current Easy coverage includes:

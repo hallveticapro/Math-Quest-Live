@@ -22,12 +22,12 @@ This file documents the benchmarks currently used by MathQuest Live. Benchmark d
 
 ## Summary
 
-- Unique benchmark codes currently used: 47
-- Total skill entries currently mapped to benchmarks: 61
-- Grade 3 / Easy skill entries: 14
-- Grade 4 / Medium skill entries: 20
-- Grade 5 / Hard skill entries: 17
-- Advanced Grade 5 / Extreme skill entries: 10
+- Unique benchmark codes currently used: 79
+- Total skill entries currently mapped to benchmarks: 99
+- Grade 3 / Easy skill entries: 20
+- Grade 4 / Medium skill entries: 33
+- Grade 5 / Hard skill entries: 29
+- Advanced Grade 5 / Extreme skill entries: 17
 
 Benchmark codes and descriptions are currently internal metadata on generated math problems. Student-facing setup, settings, and app-info UI show difficulty-level descriptions and skill summaries, but they do not show individual benchmark codes. The README includes a sample metadata object that shows one benchmark code and description.
 
@@ -62,6 +62,10 @@ The current engine now includes a session-only `varietyGroup` on each generated 
 
 Newly added or expanded generator coverage:
 
+- Easy / Grade 3: `g3ExpandedForm`, `g3WholeNumberCompare`, `g3MissingFactorEquation`, `g3Multiples`, `g3CompositeArea`, and `g3QuadrilateralAttributes`.
+- Medium / Grade 4: `g4PlaceValueShift`, `g4ExpandedForm`, `g4WholeNumberCompare`, `g4TwoDigitMultiplication`, `g4EstimateProduct`, `g4EquationTrueFalse`, `g4UnknownNumberEquation`, `g4NumberPatternRule`, `g4FractionCompare`, `g4DecimalMoreLess`, `g4DecimalOperations`, `g4DataModeMedianRange`, and `g4AngleClassification`.
+- Hard / Grade 5: `g5DecimalPlaceValueShift`, `g5DecimalExpandedForm`, `g5DecimalEstimateProduct`, `g5DecimalPowerOfTen`, `g5UnitFractionDivision`, `g5VolumeUnitCubes`, `g5ExpressionTranslation`, `g5EquationTrueFalse`, `g5UnknownNumberEquation`, `g5PatternRuleExpression`, `g5InputOutputTable`, and `g5ThreeDClassification`.
+- Extreme / Advanced Grade 5: `g5ExtremeUnitFractionDivision`, `g5ExtremeDecimalPowerOfTen`, `g5ExtremeVolumeTwoPrisms`, `g5ExtremeMeasurementCapacityWeight`, `g5ExtremeExpressionTranslationEvaluate`, `g5ExtremeInputOutputTable`, and `g5ExtremeProductSizeReasoning`.
 - Easy / Grade 3: `g3MeasurementMassVolume` under `MA.3.M.1.2`.
 - Easy / Grade 3: `g3NumberPatterns` under `MA.3.AR.3.3`.
 - Medium / Grade 4: `g4SamePerimeterArea`, `g4FractionDecomposition`, `g4FractionTenthsHundredthsAdd`, `g4FractionTimesWhole`, `g4MeasurementConversion`, `g4DataInterpretation`, and `g4DecimalCompare`.
@@ -84,7 +88,7 @@ This file does not invent official domain names. A future verification pass shou
 
 ## Summary Table
 
-The summary table is the current authoritative inventory after the Grade 3, Grade 4, and Grade 5 standards-reference expansion passes. Some narrative detail sections below preserve extra notes from earlier audits and should be treated as explanatory, not as a replacement for this table.
+The source of truth for the complete current skill list is `artifacts/mathquest-live/src/math/floridaBestMath.ts`. The table below preserves the earlier benchmark inventory format and representative mapped generators; the summary and "Latest Variety Expansion" section above record the May 11 expansion totals and newly added generator names. Future cleanup should regenerate this table mechanically from the source metadata to avoid hand-maintained drift.
 
 | Difficulty | Grade Band | Benchmark Code | Current App Description | Skill Label | Problem Type | Generator(s) | Internal/Student/Teacher/README Use | Verification Status |
 |---|---:|---|---|---|---|---|---|---|

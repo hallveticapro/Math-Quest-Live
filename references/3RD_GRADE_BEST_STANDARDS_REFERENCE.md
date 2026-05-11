@@ -61,13 +61,22 @@ It was created from the user-provided CPALMS course export PDF:
 | Skill ID                         | Generator               | Benchmark    |
 | -------------------------------- | ----------------------- | ------------ |
 | `g3_place_value_digit`           | `g3PlaceValueDigit`     | MA.3.NSO.1.2 |
+| `g3_expanded_form`               | `g3ExpandedForm`        | MA.3.NSO.1.1 |
+| `g3_whole_number_compare`        | `g3WholeNumberCompare`  | MA.3.NSO.1.3 |
 | `g3_add_sub_1000`                | `g3AddSub1000`          | MA.3.NSO.2.1 |
 | `g3_multiplication_equal_groups` | `g3MultiplicationFacts` | MA.3.AR.1.2  |
 | `g3_division_equal_groups`       | `g3DivisionFacts`       | MA.3.AR.1.2  |
+| `g3_missing_factor_equations`    | `g3MissingFactorEquation` | MA.3.AR.2.3 |
+| `g3_multiples`                   | `g3Multiples`           | MA.3.AR.3.2  |
 | `g3_area_perimeter`              | `g3AreaPerimeter`       | MA.3.GR.2.3  |
+| `g3_composite_area`              | `g3CompositeArea`       | MA.3.GR.2.4  |
+| `g3_quadrilateral_attributes`    | `g3QuadrilateralAttributes` | MA.3.GR.1.2 |
 | `g3_simple_fractions`            | `g3FractionCompare`     | MA.3.FR.2.1  |
+| `g3_equivalent_fractions`        | `g3EquivalentFractions` | MA.3.FR.2.2  |
+| `g3_rounding`                    | `g3Rounding`            | MA.3.NSO.1.4 |
 | `g3_number_patterns`             | `g3NumberPatterns`      | MA.3.AR.3.3  |
 | `g3_measurement_length`          | `g3MeasurementLength`   | MA.3.M.1.2   |
+| `g3_measurement_mass_volume`     | `g3MeasurementMassVolume` | MA.3.M.1.2 |
 | `g3_time_elapsed`                | `g3ElapsedTime`         | MA.3.M.2.2   |
 | `g3_time_elapsed_two_step`       | `g3ElapsedTimeTwoStep`  | MA.3.M.2.2   |
 | `g3_data_interpretation`         | `g3DataInterpretation`  | MA.3.DP.1.2  |

@@ -66,12 +66,36 @@ It was created from the user-provided CPALMS course export PDF:
 | Skill ID | Generator | Benchmark |
 |---|---|---|
 | `g4_rounding` | `g4Rounding` | MA.4.NSO.1.4 |
+| `g4_place_value_shift` | `g4PlaceValueShift` | MA.4.NSO.1.1 |
+| `g4_expanded_form` | `g4ExpandedForm` | MA.4.NSO.1.2 |
+| `g4_whole_number_compare` | `g4WholeNumberCompare` | MA.4.NSO.1.3 |
 | `g4_multiplication` | `g4Multiplication` | MA.4.NSO.2.2 |
+| `g4_two_digit_multiplication` | `g4TwoDigitMultiplication` | MA.4.NSO.2.3 |
+| `g4_estimate_product` | `g4EstimateProduct` | MA.4.NSO.2.5 |
 | `g4_division_remainders` | `g4DivisionRemainders` | MA.4.NSO.2.4 |
+| `g4_equation_true_false` | `g4EquationTrueFalse` | MA.4.AR.2.1 |
+| `g4_unknown_number_equation` | `g4UnknownNumberEquation` | MA.4.AR.2.2 |
+| `g4_number_pattern_rule` | `g4NumberPatternRule` | MA.4.AR.3.2 |
+| `g4_factors_prime_composite` | `g4FactorsPrimeComposite` | MA.4.AR.3.1 |
+| `g4_area_perimeter_rectangles` | `g4AreaPerimeterRectangles` | MA.4.GR.2.1 |
+| `g4_same_perimeter_area` | `g4SamePerimeterArea` | MA.4.GR.2.2 |
 | `g4_equivalent_fractions` | `g4EquivalentFractions` | MA.4.FR.1.3 |
 | `g4_equivalent_fractions_greater_than_one` | `g4EquivalentFractionsGreaterThanOne` | MA.4.FR.1.3 |
+| `g4_fraction_compare` | `g4FractionCompare` | MA.4.FR.1.4 |
 | `g4_decimals_hundredths` | `g4DecimalsHundredths` | MA.4.FR.1.2 |
 | `g4_decimals_tenths_to_fraction` | `g4DecimalsTenthsToFraction` | MA.4.FR.1.2 |
+| `g4_decimal_more_less` | `g4DecimalMoreLess` | MA.4.NSO.2.6 |
+| `g4_decimal_operations` | `g4DecimalOperations` | MA.4.NSO.2.7 |
+| `g4_fraction_add_like_denominators` | `g4FractionAddLikeDenominators` | MA.4.FR.2.2 |
+| `g4_fraction_decomposition` | `g4FractionDecomposition` | MA.4.FR.2.1 |
+| `g4_fraction_tenths_hundredths_add` | `g4FractionTenthsHundredthsAdd` | MA.4.FR.2.3 |
+| `g4_fraction_times_whole` | `g4FractionTimesWhole` | MA.4.FR.2.4 |
+| `g4_money_decimal` | `g4MoneyDecimal` | MA.4.M.2.2 |
+| `g4_measurement_conversion` | `g4MeasurementConversion` | MA.4.M.1.2 |
+| `g4_data_interpretation` | `g4DataInterpretation` | MA.4.DP.1.3 |
+| `g4_data_mode_median_range` | `g4DataModeMedianRange` | MA.4.DP.1.2 |
+| `g4_decimal_compare` | `g4DecimalCompare` | MA.4.NSO.1.5 |
+| `g4_angle_classification` | `g4AngleClassification` | MA.4.GR.1.1 |
 | `g4_angles` | `g4Angles` | MA.4.GR.1.3 |
 | `g4_angles_three_part` | `g4AnglesThreePart` | MA.4.GR.1.3 |
 
