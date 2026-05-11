@@ -2,6 +2,10 @@
 
 Newest entries first. Add a concise timestamped entry for every meaningful project change before creating the related commit.
 
+## 2026-05-11T06:43:02-04:00
+
+- Formalized this root update log as the durable project journal for future change checkpoints and Codex handoffs.
+
 ## 2026-05-11T06:42:09-04:00
 
 - Moved the rich social preview image into the frontend public images folder and updated page metadata/tagline for richer embeds.
