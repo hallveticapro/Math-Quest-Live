@@ -1789,6 +1789,50 @@ function g5DecimalPlaceValue(): ProblemCore {
   };
 }
 
+function g5DecimalPlaceValueShift(): ProblemCore {
+  const digit = randInt(2, 9);
+  const moves = randInt(1, 2);
+  const direction = Math.random() < 0.5 ? "left" : "right";
+  const factor = 10 ** moves;
+  const answer = direction === "left" ? `${factor} times as much` : `1/${factor} as much`;
+  return {
+    prompt: `In a decimal number, a ${digit} moves ${moves} place${moves === 1 ? "" : "s"} to the ${direction}. How does its value change?`,
+    correctAnswer: answer,
+    wrongAnswers: [
+      direction === "left" ? `1/${factor} as much` : `${factor} times as much`,
+      "10 times as much",
+      "1/10 as much",
+      "it does not change",
+    ],
+    hint: "Each place-value move changes the value by a factor of 10.",
+    secondHint:
+      direction === "left"
+        ? `Moving ${moves} place${moves === 1 ? "" : "s"} left makes the value ${factor} times as much.`
+        : `Moving ${moves} place${moves === 1 ? "" : "s"} right makes the value 1/${factor} as much.`,
+  };
+}
+
+function g5DecimalExpandedForm(): ProblemCore {
+  const whole = randInt(12, 98);
+  const tenths = randInt(1, 9);
+  const hundredths = randInt(1, 9);
+  const thousandths = randInt(1, 9);
+  const number = `${whole}.${tenths}${hundredths}${thousandths}`;
+  const correct = `${whole} + ${tenths}/10 + ${hundredths}/100 + ${thousandths}/1000`;
+  return {
+    prompt: `Which expression matches ${number} in expanded form?`,
+    correctAnswer: correct,
+    wrongAnswers: [
+      `${whole} + ${tenths}/100 + ${hundredths}/10 + ${thousandths}/1000`,
+      `${whole} + ${tenths}/10 + ${hundredths}/1000 + ${thousandths}/100`,
+      `${whole}.${tenths} + ${hundredths}/10 + ${thousandths}/100`,
+      `${whole} + ${tenths} + ${hundredths} + ${thousandths}`,
+    ],
+    hint: "Use the decimal place values: tenths, hundredths, and thousandths.",
+    secondHint: "The first digit after the decimal is tenths, the second is hundredths, and the third is thousandths.",
+  };
+}
+
 function g5DecimalOperations(): ProblemCore {
   const a = randInt(125, 999) / 100;
   const b = randInt(25, 499) / 100;
@@ -1801,6 +1845,50 @@ function g5DecimalOperations(): ProblemCore {
     ),
     hint: "Line up the decimal points so tenths add to tenths and hundredths add to hundredths.",
     secondHint: "Add as if they are whole numbers, then place the decimal point in the same aligned spot.",
+  };
+}
+
+function g5DecimalEstimateProduct(): ProblemCore {
+  const a = randInt(125, 985) / 100;
+  const b = randInt(12, 88) / 10;
+  const roundedA = Math.round(a);
+  const roundedB = Math.round(b);
+  const answer = roundedA * roundedB;
+  return {
+    prompt: `Estimate ${a.toFixed(2)} × ${b.toFixed(1)} by rounding each factor to the nearest whole number first.`,
+    correctAnswer: String(answer),
+    wrongAnswers: [
+      Math.round(a * b),
+      roundedA + roundedB,
+      answer + roundedA,
+      Math.max(0, answer - roundedB),
+      roundedA * Math.max(1, roundedB - 1),
+    ].map(String),
+    hint: "Round the decimal factors first, then multiply.",
+    secondHint: `${a.toFixed(2)} rounds to ${roundedA}, and ${b.toFixed(1)} rounds to ${roundedB}.`,
+  };
+}
+
+function g5DecimalPowerOfTen(): ProblemCore {
+  const value = randInt(12, 98) / 10;
+  const byHundredth = Math.random() < 0.5;
+  const operation = Math.random() < 0.5 ? "multiply" : "divide";
+  const factor = byHundredth ? 0.01 : 0.1;
+  const answer = operation === "multiply" ? value * factor : value / factor;
+  return {
+    prompt: `What is ${value.toFixed(1)} ${operation === "multiply" ? "×" : "÷"} ${factor}?`,
+    correctAnswer: answer.toFixed(byHundredth && operation === "multiply" ? 3 : 1),
+    wrongAnswers: [
+      (operation === "multiply" ? value / factor : value * factor).toFixed(1),
+      value.toFixed(1),
+      (answer * 10).toFixed(1),
+      (answer / 10).toFixed(2),
+    ],
+    hint: "Multiplying or dividing by one-tenth or one-hundredth moves the decimal point.",
+    secondHint:
+      operation === "multiply"
+        ? "Multiplying by a number less than 1 makes the value smaller."
+        : "Dividing by a number less than 1 makes the value larger.",
   };
 }
 
@@ -1970,6 +2058,44 @@ function g5FractionTimesFraction(): ProblemCore {
   };
 }
 
+function g5UnitFractionDivision(): ProblemCore {
+  const denominator = randInt(3, 12);
+  const groups = randInt(2, 8);
+  const askUnitByWhole = Math.random() < 0.5;
+  if (askUnitByWhole) {
+    const answer = fraction(1, denominator * groups);
+    return {
+      prompt: `A ${fraction(1, denominator)}-mile trail is split equally among ${groups} teams. What fraction of a mile does each team get?`,
+      correctAnswer: answer,
+      wrongAnswers: [
+        fraction(groups, denominator),
+        fraction(1, denominator + groups),
+        fraction(groups, denominator * groups),
+        fraction(1, Math.max(1, denominator - groups)),
+      ],
+      hint: "A unit fraction split into equal parts gets smaller.",
+      secondHint: `Divide 1/${denominator} by ${groups}. The denominator is multiplied by ${groups}.`,
+      richDisplay: [fractionDisplay(1, denominator, "Trail length")],
+    };
+  }
+
+  const answer = denominator * groups;
+  return {
+    prompt: `${groups} miles of ribbon are cut into pieces that are 1/${denominator} mile long. How many pieces can be made?`,
+    correctAnswer: unitAnswer(answer, "piece", "pieces"),
+    wrongAnswers: [
+      denominator + groups,
+      Math.max(1, denominator - groups),
+      denominator,
+      groups,
+      answer + denominator,
+    ].map((value) => unitAnswer(value, "piece", "pieces")),
+    hint: "Ask how many unit-fraction pieces fit into the whole-number amount.",
+    secondHint: `Each mile has ${denominator} pieces of size 1/${denominator}. Multiply by ${groups} miles.`,
+    richDisplay: [fractionDisplay(1, denominator, "Piece size")],
+  };
+}
+
 function g5Volume(): ProblemCore {
   const length = randInt(4, 12);
   const width = randInt(3, 10);
@@ -1986,6 +2112,26 @@ function g5Volume(): ProblemCore {
     ].map((value) => unitAnswer(value, "cubic unit", "cubic units")),
     hint: "Volume tells how much space a rectangular prism takes up. Multiply length × width × height.",
     secondHint: "Find the base area first with length × width, then multiply by the height.",
+  };
+}
+
+function g5VolumeUnitCubes(): ProblemCore {
+  const layers = randInt(2, 6);
+  const rows = randInt(3, 8);
+  const cubesPerRow = randInt(3, 8);
+  const answer = layers * rows * cubesPerRow;
+  return {
+    prompt: `A prism is packed with ${layers} layers. Each layer has ${rows} rows with ${cubesPerRow} unit cubes in each row. What is the volume?`,
+    correctAnswer: unitAnswer(answer, "cubic unit", "cubic units"),
+    wrongAnswers: [
+      rows * cubesPerRow,
+      layers + rows + cubesPerRow,
+      2 * (layers + rows + cubesPerRow),
+      answer + rows,
+      Math.max(1, answer - cubesPerRow),
+    ].map((value) => unitAnswer(value, "cubic unit", "cubic units")),
+    hint: "Count all the unit cubes by multiplying layers, rows, and cubes per row.",
+    secondHint: "Find cubes in one layer first, then multiply by the number of layers.",
   };
 }
 
@@ -2051,6 +2197,117 @@ function g5Expressions(): ProblemCore {
   };
 }
 
+function g5ExpressionTranslation(): ProblemCore {
+  const a = randInt(4, 12);
+  const b = randInt(3, 9);
+  const c = randInt(10, 35);
+  const answer = `(${a} + ${b}) × ${c}`;
+  return {
+    prompt: `Which expression matches: add ${a} and ${b}, then multiply the result by ${c}?`,
+    correctAnswer: answer,
+    wrongAnswers: [
+      `${a} + ${b} × ${c}`,
+      `${a} × ${b} + ${c}`,
+      `(${a} × ${b}) + ${c}`,
+      `${a} + (${b} × ${c})`,
+    ],
+    hint: "Words like 'then' can tell you what should happen after the first operation.",
+    secondHint: "Parentheses show that the addition must happen before the multiplication.",
+  };
+}
+
+function g5EquationTrueFalse(): ProblemCore {
+  const a = randInt(12, 48);
+  const b = randInt(3, 12);
+  const c = randInt(10, 80);
+  const left = a * b + c;
+  const makeTrue = Math.random() < 0.5;
+  const right = makeTrue ? left : left + [5, -5, b, -b][randInt(0, 3)];
+  const answer = makeTrue ? "true" : "false";
+  return {
+    prompt: `Is this equation true or false: ${a} × ${b} + ${c} = ${right}?`,
+    correctAnswer: answer,
+    wrongAnswers: ["true", "false", "cannot tell", `${left}`].filter(
+      (choice) => choice !== answer,
+    ),
+    hint: "Evaluate the expression on the left side first.",
+    secondHint: "Use order of operations, then compare the left side to the right side.",
+  };
+}
+
+function g5UnknownNumberEquation(): ProblemCore {
+  const unknown = randInt(20, 95);
+  const multiplier = randInt(3, 9);
+  const addend = randInt(8, 40);
+  const result = unknown * multiplier + addend;
+  return {
+    prompt: `A number is multiplied by ${multiplier}, then ${addend} is added. The result is ${result}. What is the number?`,
+    correctAnswer: String(unknown),
+    wrongAnswers: [
+      result,
+      Math.floor(result / multiplier),
+      unknown + multiplier,
+      Math.max(1, unknown - multiplier),
+      unknown + addend,
+    ].map(String),
+    hint: "Undo the operations in reverse order.",
+    secondHint: `Subtract ${addend} first, then divide by ${multiplier}.`,
+  };
+}
+
+function g5PatternRuleExpression(): ProblemCore {
+  const start = randInt(2, 12);
+  const multiplier = randInt(2, 6);
+  const addend = randInt(1, 12);
+  const pattern = Array.from({ length: 4 }, (_, index) => (start + index) * multiplier + addend);
+  const answer = `${multiplier}n + ${addend}`;
+  return {
+    prompt: `For input n, the output pattern is ${pattern.join(", ")} when n starts at ${start}. Which rule describes the pattern?`,
+    correctAnswer: answer,
+    wrongAnswers: [
+      `${addend}n + ${multiplier}`,
+      `${multiplier}n - ${addend}`,
+      `n + ${multiplier + addend}`,
+      `${multiplier + addend}n`,
+    ],
+    hint: "Look at how much the output changes when the input increases by 1.",
+    secondHint: `The output grows by ${multiplier} each time, then has ${addend} added.`,
+  };
+}
+
+function g5InputOutputTable(): ProblemCore {
+  const multiplier = randInt(2, 7);
+  const addend = randInt(3, 15);
+  const inputs = [1, 2, 3, 4];
+  const missingInput = inputs[randInt(0, inputs.length - 1)];
+  const answer = missingInput * multiplier + addend;
+  const rows = inputs.map((input) => [
+    input,
+    input === missingInput ? "?" : input * multiplier + addend,
+  ]);
+  return {
+    prompt: `Use the input-output table below. The rule is multiply by ${multiplier}, then add ${addend}. What output is missing?`,
+    correctAnswer: String(answer),
+    wrongAnswers: [
+      missingInput + multiplier + addend,
+      missingInput * addend + multiplier,
+      answer + multiplier,
+      Math.max(1, answer - multiplier),
+      multiplier + addend,
+    ].map(String),
+    hint: "Apply the rule to the input in the missing row.",
+    secondHint: `Multiply ${missingInput} by ${multiplier}, then add ${addend}.`,
+    richDisplay: [
+      {
+        type: "table",
+        caption: "Input-output table",
+        headers: ["Input", "Output"],
+        rows,
+      },
+    ],
+  };
+}
+
 function g5WholeNumberMultiplication(): ProblemCore {
   const a = randInt(123, 864);
   const b = randInt(12, 48);
@@ -2112,6 +2369,33 @@ function g5GeometryClassification(): ProblemCore {
       wrongAnswers: ["right triangle", "isosceles triangle only", "scalene triangle", "obtuse triangle"],
       hint: "The word asks about side lengths, not angle size.",
       secondHint: "Equilateral means all sides are equal.",
+    },
+  ];
+  return questions[randInt(0, questions.length - 1)];
+}
+
+function g5ThreeDClassification(): ProblemCore {
+  const questions = [
+    {
+      prompt: "Which three-dimensional figure has two circular bases?",
+      correctAnswer: "right circular cylinder",
+      wrongAnswers: ["right rectangular prism", "right circular cone", "sphere", "right square pyramid"],
+      hint: "Think about the faces or bases of the solid figure.",
+      secondHint: "A cylinder has two circular bases connected by a curved surface.",
+    },
+    {
+      prompt: "Which three-dimensional figure has exactly one circular base and one vertex?",
+      correctAnswer: "right circular cone",
+      wrongAnswers: ["sphere", "right circular cylinder", "right rectangular prism", "right triangular prism"],
+      hint: "Look for one circular base and a point.",
+      secondHint: "A cone has one circular base and comes to one point called a vertex.",
+    },
+    {
+      prompt: "Which three-dimensional figure has only curved surface and no edges?",
+      correctAnswer: "sphere",
+      wrongAnswers: ["right circular cylinder", "right circular cone", "right rectangular prism", "right pyramid"],
+      hint: "Think of a solid that is round in every direction.",
+      secondHint: "A sphere has no flat faces, edges, or vertices.",
     },
   ];
   return questions[randInt(0, questions.length - 1)];
@@ -2460,7 +2744,11 @@ const GENERATORS: Record<string, ProblemGenerator> = {
   g4Angles,
   g4AnglesThreePart,
   g5DecimalPlaceValue,
+  g5DecimalPlaceValueShift,
+  g5DecimalExpandedForm,
   g5DecimalOperations,
+  g5DecimalEstimateProduct,
+  g5DecimalPowerOfTen,
   g5DecimalSubtraction,
   g5DecimalCompare,
   g5DecimalRounding,
@@ -2468,13 +2756,21 @@ const GENERATORS: Record<string, ProblemGenerator> = {
   g5FractionSubtractUnlike,
   g5FractionTimesWhole,
   g5FractionTimesFraction,
+  g5UnitFractionDivision,
   g5Volume,
+  g5VolumeUnitCubes,
   g5CoordinatePoint,
   g5CoordinateAxes,
   g5Expressions,
+  g5ExpressionTranslation,
+  g5EquationTrueFalse,
+  g5UnknownNumberEquation,
+  g5PatternRuleExpression,
+  g5InputOutputTable,
   g5WholeNumberMultiplication,
   g5WholeNumberDivision,
   g5GeometryClassification,
+  g5ThreeDClassification,
   g5DataStatistics,
   g5ExtremeFractionCombo,
   g5ExtremeWholeNumberRemainders,

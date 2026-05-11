@@ -795,7 +795,7 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
     gradeBand: 5,
     standardsSystem: "Florida B.E.S.T. Mathematics",
     description: "Practice with Grade 5 math skills",
-    studentSummary: "Fractions, decimals, volume, coordinate plane, multi-step problems",
+    studentSummary: "Fractions, decimals, volume, geometry, coordinate plane, expressions, patterns",
     readingGuidance: "richer scenes, 120-180 words",
     skills: [
       {
@@ -808,6 +808,24 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
         ...benchmarkMetadata("MA.5.NSO.1.3"),
       },
       {
+        id: "g5_decimal_place_value_shift",
+        benchmark: "MA.5.NSO.1.1",
+        description:
+          "Practice how decimal digit values change when moving places within Grade 5 expectations.",
+        skill: "decimal place-value shifts",
+        generator: "g5DecimalPlaceValueShift",
+        ...benchmarkMetadata("MA.5.NSO.1.1"),
+      },
+      {
+        id: "g5_decimal_expanded_form",
+        benchmark: "MA.5.NSO.1.2",
+        description:
+          "Practice matching decimals to expanded form through thousandths within Grade 5 expectations.",
+        skill: "decimal expanded form",
+        generator: "g5DecimalExpandedForm",
+        ...benchmarkMetadata("MA.5.NSO.1.2"),
+      },
+      {
         id: "g5_decimal_operations",
         benchmark: "MA.5.NSO.2.3",
         description:
@@ -815,6 +833,24 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
         skill: "decimal operations",
         generator: "g5DecimalOperations",
         ...benchmarkMetadata("MA.5.NSO.2.3"),
+      },
+      {
+        id: "g5_decimal_estimate_product",
+        benchmark: "MA.5.NSO.2.4",
+        description:
+          "Practice estimating decimal multiplication using rounding and place value within Grade 5 expectations.",
+        skill: "decimal multiplication estimates",
+        generator: "g5DecimalEstimateProduct",
+        ...benchmarkMetadata("MA.5.NSO.2.4"),
+      },
+      {
+        id: "g5_decimal_power_of_ten",
+        benchmark: "MA.5.NSO.2.5",
+        description:
+          "Practice multiplying and dividing decimals by one-tenth or one-hundredth within Grade 5 expectations.",
+        skill: "decimal powers of ten",
+        generator: "g5DecimalPowerOfTen",
+        ...benchmarkMetadata("MA.5.NSO.2.5"),
       },
       {
         id: "g5_decimal_subtraction",
@@ -879,6 +915,15 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
         ...benchmarkMetadata("MA.5.FR.2.2"),
       },
       {
+        id: "g5_unit_fraction_division",
+        benchmark: "MA.5.AR.1.3",
+        description:
+          "Practice real-world unit-fraction division contexts within Grade 5 expectations.",
+        skill: "unit fraction division",
+        generator: "g5UnitFractionDivision",
+        ...benchmarkMetadata("MA.5.AR.1.3"),
+      },
+      {
         id: "g5_volume",
         benchmark: "MA.5.GR.3.2",
         description:
@@ -886,6 +931,15 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
         skill: "volume of rectangular prisms",
         generator: "g5Volume",
         ...benchmarkMetadata("MA.5.GR.3.2"),
+      },
+      {
+        id: "g5_volume_unit_cubes",
+        benchmark: "MA.5.GR.3.1",
+        description:
+          "Practice unit-cube volume reasoning for right rectangular prisms within Grade 5 expectations.",
+        skill: "unit-cube volume",
+        generator: "g5VolumeUnitCubes",
+        ...benchmarkMetadata("MA.5.GR.3.1"),
       },
       {
         id: "g5_coordinate_point",
@@ -915,6 +969,51 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
         ...benchmarkMetadata("MA.5.AR.2.2"),
       },
       {
+        id: "g5_expression_translation",
+        benchmark: "MA.5.AR.2.1",
+        description:
+          "Practice translating written descriptions into numerical expressions within Grade 5 expectations.",
+        skill: "expression translation",
+        generator: "g5ExpressionTranslation",
+        ...benchmarkMetadata("MA.5.AR.2.1"),
+      },
+      {
+        id: "g5_equation_true_false",
+        benchmark: "MA.5.AR.2.3",
+        description:
+          "Practice determining whether equations involving operations are true or false within Grade 5 expectations.",
+        skill: "true/false equations",
+        generator: "g5EquationTrueFalse",
+        ...benchmarkMetadata("MA.5.AR.2.3"),
+      },
+      {
+        id: "g5_unknown_number_equation",
+        benchmark: "MA.5.AR.2.4",
+        description:
+          "Practice finding unknown whole numbers in equation contexts within Grade 5 expectations.",
+        skill: "unknown-number equations",
+        generator: "g5UnknownNumberEquation",
+        ...benchmarkMetadata("MA.5.AR.2.4"),
+      },
+      {
+        id: "g5_pattern_rule_expression",
+        benchmark: "MA.5.AR.3.1",
+        description:
+          "Practice identifying a rule that describes a numerical pattern within Grade 5 expectations.",
+        skill: "pattern rules as expressions",
+        generator: "g5PatternRuleExpression",
+        ...benchmarkMetadata("MA.5.AR.3.1"),
+      },
+      {
+        id: "g5_input_output_table",
+        benchmark: "MA.5.AR.3.2",
+        description:
+          "Practice using rules to complete input-output tables within Grade 5 expectations.",
+        skill: "input-output tables",
+        generator: "g5InputOutputTable",
+        ...benchmarkMetadata("MA.5.AR.3.2"),
+      },
+      {
         id: "g5_whole_number_multiplication",
         benchmark: "MA.5.NSO.2.1",
         description:
@@ -940,6 +1039,15 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
         skill: "geometry classification",
         generator: "g5GeometryClassification",
         ...benchmarkMetadata("MA.5.GR.1.1"),
+      },
+      {
+        id: "g5_three_d_classification",
+        benchmark: "MA.5.GR.1.2",
+        description:
+          "Practice classifying three-dimensional figures by defining attributes within Grade 5 expectations.",
+        skill: "three-dimensional figure classification",
+        generator: "g5ThreeDClassification",
+        ...benchmarkMetadata("MA.5.GR.1.2"),
       },
       {
         id: "g5_data_statistics",
