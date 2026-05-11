@@ -2,6 +2,10 @@
 
 Newest entries first. Add a concise timestamped entry for every meaningful project change before creating the related commit.
 
+## 2026-05-11T06:46:02-04:00
+
+- Added session-only action recaps so the next story page briefly reflects the choice that opened it.
+
 ## 2026-05-11T06:44:54-04:00
 
 - Added session-only Quest Moments and stronger reward framing to the ending screen so completed adventures feel more earned and replayable.

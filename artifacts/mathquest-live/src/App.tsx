@@ -156,6 +156,15 @@ function historyWithChosenAction(history: string, chosenAction: string | null) {
   return appendStoryHistory(history, `Chosen action: ${chosenAction}`);
 }
 
+function buildActionRecap(
+  heroName: string,
+  chosenAction: string | null,
+  sceneTitle: string,
+) {
+  if (!chosenAction) return null;
+  return `The Chronicle remembers: ${heroName} chose "${chosenAction}," and the path opened into ${sceneTitle}.`;
+}
+
 function GameApp() {
   const [state, setState] = useState<GameState>(INITIAL_STATE);
   const pendingPreparationRef =
@@ -434,6 +443,7 @@ function GameApp() {
     setState((s) => ({
       ...s,
       chosenAction: choiceLabel,
+      actionRecap: null,
       currentMathProblem: mathProblem,
     }));
   };
@@ -585,6 +595,7 @@ function GameApp() {
         turn: nextTurn,
         sceneTitle: res.sceneTitle,
         storyText: res.storyText,
+        actionRecap: buildActionRecap(s.hero.name, s.chosenAction, res.sceneTitle),
         illustration: res.image ?? null,
         choices: res.choices,
         storySummary: res.storySummary,
@@ -618,6 +629,7 @@ function GameApp() {
           turn: nextTurn,
           sceneTitle: res.sceneTitle,
           storyText: res.storyText,
+          actionRecap: buildActionRecap(s.hero.name, s.chosenAction, res.sceneTitle),
           illustration: res.image ?? null,
           choices: res.choices,
           storySummary: res.storySummary,
@@ -640,6 +652,11 @@ function GameApp() {
           turn: nextTurn,
           sceneTitle: FALLBACK_SCENE.sceneTitle + ` (Part ${nextTurn})`,
           storyText: FALLBACK_SCENE.storyText,
+          actionRecap: buildActionRecap(
+            s.hero.name,
+            s.chosenAction,
+            `${FALLBACK_SCENE.sceneTitle} (Part ${nextTurn})`,
+          ),
           illustration: null,
           choices: FALLBACK_SCENE.choices,
           storySummary: FALLBACK_SCENE.storySummary,
