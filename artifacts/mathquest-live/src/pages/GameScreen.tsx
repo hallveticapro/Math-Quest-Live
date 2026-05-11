@@ -19,6 +19,7 @@ interface GameScreenProps {
 const QUEST_TRANSITION_OUT_MS = 180;
 const QUEST_TRANSITION_IN_MS = 320;
 const LOADING_MESSAGE_INTERVAL_MS = 4500;
+const EXIT_CONTROL_HEIGHT_CLASS = "min-h-12";
 const INTRO_LOADING_MESSAGES = [
   "The Chronicler is opening the first page of your legend...",
   "The Illustrator is adding the final colors to your first scene...",
@@ -210,13 +211,13 @@ export function GameScreen({
             {!confirmExit ? (
               <button
                 onClick={handleExitClick}
-                className="mq-focus w-full rounded-sm border border-[var(--mq-border)] bg-[var(--mq-background)] px-3 py-3 font-sans text-xs font-bold uppercase tracking-widest text-[var(--mq-text-muted)] transition-colors duration-150 hover:border-[var(--mq-border-strong)] hover:text-[var(--mq-heading)] sm:w-auto"
+                className={`mq-focus ${EXIT_CONTROL_HEIGHT_CLASS} w-full rounded-sm border border-[var(--mq-border)] bg-[var(--mq-background)] px-3 py-3 font-sans text-xs font-bold uppercase tracking-widest text-[var(--mq-text-muted)] transition-colors duration-150 hover:border-[var(--mq-border-strong)] hover:text-[var(--mq-heading)] sm:w-auto`}
                 data-testid="button-exit-quest"
               >
                 ← Exit Quest
               </button>
             ) : (
-              <div className="flex w-full items-center justify-center gap-2 rounded-sm border border-[var(--mq-danger)] bg-[var(--mq-background)] px-3 py-3 sm:w-auto">
+              <div className={`flex ${EXIT_CONTROL_HEIGHT_CLASS} w-full items-center justify-center gap-2 rounded-sm border border-[var(--mq-danger)] bg-[var(--mq-background)] px-3 py-3 sm:w-auto`}>
                 <span className="font-sans text-xs uppercase tracking-wider text-[var(--mq-text)]">
                   Exit?
                 </span>
