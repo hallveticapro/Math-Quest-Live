@@ -684,7 +684,7 @@ function g3DataInterpretation(): ProblemCore {
     const smallerValue = Math.min(valueA, valueB);
     const answer = largerValue - smallerValue;
     return {
-      prompt: `The quest table shows ${categoryA}: ${valueA}, ${categoryB}: ${valueB}, and ${categoryC}: ${valueC}. How many more ${largerCategory} than ${smallerCategory} are there?`,
+      prompt: `Use the quest table below. How many more ${largerCategory} than ${smallerCategory} are there?`,
       correctAnswer: unitAnswer(answer, "item", "items"),
       wrongAnswers: [
         largerValue + smallerValue,
@@ -701,7 +701,7 @@ function g3DataInterpretation(): ProblemCore {
 
   const answer = valueA + valueB;
   return {
-    prompt: `The quest table shows ${categoryA}: ${valueA}, ${categoryB}: ${valueB}, and ${categoryC}: ${valueC}. How many ${categoryA} and ${categoryB} are there altogether?`,
+    prompt: `Use the quest table below. How many ${categoryA} and ${categoryB} are there altogether?`,
     correctAnswer: unitAnswer(answer, "item", "items"),
     wrongAnswers: [
       Math.abs(valueA - valueB),
@@ -1148,7 +1148,7 @@ function g4DataInterpretation(): ProblemCore {
   if (askRange) {
     const answer = Math.max(...values) - Math.min(...values);
     return {
-      prompt: `A table shows ${labels.map((label, index) => `${label}: ${values[index]}`).join(", ")}. What is the range of the data?`,
+      prompt: "Use the quest data table below. What is the range of the data?",
       correctAnswer: unitAnswer(answer, "item", "items"),
       wrongAnswers: [
         Math.max(...values),
@@ -1167,7 +1167,7 @@ function g4DataInterpretation(): ProblemCore {
   while (targetB === targetA) targetB = randInt(0, 3);
   const answer = values[targetA] + values[targetB];
   return {
-    prompt: `A table shows ${labels.map((label, index) => `${label}: ${values[index]}`).join(", ")}. How many ${labels[targetA]} and ${labels[targetB]} are there altogether?`,
+    prompt: `Use the quest data table below. How many ${labels[targetA]} and ${labels[targetB]} are there altogether?`,
     correctAnswer: unitAnswer(answer, "item", "items"),
     wrongAnswers: [
       Math.abs(values[targetA] - values[targetB]),
@@ -1613,7 +1613,7 @@ function g5DataStatistics(): ProblemCore {
       ),
     ];
     return {
-      prompt: `The team recorded these whole-number scores: ${allValues.join(", ")}. What is the mean score?`,
+      prompt: "Use the team scores table below. What is the mean score?",
       correctAnswer: unitAnswer(targetMean, "point", "points"),
       wrongAnswers: [
         Math.max(...allValues) - Math.min(...allValues),
@@ -1637,7 +1637,7 @@ function g5DataStatistics(): ProblemCore {
     ),
   ];
   return {
-    prompt: `The table shows whole-number distances in miles: ${values.join(", ")}. What is the range?`,
+    prompt: "Use the distances table below. What is the range in miles?",
     correctAnswer: unitAnswer(answer, "mile", "miles"),
     wrongAnswers: [
       Math.max(...values),
@@ -1872,7 +1872,7 @@ function g5ExtremeDataRange(): ProblemCore {
   ];
 
   return {
-    prompt: `A team tracks crystals found over four days: ${values.join(", ")}. The final gate number is the range plus ${afterBonus - range}. What is the final gate number?`,
+    prompt: `Use the crystals-found table below. The final gate number is the range plus ${afterBonus - range}. What is the final gate number?`,
     correctAnswer: String(afterBonus),
     wrongAnswers: [
       String(range),
