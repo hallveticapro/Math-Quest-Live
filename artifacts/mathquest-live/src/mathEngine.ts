@@ -24,6 +24,7 @@ export type MathProblem = {
   skill: string;
   skillLabel?: string;
   skillId: string;
+  varietyGroup: string;
   problemType: string;
   signature: string;
   hint: string;
@@ -45,7 +46,7 @@ const DEFAULT_UNIQUE_RETRY_COUNT = 50;
 const randInt = (min: number, max: number) =>
   Math.floor(Math.random() * (max - min + 1)) + min;
 
-function shuffle(array: string[]) {
+function shuffle<T>(array: T[]) {
   const arr = [...array];
   for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -379,6 +380,52 @@ function g3MeasurementLength(): ProblemCore {
   };
 }
 
+function g3MeasurementMassVolume(): ProblemCore {
+  const contexts = [
+    { unit: "grams", itemA: "crystal dust", itemB: "moon sand", minA: 120, maxA: 450, minB: 80, maxB: 320 },
+    { unit: "milliliters", itemA: "blue potion", itemB: "gold potion", minA: 150, maxA: 600, minB: 75, maxB: 350 },
+    { unit: "degrees", itemA: "morning cave temperature", itemB: "afternoon cave temperature", minA: 45, maxA: 68, minB: 5, maxB: 18 },
+  ];
+  const context = contexts[randInt(0, contexts.length - 1)];
+  const first = randInt(context.minA, context.maxA);
+  const second = randInt(context.minB, context.maxB);
+  const compare = Math.random() < 0.45;
+
+  if (compare) {
+    const larger = Math.max(first, second);
+    const smaller = Math.min(first, second);
+    const answer = larger - smaller;
+    return {
+      prompt: `One supply bag has ${larger} ${context.unit} of ${context.itemA}. Another has ${smaller} ${context.unit} of ${context.itemB}. How many more ${context.unit} are in the larger bag?`,
+      correctAnswer: `${answer} ${context.unit}`,
+      wrongAnswers: [
+        `${larger + smaller} ${context.unit}`,
+        `${larger} ${context.unit}`,
+        `${smaller} ${context.unit}`,
+        `${answer + 10} ${context.unit}`,
+        `${Math.max(1, answer - 10)} ${context.unit}`,
+      ],
+      hint: "When a problem asks how many more, compare the two measurements.",
+      secondHint: "Subtract the smaller measurement from the larger measurement, and keep the same unit.",
+    };
+  }
+
+  const answer = first + second;
+  return {
+    prompt: `A recipe uses ${first} ${context.unit} of ${context.itemA} and ${second} ${context.unit} of ${context.itemB}. How many ${context.unit} are used altogether?`,
+    correctAnswer: `${answer} ${context.unit}`,
+    wrongAnswers: [
+      `${Math.abs(first - second)} ${context.unit}`,
+      `${first} ${context.unit}`,
+      `${second} ${context.unit}`,
+      `${answer + 10} ${context.unit}`,
+      `${Math.max(1, answer - 10)} ${context.unit}`,
+    ],
+    hint: "Altogether means combine the measurements.",
+    secondHint: "Add the two measurements and keep the unit with your answer.",
+  };
+}
+
 function g3ElapsedTime(): ProblemCore {
   const startHour = randInt(1, 9);
   const minutes = [15, 20, 25, 30, 35, 40, 45][randInt(0, 6)];
@@ -617,6 +664,37 @@ function g4AreaPerimeterRectangles(): ProblemCore {
   };
 }
 
+function g4SamePerimeterArea(): ProblemCore {
+  const lengthA = randInt(6, 16);
+  const widthA = randInt(4, 12);
+  const perimeter = 2 * (lengthA + widthA);
+  let lengthB = randInt(5, 18);
+  let widthB = perimeter / 2 - lengthB;
+  let attempts = 0;
+  while ((!Number.isInteger(widthB) || widthB <= 0 || lengthB * widthB === lengthA * widthA) && attempts < 25) {
+    lengthB = randInt(5, 18);
+    widthB = perimeter / 2 - lengthB;
+    attempts += 1;
+  }
+  if (!Number.isInteger(widthB) || widthB <= 0) return g4AreaPerimeterRectangles();
+  const areaA = lengthA * widthA;
+  const areaB = lengthB * widthB;
+  const answer = areaA > areaB ? "Rectangle A" : "Rectangle B";
+
+  return {
+    prompt: `Rectangle A is ${lengthA} by ${widthA}. Rectangle B is ${lengthB} by ${widthB}. They have the same perimeter. Which rectangle has the greater area?`,
+    correctAnswer: answer,
+    wrongAnswers: [
+      answer === "Rectangle A" ? "Rectangle B" : "Rectangle A",
+      "They have the same area",
+      `${perimeter} square units`,
+      `${Math.max(areaA, areaB)} units`,
+    ],
+    hint: "Same perimeter does not always mean same area. Find each rectangle's area.",
+    secondHint: "Multiply length by width for each rectangle, then compare the two areas.",
+  };
+}
+
 function g4EquivalentFractions(): ProblemCore {
   const numerator = randInt(1, 5);
   const denominator = randInt(numerator + 2, 10);
@@ -731,6 +809,68 @@ function g4FractionAddLikeDenominators(): ProblemCore {
   };
 }
 
+function g4FractionDecomposition(): ProblemCore {
+  const denominator = [5, 6, 8, 10, 12][randInt(0, 4)];
+  const numerator = randInt(3, denominator + 4);
+  const first = randInt(1, numerator - 1);
+  const second = numerator - first;
+  const answer = `${first}/${denominator} + ${second}/${denominator}`;
+
+  return {
+    prompt: `Which sum decomposes ${numerator}/${denominator} using the same denominator?`,
+    correctAnswer: answer,
+    wrongAnswers: [
+      `${first}/${denominator + 1} + ${second}/${denominator + 1}`,
+      `${first + second}/${denominator + denominator}`,
+      `${first}/${denominator} + ${Math.max(1, second - 1)}/${denominator}`,
+      `${numerator}/${denominator} + 1/${denominator}`,
+    ],
+    hint: "Decompose means break one fraction into a sum of fractions.",
+    secondHint: "Keep the denominator the same and make sure the numerators add to the original numerator.",
+  };
+}
+
+function g4FractionTenthsHundredthsAdd(): ProblemCore {
+  const tenths = randInt(1, 8);
+  const hundredths = randInt(5, 85);
+  const answerHundredths = tenths * 10 + hundredths;
+  const answer = fraction(answerHundredths, 100);
+
+  return {
+    prompt: `What is ${tenths}/10 + ${hundredths}/100?`,
+    correctAnswer: answer,
+    wrongAnswers: [
+      `${tenths + hundredths}/110`,
+      `${tenths + hundredths}/100`,
+      `${answerHundredths}/10`,
+      fraction(Math.max(1, answerHundredths - 10), 100),
+      fraction(answerHundredths + 10, 100),
+    ],
+    hint: "Convert tenths to hundredths before adding.",
+    secondHint: `${tenths}/10 is ${tenths * 10}/100. Add the hundredths after the denominators match.`,
+  };
+}
+
+function g4FractionTimesWhole(): ProblemCore {
+  const whole = randInt(2, 8);
+  const denominator = [3, 4, 5, 6, 8, 10][randInt(0, 5)];
+  const numerator = randInt(1, denominator - 1);
+  const answer = fraction(whole * numerator, denominator);
+
+  return {
+    prompt: `A banner uses ${numerator}/${denominator} yard of ribbon. How much ribbon is needed for ${whole} banners?`,
+    correctAnswer: answer,
+    wrongAnswers: [
+      fraction(whole + numerator, denominator),
+      `${whole}/${denominator}`,
+      fraction(whole * numerator, denominator + whole),
+      fraction(whole * numerator + 1, denominator),
+    ],
+    hint: "This is repeated groups of the same fraction.",
+    secondHint: "Multiply the whole number by the numerator. Keep the denominator the same.",
+  };
+}
+
 function g4MoneyDecimal(): ProblemCore {
   const first = randInt(125, 975);
   const second = randInt(75, 625);
@@ -754,6 +894,90 @@ function g4MoneyDecimal(): ProblemCore {
     secondHint: twoStep
       ? "Add the two prices first. Then subtract the coupon."
       : "Add the two prices. Keep two digits after the decimal point.",
+  };
+}
+
+function g4MeasurementConversion(): ProblemCore {
+  const conversions = [
+    { from: "yards", singularFrom: "yard", to: "feet", factor: 3 },
+    { from: "feet", singularFrom: "foot", to: "inches", factor: 12 },
+    { from: "hours", singularFrom: "hour", to: "minutes", factor: 60 },
+    { from: "quarts", singularFrom: "quart", to: "pints", factor: 2 },
+    { from: "pounds", singularFrom: "pound", to: "ounces", factor: 16 },
+  ];
+  const conversion = conversions[randInt(0, conversions.length - 1)];
+  const amount = randInt(2, 9);
+  const answer = amount * conversion.factor;
+
+  return {
+    prompt: `A quest supply list shows ${amount} ${conversion.from}. How many ${conversion.to} is that?`,
+    correctAnswer: `${answer} ${conversion.to}`,
+    wrongAnswers: [
+      `${amount + conversion.factor} ${conversion.to}`,
+      `${Math.max(1, answer - conversion.factor)} ${conversion.to}`,
+      `${answer + conversion.factor} ${conversion.to}`,
+      `${amount} ${conversion.to}`,
+    ],
+    hint: `Convert from ${conversion.from} to ${conversion.to} using the matching unit relationship.`,
+    secondHint: `Each ${conversion.singularFrom} has ${conversion.factor} ${conversion.to}, so multiply ${amount} by ${conversion.factor}.`,
+  };
+}
+
+function g4DataInterpretation(): ProblemCore {
+  const values = [randInt(8, 20), randInt(10, 24), randInt(12, 28), randInt(6, 18)];
+  const labels = ["crystals", "keys", "scrolls", "coins"];
+  const askRange = Math.random() < 0.5;
+  if (askRange) {
+    const answer = Math.max(...values) - Math.min(...values);
+    return {
+      prompt: `A table shows ${labels.map((label, index) => `${label}: ${values[index]}`).join(", ")}. What is the range of the data?`,
+      correctAnswer: String(answer),
+      wrongAnswers: [
+        Math.max(...values),
+        Math.min(...values),
+        values.reduce((sum, value) => sum + value, 0),
+        answer + 1,
+      ].map(String),
+      hint: "Range tells how spread out the data are.",
+      secondHint: "Subtract the smallest value from the largest value.",
+    };
+  }
+
+  const targetA = randInt(0, 3);
+  let targetB = randInt(0, 3);
+  while (targetB === targetA) targetB = randInt(0, 3);
+  const answer = values[targetA] + values[targetB];
+  return {
+    prompt: `A table shows ${labels.map((label, index) => `${label}: ${values[index]}`).join(", ")}. How many ${labels[targetA]} and ${labels[targetB]} are there altogether?`,
+    correctAnswer: String(answer),
+    wrongAnswers: [
+      Math.abs(values[targetA] - values[targetB]),
+      Math.max(...values),
+      values.reduce((sum, value) => sum + value, 0),
+      answer + 2,
+    ].map(String),
+    hint: "Find the two categories named in the question first.",
+    secondHint: "Altogether means add only those two values, not every value in the table.",
+  };
+}
+
+function g4DecimalCompare(): ProblemCore {
+  const a = randInt(1, 99) / 100;
+  let b = randInt(1, 99) / 100;
+  while (a === b) b = randInt(1, 99) / 100;
+  const greater = Math.max(a, b);
+  const lesser = Math.min(a, b);
+  return {
+    prompt: `Which decimal is greater: ${a.toFixed(2)} or ${b.toFixed(2)}?`,
+    correctAnswer: greater.toFixed(2),
+    wrongAnswers: [
+      lesser.toFixed(2),
+      greater.toFixed(1),
+      (Math.max(0.01, greater - 0.01)).toFixed(2),
+      (Math.min(0.99, lesser + 0.01)).toFixed(2),
+    ],
+    hint: "Compare tenths first, then hundredths.",
+    secondHint: "Line up the decimal points. The first different digit tells which decimal is greater.",
   };
 }
 
@@ -1071,6 +1295,111 @@ function g5Expressions(): ProblemCore {
   };
 }
 
+function g5WholeNumberMultiplication(): ProblemCore {
+  const a = randInt(123, 864);
+  const b = randInt(12, 48);
+  const answer = a * b;
+  return {
+    prompt: `A sky caravan carries ${a} supply boxes on each wagon. There are ${b} wagons. How many supply boxes are there in all?`,
+    correctAnswer: answer.toLocaleString(),
+    wrongAnswers: [
+      a + b,
+      a * (b + 1),
+      (a + 10) * b,
+      answer - a,
+      answer + b,
+    ].map((value) => value.toLocaleString()),
+    hint: "Use multi-digit multiplication. Break one factor into tens and ones if that helps.",
+    secondHint: "Multiply each place-value part, then add the partial products.",
+  };
+}
+
+function g5WholeNumberDivision(): ProblemCore {
+  const divisor = randInt(12, 24);
+  const quotient = randInt(110, 420);
+  const remainder = randInt(1, divisor - 1);
+  const dividend = divisor * quotient + remainder;
+  return {
+    prompt: `${dividend.toLocaleString()} lanterns are packed equally into ${divisor} crates. What is ${dividend.toLocaleString()} ÷ ${divisor} as a mixed number?`,
+    correctAnswer: `${quotient} ${remainder}/${divisor}`,
+    wrongAnswers: [
+      `${quotient} ${divisor - remainder}/${divisor}`,
+      `${quotient + 1} ${remainder}/${divisor}`,
+      `${quotient - 1} ${remainder}/${divisor}`,
+      `${quotient} ${remainder}/${divisor + 1}`,
+      quotient.toLocaleString(),
+    ],
+    hint: "Divide to find the whole-number quotient first.",
+    secondHint: "Write the leftover amount as a fraction over the divisor.",
+  };
+}
+
+function g5GeometryClassification(): ProblemCore {
+  const questions = [
+    {
+      prompt: "Which shape must have exactly one pair of parallel sides?",
+      correctAnswer: "trapezoid",
+      wrongAnswers: ["rectangle", "rhombus", "square", "equilateral triangle"],
+      hint: "Think about the defining attributes of each quadrilateral.",
+      secondHint: "A trapezoid has exactly one pair of parallel sides in this classification.",
+    },
+    {
+      prompt: "Which shape has four right angles and four equal sides?",
+      correctAnswer: "square",
+      wrongAnswers: ["rectangle", "rhombus", "trapezoid", "right triangle"],
+      hint: "Look for a shape that has both right angles and equal side lengths.",
+      secondHint: "A square is both a rectangle and a rhombus because it has right angles and equal sides.",
+    },
+    {
+      prompt: "Which triangle has all three sides the same length?",
+      correctAnswer: "equilateral triangle",
+      wrongAnswers: ["right triangle", "isosceles triangle only", "scalene triangle", "obtuse triangle"],
+      hint: "The word asks about side lengths, not angle size.",
+      secondHint: "Equilateral means all sides are equal.",
+    },
+  ];
+  return questions[randInt(0, questions.length - 1)];
+}
+
+function g5DataStatistics(): ProblemCore {
+  const askMean = Math.random() < 0.5;
+  if (askMean) {
+    const values = [randInt(8, 18), randInt(10, 20), randInt(12, 22)];
+    const targetMean = randInt(12, 20);
+    const finalValue = targetMean * 4 - values.reduce((sum, value) => sum + value, 0);
+    if (finalValue < 5 || finalValue > 30) return g5DataStatistics();
+    const allValues = shuffle([...values, finalValue]);
+    return {
+      prompt: `The team recorded these whole-number scores: ${allValues.join(", ")}. What is the mean score?`,
+      correctAnswer: String(targetMean),
+      wrongAnswers: [
+        Math.max(...allValues) - Math.min(...allValues),
+        Math.max(...allValues),
+        Math.min(...allValues),
+        targetMean + 1,
+        Math.max(1, targetMean - 1),
+      ].map(String),
+      hint: "Mean is the fair-share average.",
+      secondHint: "Add all the values, then divide by how many values there are.",
+    };
+  }
+
+  const values = shuffle([randInt(6, 12), randInt(13, 18), randInt(20, 28), randInt(30, 38)]);
+  const answer = Math.max(...values) - Math.min(...values);
+  return {
+    prompt: `The table shows whole-number distances: ${values.join(", ")}. What is the range?`,
+    correctAnswer: String(answer),
+    wrongAnswers: [
+      Math.max(...values),
+      Math.min(...values),
+      values.reduce((sum, value) => sum + value, 0),
+      answer + 2,
+    ].map(String),
+    hint: "Range shows the distance between the greatest and least data values.",
+    secondHint: "Subtract the smallest value from the largest value.",
+  };
+}
+
 function g5ExtremeFractionCombo(): ProblemCore {
   const d1 = [3, 4, 5, 6, 8][randInt(0, 4)];
   const d2 = [5, 6, 8, 10, 12][randInt(0, 4)];
@@ -1235,6 +1564,56 @@ function g5ExtremeExpressions(): ProblemCore {
   };
 }
 
+function g5ExtremeFractionUnlikeMultiStep(): ProblemCore {
+  const d1 = [3, 4, 5, 6][randInt(0, 3)];
+  const d2 = [5, 6, 8, 10][randInt(0, 3)];
+  const n1 = randInt(1, d1 - 1);
+  const n2 = randInt(1, d2 - 1);
+  const extraWhole = randInt(1, 2);
+  const combined = fraction(n1 * d2 + n2 * d1, d1 * d2);
+  const parsed = parseFraction(combined);
+  const answer = fraction(
+    parsed.numerator + extraWhole * parsed.denominator,
+    parsed.denominator,
+  );
+
+  return {
+    prompt: `A recipe uses ${extraWhole} whole cup plus ${n1}/${d1} cup of moon flour and ${n2}/${d2} cup of star sugar. How many cups are used in all?`,
+    correctAnswer: answer,
+    wrongAnswers: [
+      fraction(n1 + n2 + extraWhole, d1 + d2),
+      fraction(n1 * d2 + n2 * d1, d1 * d2),
+      fraction(parsed.numerator + extraWhole, parsed.denominator),
+      fraction(parsed.numerator + extraWhole * parsed.denominator + 1, parsed.denominator),
+    ],
+    hint: "Combine the unlike-denominator fractions first.",
+    secondHint: "Find a common denominator, add the fractions, then include the whole-number cup.",
+  };
+}
+
+function g5ExtremeDataRange(): ProblemCore {
+  const day1 = randInt(18, 35);
+  const day2 = randInt(24, 44);
+  const day3 = randInt(30, 55);
+  const day4 = randInt(36, 62);
+  const values = shuffle([day1, day2, day3, day4]);
+  const range = Math.max(...values) - Math.min(...values);
+  const afterBonus = range + randInt(3, 9);
+
+  return {
+    prompt: `A team tracks crystals found over four days: ${values.join(", ")}. The final gate number is the range plus ${afterBonus - range}. What is the final gate number?`,
+    correctAnswer: String(afterBonus),
+    wrongAnswers: [
+      String(range),
+      String(Math.max(...values)),
+      String(values.reduce((sum, value) => sum + value, 0)),
+      String(afterBonus + 2),
+    ],
+    hint: "This is a two-step data problem. Find the range first.",
+    secondHint: "Subtract the smallest value from the largest value, then add the bonus number.",
+  };
+}
+
 const GENERATORS: Record<string, ProblemGenerator> = {
   g3PlaceValueDigit,
   g3AddSub1000,
@@ -1245,6 +1624,7 @@ const GENERATORS: Record<string, ProblemGenerator> = {
   g3EquivalentFractions,
   g3Rounding,
   g3MeasurementLength,
+  g3MeasurementMassVolume,
   g3ElapsedTime,
   g3ElapsedTimeTwoStep,
   g3DataInterpretation,
@@ -1253,12 +1633,19 @@ const GENERATORS: Record<string, ProblemGenerator> = {
   g4DivisionRemainders,
   g4FactorsPrimeComposite,
   g4AreaPerimeterRectangles,
+  g4SamePerimeterArea,
   g4EquivalentFractions,
   g4EquivalentFractionsGreaterThanOne,
   g4DecimalsHundredths,
   g4DecimalsTenthsToFraction,
   g4FractionAddLikeDenominators,
+  g4FractionDecomposition,
+  g4FractionTenthsHundredthsAdd,
+  g4FractionTimesWhole,
   g4MoneyDecimal,
+  g4MeasurementConversion,
+  g4DataInterpretation,
+  g4DecimalCompare,
   g4Angles,
   g4AnglesThreePart,
   g5DecimalPlaceValue,
@@ -1274,6 +1661,10 @@ const GENERATORS: Record<string, ProblemGenerator> = {
   g5CoordinatePoint,
   g5CoordinateAxes,
   g5Expressions,
+  g5WholeNumberMultiplication,
+  g5WholeNumberDivision,
+  g5GeometryClassification,
+  g5DataStatistics,
   g5ExtremeFractionCombo,
   g5ExtremeWholeNumberRemainders,
   g5ExtremeDecimalCombo,
@@ -1282,6 +1673,8 @@ const GENERATORS: Record<string, ProblemGenerator> = {
   g5ExtremeMoneyDecimal,
   g5ExtremeCoordinate,
   g5ExtremeExpressions,
+  g5ExtremeFractionUnlikeMultiStep,
+  g5ExtremeDataRange,
 };
 
 function buildProblem(
@@ -1319,6 +1712,7 @@ function buildProblem(
     skill: skill.skill,
     skillLabel: skill.skill,
     skillId: skill.id,
+    varietyGroup: skill.varietyGroup ?? skill.id,
     problemType: skill.generator,
     signature,
     hint: core.hint,
@@ -1326,10 +1720,26 @@ function buildProblem(
   };
 }
 
-export function generateMathProblem(difficulty: string): MathProblem {
+function getVarietyGroup(skill: MathSkill) {
+  return skill.varietyGroup ?? skill.id;
+}
+
+export function getEligibleVarietyGroups(difficulty: string): string[] {
+  const difficultyKey = normalizeDifficulty(difficulty);
+  return [...new Set(FL_BEST_MATH_BANDS[difficultyKey].skills.map(getVarietyGroup))];
+}
+
+export function generateMathProblem(
+  difficulty: string,
+  preferredVarietyGroups?: ReadonlySet<string>,
+): MathProblem {
   const difficultyKey = normalizeDifficulty(difficulty);
   const band = FL_BEST_MATH_BANDS[difficultyKey];
-  const skill = band.skills[randInt(0, band.skills.length - 1)];
+  const preferredSkills = preferredVarietyGroups?.size
+    ? band.skills.filter((skill) => preferredVarietyGroups.has(getVarietyGroup(skill)))
+    : [];
+  const skillPool = preferredSkills.length > 0 ? preferredSkills : band.skills;
+  const skill = skillPool[randInt(0, skillPool.length - 1)];
 
   try {
     return buildProblem(difficultyKey, skill);
@@ -1341,12 +1751,32 @@ export function generateMathProblem(difficulty: string): MathProblem {
 export function generateUniqueMathProblem(
   difficulty: string,
   usedSignatures: ReadonlySet<string>,
+  usedVarietyGroupsOrMaxRetries?: ReadonlySet<string> | number,
   maxRetries = DEFAULT_UNIQUE_RETRY_COUNT,
 ): MathProblem {
   let lastProblem: MathProblem | null = null;
+  const retryCount =
+    typeof usedVarietyGroupsOrMaxRetries === "number"
+      ? usedVarietyGroupsOrMaxRetries
+      : maxRetries;
+  const usedVarietyGroups =
+    typeof usedVarietyGroupsOrMaxRetries === "number"
+      ? undefined
+      : usedVarietyGroupsOrMaxRetries;
+  const difficultyKey = normalizeDifficulty(difficulty);
+  const band = FL_BEST_MATH_BANDS[difficultyKey];
+  const unusedGroups = usedVarietyGroups
+    ? new Set(
+        band.skills
+          .map(getVarietyGroup)
+          .filter((group) => !usedVarietyGroups.has(group)),
+      )
+    : undefined;
+  const preferredGroups =
+    unusedGroups && unusedGroups.size > 0 ? unusedGroups : undefined;
 
-  for (let attempt = 0; attempt < maxRetries; attempt += 1) {
-    const problem = generateMathProblem(difficulty);
+  for (let attempt = 0; attempt < retryCount; attempt += 1) {
+    const problem = generateMathProblem(difficulty, preferredGroups);
     lastProblem = problem;
 
     if (!usedSignatures.has(problem.signature)) {
@@ -1355,7 +1785,7 @@ export function generateUniqueMathProblem(
   }
 
   console.warn(
-    `Unable to find a unique ${difficulty} math problem after ${maxRetries} attempts. Reusing the last generated problem.`,
+    `Unable to find a unique ${difficulty} math problem after ${retryCount} attempts. Reusing the last generated problem.`,
   );
   return lastProblem ?? generateMathProblem(difficulty);
 }
@@ -1375,6 +1805,7 @@ export function generateRecoveryProblem(difficulty: string): MathProblem {
 export function generateUniqueRecoveryProblem(
   difficulty: string,
   usedSignatures: ReadonlySet<string>,
+  usedVarietyGroupsOrMaxRetries?: ReadonlySet<string> | number,
   maxRetries = DEFAULT_UNIQUE_RETRY_COUNT,
 ): MathProblem {
   const diffMap: Record<DifficultyKey, DifficultyKey> = {
@@ -1388,6 +1819,7 @@ export function generateUniqueRecoveryProblem(
   return generateUniqueMathProblem(
     recoveryDifficulty,
     usedSignatures,
+    usedVarietyGroupsOrMaxRetries,
     maxRetries,
   );
 }

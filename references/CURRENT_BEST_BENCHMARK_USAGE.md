@@ -22,12 +22,12 @@ This file documents the benchmarks currently used by MathQuest Live. Benchmark d
 
 ## Summary
 
-- Unique benchmark codes currently used: 35
-- Total skill entries currently mapped to benchmarks: 46
-- Grade 3 / Easy skill entries: 12
-- Grade 4 / Medium skill entries: 13
-- Grade 5 / Hard skill entries: 13
-- Advanced Grade 5 / Extreme skill entries: 8
+- Unique benchmark codes currently used: 46
+- Total skill entries currently mapped to benchmarks: 60
+- Grade 3 / Easy skill entries: 13
+- Grade 4 / Medium skill entries: 20
+- Grade 5 / Hard skill entries: 17
+- Advanced Grade 5 / Extreme skill entries: 10
 
 Benchmark codes and descriptions are currently internal metadata on generated math problems. Student-facing setup, settings, and app-info UI show difficulty-level descriptions and skill summaries, but they do not show individual benchmark codes. The README includes a sample metadata object that shows one benchmark code and description.
 
@@ -52,8 +52,22 @@ Generated math problems currently include:
   signature,
   hint,
   secondHint
+  varietyGroup
 }
 ```
+
+## Latest Variety Expansion
+
+The current engine now includes a session-only `varietyGroup` on each generated problem. Gameplay uses this field to prefer unused skill families within a quest before repeating a group, while exact duplicate prevention still relies on stable problem signatures that ignore answer-choice order.
+
+Newly added or expanded generator coverage:
+
+- Easy / Grade 3: `g3MeasurementMassVolume` under `MA.3.M.1.2`.
+- Medium / Grade 4: `g4SamePerimeterArea`, `g4FractionDecomposition`, `g4FractionTenthsHundredthsAdd`, `g4FractionTimesWhole`, `g4MeasurementConversion`, `g4DataInterpretation`, and `g4DecimalCompare`.
+- Hard / Grade 5: `g5WholeNumberMultiplication`, `g5WholeNumberDivision`, `g5GeometryClassification`, and `g5DataStatistics`.
+- Extreme / Advanced Grade 5: `g5ExtremeFractionUnlikeMultiStep` and `g5ExtremeDataRange`.
+
+All new items use benchmark codes already present in the Grade 3, Grade 4, or Grade 5 reference files under `references/`.
 
 ## Current Domains / Strands
 

@@ -39,6 +39,7 @@ Current Easy coverage includes:
 - Two-step elapsed time with a missing activity duration
 - Place-value digit value
 - Length measurement totals and comparisons
+- Measurement operations with mass, volume, temperature, and weight contexts
 - Simple data-table totals and comparisons
 
 Current verified or referenced benchmark anchors include:
@@ -67,6 +68,13 @@ Current Medium coverage includes:
 - Decimal-to-fraction notation with tenths
 - Missing angle measures
 - Missing angle measures in three-part angles
+- Same-perimeter / different-area rectangle comparisons
+- Fraction decomposition
+- Tenths and hundredths fraction addition
+- Fraction multiplied by a whole number
+- Measurement conversion
+- Data interpretation
+- Decimal comparison to hundredths
 
 Current verified benchmark anchors include:
 
@@ -79,7 +87,7 @@ Current verified benchmark anchors include:
 
 The full Grade 4 reference now lives in `references/4TH_GRADE_BEST_STANDARDS_REFERENCE.md`.
 
-Medium has a healthy start, with expanded equivalent-fraction, decimal/fraction, and angle-reasoning variety. The Grade 4 master reference now verifies future anchors for area/perimeter, factors/prime/composite, fraction operations, money, measurement conversion, data, and decimal comparison.
+Medium has broad Grade 4 variety across operations, factors, area/perimeter, fraction relationships and operations, money, measurement conversion, data, decimals, and angles. The Grade 4 master reference continues to be the source for future expansion.
 
 ### Hard / Grade 5
 
@@ -98,6 +106,10 @@ Current Hard coverage includes:
 - First-quadrant ordered-pair representation
 - Coordinate axes and first-quadrant plotting
 - Numerical expressions / order of operations
+- Multi-digit whole-number multiplication
+- Multi-digit whole-number division with fractional remainders
+- Triangle and quadrilateral classification
+- Whole-number data statistics
 
 Current verified benchmark anchors include:
 
@@ -115,7 +127,7 @@ Current verified benchmark anchors include:
 
 The full Grade 5 reference now lives in `references/5TH_GRADE_BEST_STANDARDS_REFERENCE.md`.
 
-Hard now has broader Grade 5 decimal, fraction, volume, coordinate-plane, and expression coverage. It still intentionally avoids the heavier multi-step load reserved for Extreme.
+Hard now has broader Grade 5 decimal, fraction, volume, coordinate-plane, expression, whole-number operation, geometry classification, and data-statistics coverage. It still intentionally avoids the heavier multi-step load reserved for Extreme.
 
 ### Extreme / Advanced Grade 5
 
@@ -129,6 +141,8 @@ Current Extreme coverage includes:
 - Multi-step money problems with decimal notation
 - Coordinate-value interpretation in context
 - Multi-step numerical expressions within Grade 5 limits
+- Multi-step unlike-denominator fraction reasoning
+- Multi-step data interpretation with range
 
 Current verified benchmark anchors include:
 
@@ -148,25 +162,18 @@ Extreme correctly stays inside Grade 5 while adding more multi-step variety. Fut
 ### Easy / Grade 3
 
 - Time
-- Measurement operations beyond length
+- Measurement contexts are improved, but more item variety can still be added later
 - Rounding
 
 ### Medium / Grade 4
 
-- Area/perimeter
-- Factors/multiples
-- Fraction operations
-- Money with decimal notation
-- Measurement conversion
-- Data interpretation
-- Decimal comparison/order to hundredths
+- Additional item forms for existing Grade 4 domains
+- More geometry classification only if tied to verified Grade 4 wording
 
 ### Hard / Grade 5
 
-- Broader multi-digit whole-number operations
 - Decimal multiplication/division exploration
-- Geometry classification
-- Data interpretation with mean, mode, median, or range
+- More geometry and data contexts
 
 ### Extreme / Advanced Grade 5
 
@@ -211,7 +218,7 @@ The order below favors classroom value, low implementation risk, and better play
 Implementation status:
 
 - Implemented after user approval as `g3PlaceValueDigit` under verified benchmark `MA.3.NSO.1.2`.
-- Rounding remains unimplemented; `MA.3.NSO.1.4` is now available for a future Grade 3 rounding generator.
+- Rounding is implemented as `g3Rounding` under verified benchmark `MA.3.NSO.1.4`.
 
 ### 2. Easy Measurement Operations
 
@@ -330,7 +337,7 @@ Implementation status:
 
 Implementation status:
 
-- Not implemented yet. It is now standards-ready for a future Medium expansion pass.
+- Implemented as `g4FactorsPrimeComposite` under verified benchmark `MA.4.AR.3.1`.
 
 ### 5. Medium Area And Perimeter Problem Solving
 
@@ -362,7 +369,7 @@ Implementation status:
 
 Implementation status:
 
-- Not implemented yet. It is now standards-ready for a future Medium expansion pass.
+- Implemented as `g4AreaPerimeterRectangles` under `MA.4.GR.2.1` and `g4SamePerimeterArea` under `MA.4.GR.2.2`.
 
 ### 6. Medium Fraction Operations
 
@@ -397,7 +404,7 @@ Implementation status:
 
 Implementation status:
 
-- Not implemented yet. These candidates are now verified from the provided Grade 4 source and ready for a future Medium expansion pass.
+- Implemented as `g4FractionAddLikeDenominators`, `g4FractionDecomposition`, `g4FractionTenthsHundredthsAdd`, and `g4FractionTimesWhole` under verified Grade 4 fraction benchmarks.
 - Related verified fraction variety was added under `MA.4.FR.1.3` as `g4EquivalentFractionsGreaterThanOne`.
 - Related verified fraction-decimal variety was added under `MA.4.FR.1.2` as `g4DecimalsTenthsToFraction`.
 
@@ -492,7 +499,7 @@ Implementation status:
 
 Implementation status:
 
-- Skipped in the first Hard expansion pass because this plan still requires CPALMS/FDOE verification before mapping.
+- Implemented after the full Grade 5 reference pass as `g5WholeNumberMultiplication` and `g5WholeNumberDivision` under verified benchmarks `MA.5.NSO.2.1` and `MA.5.NSO.2.2`.
 
 ### 10. Hard Decimal And Fraction Mixed Reasoning
 

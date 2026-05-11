@@ -14,6 +14,7 @@ import {
 } from "@workspace/api-client-react";
 import { GameState, INITIAL_STATE, Hero } from "./types";
 import {
+  getEligibleVarietyGroups,
   generateUniqueMathProblem,
   generateUniqueRecoveryProblem,
   type MathProblem,
@@ -164,6 +165,7 @@ function GameApp() {
     promise: Promise<StoryTurnResponse | null>;
   } | null>(null);
   const usedProblemSignaturesRef = useRef<Set<string>>(new Set());
+  const usedProblemVarietyGroupsRef = useRef<Set<string>>(new Set());
   const lastQuickStartRef = useRef<QuickStartSession | null>(null);
   const quickStartLockRef = useRef(false);
   const startLockRef = useRef(false);
@@ -222,23 +224,43 @@ function GameApp() {
     };
   };
 
+  const resetVarietyCycleIfExhausted = (difficulty: string) => {
+    const eligibleGroups = getEligibleVarietyGroups(difficulty);
+    if (
+      eligibleGroups.length > 0 &&
+      eligibleGroups.every((group) => usedProblemVarietyGroupsRef.current.has(group))
+    ) {
+      usedProblemVarietyGroupsRef.current = new Set();
+    }
+  };
+
   const rememberMathProblem = (problem: MathProblem) => {
     usedProblemSignaturesRef.current.add(problem.signature);
+    usedProblemVarietyGroupsRef.current.add(problem.varietyGroup);
     return problem;
   };
 
-  const generateSessionMathProblem = (difficulty: string) =>
-    rememberMathProblem(
-      generateUniqueMathProblem(difficulty, usedProblemSignaturesRef.current),
+  const generateSessionMathProblem = (difficulty: string) => {
+    resetVarietyCycleIfExhausted(difficulty);
+    return rememberMathProblem(
+      generateUniqueMathProblem(
+        difficulty,
+        usedProblemSignaturesRef.current,
+        usedProblemVarietyGroupsRef.current,
+      ),
     );
+  };
 
-  const generateSessionRecoveryProblem = (difficulty: string) =>
-    rememberMathProblem(
+  const generateSessionRecoveryProblem = (difficulty: string) => {
+    resetVarietyCycleIfExhausted(difficulty);
+    return rememberMathProblem(
       generateUniqueRecoveryProblem(
         difficulty,
         usedProblemSignaturesRef.current,
+        usedProblemVarietyGroupsRef.current,
       ),
     );
+  };
 
   const handleStart = (
     hero: Hero,
@@ -257,6 +279,7 @@ function GameApp() {
     const sessionVersion = sessionVersionRef.current;
     playTransition();
     usedProblemSignaturesRef.current = new Set();
+    usedProblemVarietyGroupsRef.current = new Set();
     setState((s) => ({
       ...s,
       hero,
@@ -705,6 +728,7 @@ function GameApp() {
     pendingPreparationRef.current = null;
     pendingStartRef.current = null;
     usedProblemSignaturesRef.current = new Set();
+    usedProblemVarietyGroupsRef.current = new Set();
     applyColorScheme(DEFAULT_COLOR_SCHEME_ID);
     setState(INITIAL_STATE);
   };
@@ -759,6 +783,7 @@ function GameApp() {
             actionLockRef.current = false;
             mathAnswerLockRef.current = false;
             usedProblemSignaturesRef.current = new Set();
+            usedProblemVarietyGroupsRef.current = new Set();
             setState(INITIAL_STATE);
           }}
         />

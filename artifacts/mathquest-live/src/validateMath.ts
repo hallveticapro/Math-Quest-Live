@@ -62,6 +62,10 @@ for (const difficulty of DIFFICULTY_OPTIONS) {
       Boolean(problem.problemType),
       `${difficulty.label}: missing problemType`,
     );
+    assertValid(
+      Boolean(problem.varietyGroup),
+      `${difficulty.label}: missing varietyGroup`,
+    );
     assertValid(Boolean(problem.hint), `${difficulty.label}: missing hint`);
     assertValid(
       Boolean(problem.secondHint),
@@ -107,6 +111,7 @@ for (const difficulty of DIFFICULTY_OPTIONS) {
         skill: problem.skill,
         skillId: problem.skillId,
         problemType: problem.problemType,
+        varietyGroup: problem.varietyGroup,
         hint: problem.hint,
         secondHint: problem.secondHint,
         signature: problem.signature,

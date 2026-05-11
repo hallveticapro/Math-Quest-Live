@@ -17,6 +17,7 @@ export type BenchmarkVerificationStatus =
 
 export type MathSkill = {
   id: string;
+  varietyGroup?: string;
   benchmark: string;
   description: string;
   skill: string;
@@ -368,6 +369,15 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
         ...benchmarkMetadata("MA.3.M.1.2"),
       },
       {
+        id: "g3_measurement_mass_volume",
+        benchmark: "MA.3.M.1.2",
+        description:
+          "Practice whole-number measurement operations with mass, weight, temperature, or liquid volume within Grade 3 expectations.",
+        skill: "measurement operations",
+        generator: "g3MeasurementMassVolume",
+        ...benchmarkMetadata("MA.3.M.1.2"),
+      },
+      {
         id: "g3_time_elapsed",
         benchmark: "MA.3.M.2.2",
         description: "Practice elapsed-time problem solving within Grade 3 expectations.",
@@ -449,6 +459,15 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
         ...benchmarkMetadata("MA.4.GR.2.1"),
       },
       {
+        id: "g4_same_perimeter_area",
+        benchmark: "MA.4.GR.2.2",
+        description:
+          "Practice comparing rectangles with the same perimeter or same area within Grade 4 expectations.",
+        skill: "same perimeter and same area rectangles",
+        generator: "g4SamePerimeterArea",
+        ...benchmarkMetadata("MA.4.GR.2.2"),
+      },
+      {
         id: "g4_equivalent_fractions",
         benchmark: "MA.4.FR.1.3",
         description:
@@ -494,6 +513,33 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
         ...benchmarkMetadata("MA.4.FR.2.2"),
       },
       {
+        id: "g4_fraction_decomposition",
+        benchmark: "MA.4.FR.2.1",
+        description:
+          "Practice decomposing fractions into sums with the same denominator within Grade 4 expectations.",
+        skill: "fraction decomposition",
+        generator: "g4FractionDecomposition",
+        ...benchmarkMetadata("MA.4.FR.2.1"),
+      },
+      {
+        id: "g4_fraction_tenths_hundredths_add",
+        benchmark: "MA.4.FR.2.3",
+        description:
+          "Practice adding tenths and hundredths using equivalent fractions within Grade 4 expectations.",
+        skill: "tenths and hundredths fraction addition",
+        generator: "g4FractionTenthsHundredthsAdd",
+        ...benchmarkMetadata("MA.4.FR.2.3"),
+      },
+      {
+        id: "g4_fraction_times_whole",
+        benchmark: "MA.4.FR.2.4",
+        description:
+          "Practice multiplying a fraction by a whole number within Grade 4 expectations.",
+        skill: "fraction times whole number",
+        generator: "g4FractionTimesWhole",
+        ...benchmarkMetadata("MA.4.FR.2.4"),
+      },
+      {
         id: "g4_money_decimal",
         benchmark: "MA.4.M.2.2",
         description:
@@ -501,6 +547,33 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
         skill: "money with decimal notation",
         generator: "g4MoneyDecimal",
         ...benchmarkMetadata("MA.4.M.2.2"),
+      },
+      {
+        id: "g4_measurement_conversion",
+        benchmark: "MA.4.M.1.2",
+        description:
+          "Practice converting measurements within a single system within Grade 4 expectations.",
+        skill: "measurement conversion",
+        generator: "g4MeasurementConversion",
+        ...benchmarkMetadata("MA.4.M.1.2"),
+      },
+      {
+        id: "g4_data_interpretation",
+        benchmark: "MA.4.DP.1.3",
+        description:
+          "Practice solving real-world problems using numerical data within Grade 4 expectations.",
+        skill: "data interpretation",
+        generator: "g4DataInterpretation",
+        ...benchmarkMetadata("MA.4.DP.1.3"),
+      },
+      {
+        id: "g4_decimal_compare",
+        benchmark: "MA.4.NSO.1.5",
+        description:
+          "Practice comparing decimals to hundredths within Grade 4 expectations.",
+        skill: "decimal comparison to hundredths",
+        generator: "g4DecimalCompare",
+        ...benchmarkMetadata("MA.4.NSO.1.5"),
       },
       {
         id: "g4_angles",
@@ -647,6 +720,42 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
         generator: "g5Expressions",
         ...benchmarkMetadata("MA.5.AR.2.2"),
       },
+      {
+        id: "g5_whole_number_multiplication",
+        benchmark: "MA.5.NSO.2.1",
+        description:
+          "Practice multi-digit whole-number multiplication within Grade 5 expectations.",
+        skill: "multi-digit whole-number multiplication",
+        generator: "g5WholeNumberMultiplication",
+        ...benchmarkMetadata("MA.5.NSO.2.1"),
+      },
+      {
+        id: "g5_whole_number_division",
+        benchmark: "MA.5.NSO.2.2",
+        description:
+          "Practice multi-digit whole-number division with remainders represented as fractions within Grade 5 expectations.",
+        skill: "multi-digit whole-number division",
+        generator: "g5WholeNumberDivision",
+        ...benchmarkMetadata("MA.5.NSO.2.2"),
+      },
+      {
+        id: "g5_geometry_classification",
+        benchmark: "MA.5.GR.1.1",
+        description:
+          "Practice classifying triangles and quadrilaterals by shared attributes within Grade 5 expectations.",
+        skill: "geometry classification",
+        generator: "g5GeometryClassification",
+        ...benchmarkMetadata("MA.5.GR.1.1"),
+      },
+      {
+        id: "g5_data_statistics",
+        benchmark: "MA.5.DP.1.2",
+        description:
+          "Practice interpreting whole-number data using mean, median, mode, or range within Grade 5 expectations.",
+        skill: "data statistics",
+        generator: "g5DataStatistics",
+        ...benchmarkMetadata("MA.5.DP.1.2"),
+      },
     ],
   },
   extreme: {
@@ -727,6 +836,24 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
         skill: "advanced Grade 5 expression reasoning",
         generator: "g5ExtremeExpressions",
         ...benchmarkMetadata("MA.5.AR.2.2"),
+      },
+      {
+        id: "g5_extreme_fraction_unlike_multi_step",
+        benchmark: "MA.5.FR.2.1",
+        description:
+          "Practice multi-step unlike-denominator fraction operations within Grade 5 expectations.",
+        skill: "advanced unlike-denominator fraction reasoning",
+        generator: "g5ExtremeFractionUnlikeMultiStep",
+        ...benchmarkMetadata("MA.5.FR.2.1"),
+      },
+      {
+        id: "g5_extreme_data_range",
+        benchmark: "MA.5.DP.1.2",
+        description:
+          "Practice multi-step interpretation of whole-number data using range within Grade 5 expectations.",
+        skill: "advanced data interpretation",
+        generator: "g5ExtremeDataRange",
+        ...benchmarkMetadata("MA.5.DP.1.2"),
       },
     ],
   },
