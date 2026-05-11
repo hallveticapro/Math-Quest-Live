@@ -245,6 +245,67 @@ function dataTableDisplay(
   };
 }
 
+type CustomaryReferenceCategory = "length" | "capacity" | "weight" | "time";
+
+function customaryReferenceTableDisplay(
+  category: CustomaryReferenceCategory,
+  gradeBand: 4 | 5 = 4,
+): RichMathDisplay {
+  const rowsByCategory: Record<CustomaryReferenceCategory, Array<[string, string]>> = {
+    length:
+      gradeBand === 5
+        ? [
+            ["1 foot", "12 inches"],
+            ["1 yard", "3 feet"],
+            ["1 mile", "5,280 feet"],
+            ["1 mile", "1,760 yards"],
+          ]
+        : [
+            ["1 foot", "12 inches"],
+            ["1 yard", "3 feet"],
+          ],
+    capacity:
+      gradeBand === 5
+        ? [
+            ["1 cup", "8 fluid ounces"],
+            ["1 pint", "2 cups"],
+            ["1 quart", "2 pints"],
+            ["1 gallon", "4 quarts"],
+          ]
+        : [
+            ["1 pint", "2 cups"],
+            ["1 quart", "2 pints"],
+            ["1 gallon", "4 quarts"],
+          ],
+    weight:
+      gradeBand === 5
+        ? [
+            ["1 pound", "16 ounces"],
+            ["1 ton", "2,000 pounds"],
+          ]
+        : [["1 pound", "16 ounces"]],
+    time:
+      gradeBand === 5
+        ? [
+            ["1 minute", "60 seconds"],
+            ["1 hour", "60 minutes"],
+            ["1 day", "24 hours"],
+            ["1 week", "7 days"],
+          ]
+        : [
+            ["1 minute", "60 seconds"],
+            ["1 hour", "60 minutes"],
+          ],
+  };
+
+  return {
+    type: "table",
+    caption: `Customary ${category} reference`,
+    headers: ["Unit", "Equivalent measure"],
+    rows: rowsByCategory[category],
+  };
+}
+
 function g3PlaceValueDigit(): ProblemCore {
   const thousands = randInt(1, 9);
   const hundreds = randInt(1, 9);
@@ -1049,18 +1110,18 @@ function g4MoneyDecimal(): ProblemCore {
 
 function g4MeasurementConversion(): ProblemCore {
   const conversions = [
-    { from: "yards", singularFrom: "yard", to: "feet", factor: 3 },
-    { from: "feet", singularFrom: "foot", to: "inches", factor: 12 },
-    { from: "hours", singularFrom: "hour", to: "minutes", factor: 60 },
-    { from: "quarts", singularFrom: "quart", to: "pints", factor: 2 },
-    { from: "pounds", singularFrom: "pound", to: "ounces", factor: 16 },
+    { from: "yards", singularFrom: "yard", to: "feet", factor: 3, category: "length" as const },
+    { from: "feet", singularFrom: "foot", to: "inches", factor: 12, category: "length" as const },
+    { from: "hours", singularFrom: "hour", to: "minutes", factor: 60, category: "time" as const },
+    { from: "quarts", singularFrom: "quart", to: "pints", factor: 2, category: "capacity" as const },
+    { from: "pounds", singularFrom: "pound", to: "ounces", factor: 16, category: "weight" as const },
   ];
   const conversion = conversions[randInt(0, conversions.length - 1)];
   const amount = randInt(2, 9);
   const answer = amount * conversion.factor;
 
   return {
-    prompt: `A quest supply list shows ${amount} ${conversion.from}. How many ${conversion.to} is that?`,
+    prompt: `Use the reference table below. A quest supply list shows ${amount} ${conversion.from}. How many ${conversion.to} is that?`,
     correctAnswer: `${answer} ${conversion.to}`,
     wrongAnswers: [
       `${amount + conversion.factor} ${conversion.to}`,
@@ -1070,6 +1131,7 @@ function g4MeasurementConversion(): ProblemCore {
     ],
     hint: `Convert from ${conversion.from} to ${conversion.to} using the matching unit relationship.`,
     secondHint: `Each ${conversion.singularFrom} has ${conversion.factor} ${conversion.to}, so multiply ${amount} by ${conversion.factor}.`,
+    richDisplay: [customaryReferenceTableDisplay(conversion.category, 4)],
   };
 }
 
@@ -1683,7 +1745,7 @@ function g5ExtremeMeasurementConversion(): ProblemCore {
   const totalFeet = yards * 3 + feet + extraFeet;
 
   return {
-    prompt: `A banner uses ${yards} yards ${feet} feet of ribbon, then ${extraFeet} more feet. How many feet of ribbon is that altogether?`,
+    prompt: `Use the reference table below. A banner uses ${yards} yards ${feet} feet of ribbon, then ${extraFeet} more feet. How many feet of ribbon is that altogether?`,
     correctAnswer: `${totalFeet} feet`,
     wrongAnswers: [
       `${yards + feet + extraFeet} feet`,
@@ -1693,6 +1755,7 @@ function g5ExtremeMeasurementConversion(): ProblemCore {
     ],
     hint: "Convert yards to feet before adding. One yard equals 3 feet.",
     secondHint: "Multiply yards by 3, then add the other feet.",
+    richDisplay: [customaryReferenceTableDisplay("length", 5)],
   };
 }
 

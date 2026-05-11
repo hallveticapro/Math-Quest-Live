@@ -2,6 +2,10 @@
 
 Newest entries first. Add a concise timestamped entry for every meaningful project change before creating the related commit.
 
+## 2026-05-11T18:26:00-04:00
+
+- Completed PLAN.md Section 10 by adding customary conversion reference tables to rich math display metadata for Grade 4 conversion and Grade 5 extreme conversion problems.
+
 ## 2026-05-11T18:23:00-04:00
 
 - Completed PLAN.md Section 9 by converting the Grade 4 and Grade 5 FAST/B.E.S.T. reference sheet PDFs into Markdown reference files under `references/` and removing the temporary root PDFs.
