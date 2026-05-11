@@ -2,6 +2,10 @@
 
 Newest entries first. Add a concise timestamped entry for every meaningful project change before creating the related commit.
 
+## 2026-05-11T18:20:00-04:00
+
+- Completed PLAN.md Section 8 by adding unit labels to measurement, time, area, volume, data, money-adjacent fraction, and advanced Grade 5 answer choices while preserving deterministic checking.
+
 ## 2026-05-11T18:12:00-04:00
 
 - Completed PLAN.md Section 7 by expanding Grade 4 angle decomposition to use varied whole-number angle measures, 90/180/270/360-degree totals, and degree-labeled answer choices.

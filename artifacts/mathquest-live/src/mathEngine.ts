@@ -203,6 +203,17 @@ function money(cents: number) {
   return `$${(cents / 100).toFixed(2)}`;
 }
 
+function unitAnswer(
+  value: number | string,
+  singular: string,
+  plural = `${singular}s`,
+) {
+  const numeric = typeof value === "number" ? value : Number(value);
+  const unit = Number.isFinite(numeric) && Math.abs(numeric) === 1 ? singular : plural;
+  const text = typeof value === "number" ? value.toLocaleString() : value;
+  return `${text} ${unit}`;
+}
+
 function parseFraction(value: string) {
   const [n, d] = value.split("/").map(Number);
   return { numerator: n, denominator: d };
@@ -337,16 +348,18 @@ function g3AreaPerimeter(): ProblemCore {
   const width = randInt(3, 10);
   const area = Math.random() < 0.6;
   const answer = area ? length * width : 2 * (length + width);
+  const unitSingular = area ? "square unit" : "unit";
+  const unitPlural = area ? "square units" : "units";
   return {
     prompt: `A rectangle is ${length} units long and ${width} units wide. What is its ${area ? "area" : "perimeter"}?`,
-    correctAnswer: String(answer),
+    correctAnswer: unitAnswer(answer, unitSingular, unitPlural),
     wrongAnswers: [
       length + width,
       length * width,
       2 * (length + width),
       answer + length,
       Math.max(1, answer - width),
-    ].map(String),
+    ].map((value) => unitAnswer(value, unitSingular, unitPlural)),
     hint: area
       ? "Area covers the inside of a rectangle. Multiply length by width."
       : "Perimeter is the distance around the rectangle. Add all four sides.",
@@ -462,14 +475,14 @@ function g3MeasurementLength(): ProblemCore {
     const answer = longer - shorter;
     return {
       prompt: `A ribbon is ${longer} inches long. A rope is ${shorter} inches long. How many inches longer is the ribbon?`,
-      correctAnswer: String(answer),
+      correctAnswer: unitAnswer(answer, "inch", "inches"),
       wrongAnswers: [
         longer + shorter,
         shorter,
         longer,
         Math.max(1, answer - 1),
         answer + 1,
-      ].map(String),
+      ].map((value) => unitAnswer(value, "inch", "inches")),
       hint: "A comparison question asks how much more or less. Subtract the shorter length from the longer length.",
       secondHint: "Line up the two lengths and find the difference between them.",
     };
@@ -478,14 +491,14 @@ function g3MeasurementLength(): ProblemCore {
   const answer = first + second;
   return {
     prompt: `A trail has one path that is ${first} yards long and another path that is ${second} yards long. How many yards are the paths in all?`,
-    correctAnswer: String(answer),
+    correctAnswer: unitAnswer(answer, "yard", "yards"),
     wrongAnswers: [
       Math.abs(first - second),
       first,
       second,
       answer + 5,
       Math.max(1, answer - 5),
-    ].map(String),
+    ].map((value) => unitAnswer(value, "yard", "yards")),
     hint: "The question asks for the total length. Add the two path lengths together.",
     secondHint: "Check that your answer is longer than either path by itself.",
   };
@@ -545,8 +558,10 @@ function g3ElapsedTime(): ProblemCore {
   const endTime = `${endHour}:${String(endMinute).padStart(2, "0")}`;
   return {
     prompt: `A puzzle starts at ${startHour}:00 and ends at ${endTime}. How many minutes did it take?`,
-    correctAnswer: String(minutes),
-    wrongAnswers: numberDistractors(minutes, 15),
+    correctAnswer: unitAnswer(minutes, "minute", "minutes"),
+    wrongAnswers: numberDistractors(minutes, 15).map((value) =>
+      unitAnswer(value, "minute", "minutes"),
+    ),
     hint: "Count forward from the start time to the end time. Think in chunks of 5, 10, or 15 minutes.",
     secondHint: "Because both times are in the same hour here, focus on how many minutes passed after :00.",
   };
@@ -569,14 +584,14 @@ function g3ElapsedTimeTwoStep(): ProblemCore {
 
   return {
     prompt: `The hero starts a quest at ${formatClockTime(startTotalMinutes)}. The map walk takes ${firstPart} minutes, and the whole trip ends at ${endTime}. How many minutes did the puzzle gate take?`,
-    correctAnswer: String(secondPart),
+    correctAnswer: unitAnswer(secondPart, "minute", "minutes"),
     wrongAnswers: [
       total,
       firstPart,
       Math.max(5, secondPart - 5),
       secondPart + 5,
       Math.max(5, total - 5),
-    ].map(String),
+    ].map((value) => unitAnswer(value, "minute", "minutes")),
     hint: "Find the total time from the start to the end first. Then subtract the time already used by the map walk.",
     secondHint: "Count forward from the start time to the end time. The puzzle gate time is the part left after the first activity.",
   };
@@ -609,14 +624,14 @@ function g3DataInterpretation(): ProblemCore {
     const answer = largerValue - smallerValue;
     return {
       prompt: `The quest table shows ${categoryA}: ${valueA}, ${categoryB}: ${valueB}, and ${categoryC}: ${valueC}. How many more ${largerCategory} than ${smallerCategory} are there?`,
-      correctAnswer: String(answer),
+      correctAnswer: unitAnswer(answer, "item", "items"),
       wrongAnswers: [
         largerValue + smallerValue,
         largerValue,
         smallerValue,
         Math.max(1, answer - 1),
         answer + 1,
-      ].map(String),
+      ].map((value) => unitAnswer(value, "item", "items")),
       hint: "Find the two categories named in the question first. 'How many more' means compare them.",
       secondHint: "Subtract the smaller data value from the larger data value.",
       richDisplay,
@@ -626,14 +641,14 @@ function g3DataInterpretation(): ProblemCore {
   const answer = valueA + valueB;
   return {
     prompt: `The quest table shows ${categoryA}: ${valueA}, ${categoryB}: ${valueB}, and ${categoryC}: ${valueC}. How many ${categoryA} and ${categoryB} are there altogether?`,
-    correctAnswer: String(answer),
+    correctAnswer: unitAnswer(answer, "item", "items"),
     wrongAnswers: [
       Math.abs(valueA - valueB),
       valueA + valueC,
       valueB + valueC,
       valueA,
       answer + 1,
-    ].map(String),
+    ].map((value) => unitAnswer(value, "item", "items")),
     hint: "Find the categories named in the question. 'Altogether' means add those values.",
     secondHint: `Add the ${categoryA} value and the ${categoryB} value. Do not include categories the question did not ask for.`,
     richDisplay,
@@ -989,16 +1004,17 @@ function g4FractionTimesWhole(): ProblemCore {
   const denominator = [3, 4, 5, 6, 8, 10][randInt(0, 5)];
   const numerator = randInt(1, denominator - 1);
   const answer = fraction(whole * numerator, denominator);
+  const answerWithUnit = `${answer} yards`;
 
   return {
     prompt: `A banner uses ${numerator}/${denominator} yard of ribbon. How much ribbon is needed for ${whole} banners?`,
-    correctAnswer: answer,
+    correctAnswer: answerWithUnit,
     wrongAnswers: [
       fraction(whole + numerator, denominator),
       `${whole}/${denominator}`,
       fraction(whole * numerator, denominator + whole),
       fraction(whole * numerator + 1, denominator),
-    ],
+    ].map((value) => `${value} yards`),
     hint: "This is repeated groups of the same fraction.",
     secondHint: "Multiply the whole number by the numerator. Keep the denominator the same.",
     richDisplay: [fractionDisplay(numerator, denominator, "Ribbon per banner")],
@@ -1071,13 +1087,13 @@ function g4DataInterpretation(): ProblemCore {
     const answer = Math.max(...values) - Math.min(...values);
     return {
       prompt: `A table shows ${labels.map((label, index) => `${label}: ${values[index]}`).join(", ")}. What is the range of the data?`,
-      correctAnswer: String(answer),
+      correctAnswer: unitAnswer(answer, "item", "items"),
       wrongAnswers: [
         Math.max(...values),
         Math.min(...values),
         values.reduce((sum, value) => sum + value, 0),
         answer + 1,
-      ].map(String),
+      ].map((value) => unitAnswer(value, "item", "items")),
       hint: "Range tells how spread out the data are.",
       secondHint: "Subtract the smallest value from the largest value.",
       richDisplay,
@@ -1090,13 +1106,13 @@ function g4DataInterpretation(): ProblemCore {
   const answer = values[targetA] + values[targetB];
   return {
     prompt: `A table shows ${labels.map((label, index) => `${label}: ${values[index]}`).join(", ")}. How many ${labels[targetA]} and ${labels[targetB]} are there altogether?`,
-    correctAnswer: String(answer),
+    correctAnswer: unitAnswer(answer, "item", "items"),
     wrongAnswers: [
       Math.abs(values[targetA] - values[targetB]),
       Math.max(...values),
       values.reduce((sum, value) => sum + value, 0),
       answer + 2,
-    ].map(String),
+    ].map((value) => unitAnswer(value, "item", "items")),
     hint: "Find the two categories named in the question first.",
     secondHint: "Altogether means add only those two values, not every value in the table.",
     richDisplay,
@@ -1198,8 +1214,10 @@ function g5DecimalOperations(): ProblemCore {
   const answer = a + b;
   return {
     prompt: `A robot travels ${a.toFixed(2)} miles, then ${b.toFixed(2)} more miles. How far does it travel in all?`,
-    correctAnswer: answer.toFixed(2),
-    wrongAnswers: decimalDistractors(answer, 2, [0.1, 0.2, 1, 0.01]),
+    correctAnswer: unitAnswer(answer.toFixed(2), "mile", "miles"),
+    wrongAnswers: decimalDistractors(answer, 2, [0.1, 0.2, 1, 0.01]).map(
+      (value) => unitAnswer(value, "mile", "miles"),
+    ),
     hint: "Line up the decimal points so tenths add to tenths and hundredths add to hundredths.",
     secondHint: "Add as if they are whole numbers, then place the decimal point in the same aligned spot.",
   };
@@ -1211,14 +1229,14 @@ function g5DecimalSubtraction(): ProblemCore {
   const answer = minuend - subtrahend;
   return {
     prompt: `A skyship has ${minuend.toFixed(3)} liters of fuel. It uses ${subtrahend.toFixed(3)} liters. How many liters are left?`,
-    correctAnswer: answer.toFixed(3),
+    correctAnswer: unitAnswer(answer.toFixed(3), "liter", "liters"),
     wrongAnswers: [
       (minuend + subtrahend).toFixed(3),
       Math.abs(minuend - Math.round(subtrahend)).toFixed(3),
       Math.max(0, answer - 0.1).toFixed(3),
       (answer + 0.1).toFixed(3),
       ...decimalDistractors(answer, 3, [0.001, 0.01, 0.1]),
-    ],
+    ].map((value) => unitAnswer(value, "liter", "liters")),
     hint: "Line up the decimal points before subtracting. Thousandths line up with thousandths.",
     secondHint: "Subtract from right to left like whole numbers, then keep the decimal point aligned.",
   };
@@ -1330,15 +1348,16 @@ function g5FractionTimesWhole(): ProblemCore {
   const denominator = randInt(3, 10);
   const numerator = randInt(1, denominator - 1);
   const answer = fraction(whole * numerator, denominator);
+  const answerWithUnit = `${answer} cups`;
   return {
     prompt: `A recipe uses ${numerator}/${denominator} cup of spice for each batch. How much is needed for ${whole} batches?`,
-    correctAnswer: answer,
+    correctAnswer: answerWithUnit,
     wrongAnswers: [
       fraction(whole + numerator, denominator),
       fraction(whole * denominator, numerator),
       `${whole}/${denominator}`,
       fraction(whole * numerator + 1, denominator),
-    ],
+    ].map((value) => `${value} cups`),
     hint: "A fraction for each batch means repeated groups of that fraction. Multiply the whole number by the numerator.",
     secondHint: "Keep the denominator the same, and multiply the whole number by the top number.",
     richDisplay: [fractionDisplay(numerator, denominator, "Spice per batch")],
@@ -1377,13 +1396,13 @@ function g5Volume(): ProblemCore {
   const answer = length * width * height;
   return {
     prompt: `A rectangular prism is ${length} units long, ${width} units wide, and ${height} units tall. What is its volume?`,
-    correctAnswer: String(answer),
+    correctAnswer: unitAnswer(answer, "cubic unit", "cubic units"),
     wrongAnswers: [
       length * width,
       2 * (length + width + height),
       answer + length * width,
       Math.max(1, answer - width * height),
-    ].map(String),
+    ].map((value) => unitAnswer(value, "cubic unit", "cubic units")),
     hint: "Volume tells how much space a rectangular prism takes up. Multiply length × width × height.",
     secondHint: "Find the base area first with length × width, then multiply by the height.",
   };
@@ -1533,14 +1552,14 @@ function g5DataStatistics(): ProblemCore {
     ];
     return {
       prompt: `The team recorded these whole-number scores: ${allValues.join(", ")}. What is the mean score?`,
-      correctAnswer: String(targetMean),
+      correctAnswer: unitAnswer(targetMean, "point", "points"),
       wrongAnswers: [
         Math.max(...allValues) - Math.min(...allValues),
         Math.max(...allValues),
         Math.min(...allValues),
         targetMean + 1,
         Math.max(1, targetMean - 1),
-      ].map(String),
+      ].map((value) => unitAnswer(value, "point", "points")),
       hint: "Mean is the fair-share average.",
       secondHint: "Add all the values, then divide by how many values there are.",
       richDisplay,
@@ -1556,14 +1575,14 @@ function g5DataStatistics(): ProblemCore {
     ),
   ];
   return {
-    prompt: `The table shows whole-number distances: ${values.join(", ")}. What is the range?`,
-    correctAnswer: String(answer),
+    prompt: `The table shows whole-number distances in miles: ${values.join(", ")}. What is the range?`,
+    correctAnswer: unitAnswer(answer, "mile", "miles"),
     wrongAnswers: [
       Math.max(...values),
       Math.min(...values),
       values.reduce((sum, value) => sum + value, 0),
       answer + 2,
-    ].map(String),
+    ].map((value) => unitAnswer(value, "mile", "miles")),
     hint: "Range shows the distance between the greatest and least data values.",
     secondHint: "Subtract the smallest value from the largest value.",
     richDisplay,
@@ -1582,15 +1601,16 @@ function g5ExtremeFractionCombo(): ProblemCore {
     parsed.numerator + add * parsed.denominator,
     parsed.denominator,
   );
+  const answerWithUnit = `${answer} crystals`;
   return {
     prompt: `A hero collects ${n1}/${d1} of a crystal, then ${n2}/${d2} of a crystal, then ${add} whole crystal${add === 1 ? "" : "s"}. How much crystal do they have?`,
-    correctAnswer: answer,
+    correctAnswer: answerWithUnit,
     wrongAnswers: [
       partial,
       fraction(parsed.numerator + add, parsed.denominator),
       fraction(parsed.numerator, parsed.denominator + add),
       `${add}/${parsed.denominator}`,
-    ],
+    ].map((value) => `${value} crystals`),
     hint: "Break this into steps: add the fractions first, then add the whole crystals.",
     secondHint: "Use a common denominator for the fractions. After that, add the whole-number amount.",
     richDisplay: [
@@ -1608,13 +1628,13 @@ function g5ExtremeWholeNumberRemainders(): ProblemCore {
 
   return {
     prompt: `${students} students are going on a quest trip. Each wagon holds ${seats} students. How many wagons are needed?`,
-    correctAnswer: String(needed),
+    correctAnswer: unitAnswer(needed, "wagon", "wagons"),
     wrongAnswers: [
-      String(Math.floor(students / seats)),
-      String(needed + 1),
-      String(seats),
-      String(buses),
-    ],
+      Math.floor(students / seats),
+      needed + 1,
+      seats,
+      buses,
+    ].map((value) => unitAnswer(value, "wagon", "wagons")),
     hint: "Divide to see how many full wagons are filled, then think about the leftover students.",
     secondHint: "A remainder means another wagon is needed, even if it is not full.",
   };
@@ -1627,8 +1647,10 @@ function g5ExtremeDecimalCombo(): ProblemCore {
   const answer = a + b - c;
   return {
     prompt: `A crystal weighs ${a.toFixed(3)} kg. Another weighs ${b.toFixed(3)} kg. ${c.toFixed(3)} kg chips away. What weight remains?`,
-    correctAnswer: answer.toFixed(3),
-    wrongAnswers: decimalDistractors(answer, 3, [0.001, 0.01, 0.1, 1]),
+    correctAnswer: unitAnswer(answer.toFixed(3), "kg", "kg"),
+    wrongAnswers: decimalDistractors(answer, 3, [0.001, 0.01, 0.1, 1]).map(
+      (value) => unitAnswer(value, "kg", "kg"),
+    ),
     hint: "Line up the decimal points. Add the two weights first, then subtract what chipped away.",
     secondHint: "Track thousandths carefully: each number has three digits after the decimal.",
   };
@@ -1641,14 +1663,14 @@ function g5ExtremeVolume(): ProblemCore {
   const volume = width * height * length;
   return {
     prompt: `A prism has volume ${volume} cubic units, width ${width}, and height ${height}. What is its length?`,
-    correctAnswer: String(length),
+    correctAnswer: unitAnswer(length, "unit", "units"),
     wrongAnswers: [
       width * height,
       volume / width,
       volume / height,
       length + width,
       Math.max(1, length - 2),
-    ].map(String),
+    ].map((value) => unitAnswer(value, "unit", "units")),
     hint: "Volume equals length × width × height. Here one dimension is missing.",
     secondHint: "Divide the volume by width × height to find the missing length.",
   };
@@ -1698,7 +1720,8 @@ function g5ExtremeMoneyDecimal(): ProblemCore {
 
 function g5ExtremeCoordinate(): ProblemCore {
   const week = randInt(2, 9);
-  const inches = randInt(6, 24);
+  let inches = randInt(6, 24);
+  while (inches === week) inches = randInt(6, 24);
   return {
     prompt: `A garden team plots plant growth at (${week}, ${inches}), where x is weeks and y is height in inches. What does ${inches} represent?`,
     correctAnswer: `${inches} inches tall`,
@@ -1750,16 +1773,17 @@ function g5ExtremeFractionUnlikeMultiStep(): ProblemCore {
     parsed.numerator + extraWhole * parsed.denominator,
     parsed.denominator,
   );
+  const answerWithUnit = `${answer} cups`;
 
   return {
     prompt: `A recipe uses ${extraWhole} whole cup plus ${n1}/${d1} cup of moon flour and ${n2}/${d2} cup of star sugar. How many cups are used in all?`,
-    correctAnswer: answer,
+    correctAnswer: answerWithUnit,
     wrongAnswers: [
       fraction(n1 + n2 + extraWhole, d1 + d2),
       fraction(n1 * d2 + n2 * d1, d1 * d2),
       fraction(parsed.numerator + extraWhole, parsed.denominator),
       fraction(parsed.numerator + extraWhole * parsed.denominator + 1, parsed.denominator),
-    ],
+    ].map((value) => `${value} cups`),
     hint: "Combine the unlike-denominator fractions first.",
     secondHint: "Find a common denominator, add the fractions, then include the whole-number cup.",
     richDisplay: [
