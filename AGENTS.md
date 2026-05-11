@@ -25,7 +25,7 @@ The app’s core constraints matter:
 - `artifacts/mathquest-live/src/lib/sounds.ts`, `artifacts/mathquest-live/src/lib/musicManager.ts`, and `artifacts/mathquest-live/src/assets/music/` for frontend audio.
 - `lib/api-spec/openapi.yaml` plus generated files in `lib/api-client-react/src/generated/` and `lib/api-zod/src/generated/` for API client/schema contracts.
 - `references/` for standards references, planning docs, and future Markdown reference material.
-- `UPDATES.md` for the newest durable project change notes and agent handoff breadcrumbs.
+- `references/UPDATES.md` for the newest durable project change notes and agent handoff breadcrumbs.
 
 ## Commands
 
@@ -119,7 +119,7 @@ For most code changes, a task is done when:
 
 - The requested behavior is implemented without violating the no-accounts/no-database/no-saved-student-data/no-freeform-input constraints.
 - Relevant docs are updated when commands, environment variables, standards usage, deployment behavior, or developer workflow changes.
-- `UPDATES.md` has a newest-first timestamped note before each meaningful commit or checkpoint.
+- `references/UPDATES.md` has a newest-first timestamped note before each meaningful commit or checkpoint.
 - `npm run build` succeeds.
 - `npm run validate:math` succeeds for math changes.
 - `npm run validate:images` succeeds for image-mode changes.

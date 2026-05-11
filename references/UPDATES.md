@@ -2,6 +2,10 @@
 
 Newest entries first. Add a concise timestamped entry for every meaningful project change before creating the related commit.
 
+## 2026-05-11T06:52:54-04:00
+
+- Moved the project update log into `references/` and updated agent/handoff guidance to point future sessions to `references/UPDATES.md`.
+
 ## 2026-05-11T06:50:13-04:00
 
 - Added a verified Grade 3 number-pattern generator and updated standards references so Easy quests include more app-generated variety.

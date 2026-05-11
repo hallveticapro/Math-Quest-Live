@@ -54,7 +54,7 @@ Use this file to give a future ChatGPT or Codex session fast project context wit
 ## Documentation Map
 
 - `AGENTS.md`: repo-specific instructions for Codex agents.
-- `UPDATES.md`: newest-first project change log. Add a timestamped entry before meaningful commits/checkpoints.
+- `references/UPDATES.md`: newest-first project change log. Add a timestamped entry before meaningful commits/checkpoints.
 - `README.md`: user/developer setup, environment, deployment, and feature documentation.
 - `references/`: long-form standards references, audits, plans, and future Markdown planning material.
 - `references/PLAN.md`: if present and explicitly requested by the user, treat it as the source of truth for that task.
