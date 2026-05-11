@@ -18,6 +18,7 @@ interface GameScreenProps {
 
 const QUEST_TRANSITION_OUT_MS = 180;
 const QUEST_TRANSITION_IN_MS = 320;
+const LOADING_MESSAGE_INTERVAL_MS = 4500;
 const INTRO_LOADING_MESSAGES = [
   "The Chronicler is opening the first page of your legend...",
   "The Illustrator is adding the final colors to your first scene...",
@@ -78,7 +79,7 @@ export function GameScreen({
     }
     const timer = window.setInterval(() => {
       setLoadingMessageIndex((index) => index + 1);
-    }, 1800);
+    }, LOADING_MESSAGE_INTERVAL_MS);
     return () => window.clearInterval(timer);
   }, [isLoading]);
 

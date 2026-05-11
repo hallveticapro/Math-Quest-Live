@@ -2,6 +2,10 @@
 
 Newest entries first. Add a concise timestamped entry for every meaningful project change before creating the related commit.
 
+## 2026-05-11T06:34:38-04:00
+
+- Slowed rotating game loading messages to a calmer 4.5-second cadence so Chronicle copy stays readable during intro, story, and ending waits.
+
 ## 2026-05-11T06:30:31-04:00
 
 - Added ending-specific Chronicle loading copy so the final story and victory illustration wait feels intentional instead of looking like a generic next-page load.
