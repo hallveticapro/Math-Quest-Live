@@ -905,6 +905,107 @@ function g4Rounding(): ProblemCore {
   };
 }
 
+function g4PlaceValueShift(): ProblemCore {
+  const digit = randInt(2, 9);
+  const place = Math.random() < 0.5 ? "left" : "right";
+  const answer = place === "left" ? "10 times as much" : "one-tenth as much";
+  return {
+    prompt: `In a multi-digit number, a ${digit} moves one place to the ${place}. How does its value change?`,
+    correctAnswer: answer,
+    wrongAnswers: [
+      place === "left" ? "one-tenth as much" : "10 times as much",
+      "100 times as much",
+      "one-hundredth as much",
+      "it does not change",
+    ],
+    hint: "Each place-value move left or right changes the value by a factor of 10.",
+    secondHint:
+      place === "left"
+        ? "Moving left makes the digit worth 10 times as much."
+        : "Moving right makes the digit worth one-tenth as much.",
+  };
+}
+
+function g4ExpandedForm(): ProblemCore {
+  const hundredThousands = randInt(1, 9);
+  const tenThousands = randInt(1, 9);
+  const thousands = randInt(1, 9);
+  const hundreds = randInt(1, 9);
+  const tens = randInt(1, 9);
+  const ones = randInt(1, 9);
+  const number =
+    hundredThousands * 100000 +
+    tenThousands * 10000 +
+    thousands * 1000 +
+    hundreds * 100 +
+    tens * 10 +
+    ones;
+  const correct = formatExpandedForm([
+    hundredThousands * 100000,
+    tenThousands * 10000,
+    thousands * 1000,
+    hundreds * 100,
+    tens * 10,
+    ones,
+  ]);
+
+  return {
+    prompt: `Which expanded form matches ${number.toLocaleString()}?`,
+    correctAnswer: correct,
+    wrongAnswers: [
+      formatExpandedForm([
+        hundredThousands * 10000,
+        tenThousands * 100000,
+        thousands * 1000,
+        hundreds * 100,
+        tens * 10,
+        ones,
+      ]),
+      formatExpandedForm([
+        hundredThousands * 100000,
+        tenThousands * 1000,
+        thousands * 10000,
+        hundreds * 100,
+        tens * 10,
+        ones,
+      ]),
+      `${hundredThousands} + ${tenThousands} + ${thousands} + ${hundreds} + ${tens} + ${ones}`,
+      formatExpandedForm([
+        hundredThousands * 100000,
+        tenThousands * 10000,
+        thousands * 1000,
+        hundreds * 10,
+        tens * 100,
+        ones,
+      ]),
+    ],
+    hint: "Expanded form shows each digit's value, not just the digit itself.",
+    secondHint: "Read from left to right: hundred-thousands, ten-thousands, thousands, hundreds, tens, and ones.",
+  };
+}
+
+function g4WholeNumberCompare(): ProblemCore {
+  const a = randInt(10_000, 999_999);
+  let b = randInt(10_000, 999_999);
+  while (b === a) b = randInt(10_000, 999_999);
+  const values = [a, b].sort((x, y) => x - y);
+  const askGreater = Math.random() < 0.5;
+  const answer = askGreater ? values[1] : values[0];
+
+  return {
+    prompt: `Which number is ${askGreater ? "greater" : "less"}: ${a.toLocaleString()} or ${b.toLocaleString()}?`,
+    correctAnswer: answer.toLocaleString(),
+    wrongAnswers: [
+      (askGreater ? values[0] : values[1]).toLocaleString(),
+      "They are equal",
+      (values[1] + 1000).toLocaleString(),
+      Math.max(0, values[0] - 1000).toLocaleString(),
+    ],
+    hint: "Compare place values from left to right.",
+    secondHint: "Start with the greatest place. The first different digit decides the comparison.",
+  };
+}
+
 function g4Multiplication(): ProblemCore {
   const a = randInt(24, 96);
   const b = randInt(4, 9);
@@ -921,6 +1022,46 @@ function g4Multiplication(): ProblemCore {
     ].map(String),
     hint: "This is equal groups again. Multiply the number in each stack by the number of stacks.",
     secondHint: "Break the larger number into tens and ones, multiply each part, then add the partial products.",
+  };
+}
+
+function g4TwoDigitMultiplication(): ProblemCore {
+  const a = randInt(12, 98);
+  const b = randInt(12, 49);
+  const answer = a * b;
+  return {
+    prompt: `A supply cart has ${a} bundles with ${b} beads in each bundle. How many beads are there?`,
+    correctAnswer: answer.toLocaleString(),
+    wrongAnswers: [
+      a * (b + 1),
+      (a + 1) * b,
+      a + b,
+      answer - a,
+      answer + b,
+    ].map((value) => value.toLocaleString()),
+    hint: "Break one factor into tens and ones.",
+    secondHint: `You can think of ${a} × ${b} as ${a} × ${Math.floor(b / 10) * 10} plus ${a} × ${b % 10}.`,
+  };
+}
+
+function g4EstimateProduct(): ProblemCore {
+  const a = randInt(31, 89);
+  const b = randInt(12, 48);
+  const roundedA = Math.round(a / 10) * 10;
+  const roundedB = Math.round(b / 10) * 10;
+  const answer = roundedA * roundedB;
+  return {
+    prompt: `Estimate ${a} × ${b} by rounding each factor to the nearest ten first.`,
+    correctAnswer: answer.toLocaleString(),
+    wrongAnswers: [
+      a * b,
+      roundedA * b,
+      a * roundedB,
+      answer + 100,
+      Math.max(0, answer - 100),
+    ].map((value) => value.toLocaleString()),
+    hint: "Round both factors before multiplying.",
+    secondHint: `${a} rounds to ${roundedA}, and ${b} rounds to ${roundedB}. Multiply the rounded numbers.`,
   };
 }
 
@@ -942,6 +1083,69 @@ function g4DivisionRemainders(): ProblemCore {
     ],
     hint: "Divide to find the whole number. Write the leftover part as a fraction over the divisor.",
     secondHint: "Use multiplication to check the whole number, then put the remainder over the number you divided by.",
+  };
+}
+
+function g4EquationTrueFalse(): ProblemCore {
+  const a = randInt(12, 48);
+  const b = randInt(3, 12);
+  const trueValue = a * b;
+  const makeTrue = Math.random() < 0.5;
+  const rightSide = makeTrue ? trueValue : trueValue + [b, -b, 10, -10][randInt(0, 3)];
+  const answer = makeTrue ? "true" : "false";
+  return {
+    prompt: `Is this equation true or false: ${a} × ${b} = ${rightSide}?`,
+    correctAnswer: answer,
+    wrongAnswers: ["true", "false", "cannot tell", `${trueValue}`].filter(
+      (choice) => choice !== answer,
+    ),
+    hint: "Evaluate both sides of the equation.",
+    secondHint: `Find ${a} × ${b}, then compare it to ${rightSide}.`,
+  };
+}
+
+function g4UnknownNumberEquation(): ProblemCore {
+  const unknown = randInt(6, 24);
+  const factor = randInt(3, 12);
+  const product = unknown * factor;
+  const divisionForm = Math.random() < 0.45;
+
+  return {
+    prompt: divisionForm
+      ? `${product} ÷ □ = ${factor}. What number belongs in the box?`
+      : `□ × ${factor} = ${product}. What number belongs in the box?`,
+    correctAnswer: String(unknown),
+    wrongAnswers: [
+      factor,
+      product,
+      unknown + 1,
+      Math.max(1, unknown - 1),
+      factor + unknown,
+    ].map(String),
+    hint: "Use the relationship between multiplication and division.",
+    secondHint: divisionForm
+      ? `Think: ${factor} times what number equals ${product}?`
+      : `Think: ${product} divided by ${factor} equals the missing factor.`,
+  };
+}
+
+function g4NumberPatternRule(): ProblemCore {
+  const start = randInt(3, 40);
+  const step = [4, 5, 6, 8, 10, 12][randInt(0, 5)];
+  const pattern = Array.from({ length: 4 }, (_, index) => start + index * step);
+  const answer = pattern[pattern.length - 1] + step;
+  return {
+    prompt: `A number pattern starts ${pattern.join(", ")}. The rule is add ${step}. What number comes next?`,
+    correctAnswer: String(answer),
+    wrongAnswers: [
+      pattern[pattern.length - 1],
+      answer + step,
+      answer - 1,
+      answer + 1,
+      start * step,
+    ].map(String),
+    hint: "Use the rule on the last number shown.",
+    secondHint: `Add ${step} to ${pattern[pattern.length - 1]}.`,
   };
 }
 
@@ -1097,6 +1301,39 @@ function g4EquivalentFractionsGreaterThanOne(): ProblemCore {
   };
 }
 
+function g4FractionCompare(): ProblemCore {
+  const denominators = [3, 4, 5, 6, 8, 10, 12];
+  const d1 = denominators[randInt(0, denominators.length - 1)];
+  let d2 = denominators[randInt(0, denominators.length - 1)];
+  while (d2 === d1) d2 = denominators[randInt(0, denominators.length - 1)];
+  let n1 = randInt(1, d1 + 3);
+  let n2 = randInt(1, d2 + 3);
+  while (n1 / d1 === n2 / d2) {
+    n1 = randInt(1, d1 + 3);
+    n2 = randInt(1, d2 + 3);
+  }
+  const first = `${n1}/${d1}`;
+  const second = `${n2}/${d2}`;
+  const answer = n1 / d1 > n2 / d2 ? first : second;
+
+  return {
+    prompt: `Which fraction is greater: ${first} or ${second}?`,
+    correctAnswer: answer,
+    wrongAnswers: [
+      answer === first ? second : first,
+      "They are equal",
+      `${n1 + n2}/${d1 + d2}`,
+      `${Math.max(n1, n2)}/${Math.max(d1, d2)}`,
+    ],
+    hint: "Use a benchmark fraction or make equivalent fractions with a common denominator.",
+    secondHint: "Fractions with different denominators need careful comparison. Same-size pieces are easier to compare.",
+    richDisplay: [
+      fractionDisplay(n1, d1, "First fraction"),
+      fractionDisplay(n2, d2, "Second fraction"),
+    ],
+  };
+}
+
 function g4DecimalsHundredths(): ProblemCore {
   const tenths = randInt(1, 9);
   const hundredths = tenths * 10;
@@ -1129,6 +1366,55 @@ function g4DecimalsTenthsToFraction(): ProblemCore {
     ],
     hint: "Tenths are one digit after the decimal point.",
     secondHint: `${decimal} means ${tenths} tenths, so write ${tenths} over 10.`,
+  };
+}
+
+function g4DecimalMoreLess(): ProblemCore {
+  const base = randInt(10, 899) / 100;
+  const change = Math.random() < 0.5 ? 0.1 : 0.01;
+  const more = Math.random() < 0.55;
+  const answer = more ? base + change : Math.max(0, base - change);
+  const wrongs = new Set<string>();
+  for (const candidate of [
+    base,
+    more ? base + 1 : Math.max(0, base - 1),
+    more ? base + 0.1 : Math.max(0, base - 0.1),
+    more ? base + 0.01 : Math.max(0, base - 0.01),
+    answer + change,
+    Math.max(0, answer - change),
+  ]) {
+    const formatted = candidate.toFixed(2);
+    if (formatted !== answer.toFixed(2)) wrongs.add(formatted);
+  }
+  return {
+    prompt: `What number is ${change.toFixed(2)} ${more ? "more" : "less"} than ${base.toFixed(2)}?`,
+    correctAnswer: answer.toFixed(2),
+    wrongAnswers: [...wrongs],
+    hint: "Tenths and hundredths are different place values.",
+    secondHint: `${change.toFixed(2)} changes the ${change === 0.1 ? "tenths" : "hundredths"} place.`,
+  };
+}
+
+function g4DecimalOperations(): ProblemCore {
+  const first = randInt(125, 975) / 100;
+  const second = randInt(25, 425) / 100;
+  const subtract = Math.random() < 0.45;
+  const answer = subtract ? first - second : first + second;
+  if (subtract && answer <= 0) return g4DecimalOperations();
+  return {
+    prompt: subtract
+      ? `A potion bottle has ${first.toFixed(2)} liters. The hero uses ${second.toFixed(2)} liters. How many liters are left?`
+      : `A potion bottle has ${first.toFixed(2)} liters. The hero adds ${second.toFixed(2)} liters more. How many liters are there now?`,
+    correctAnswer: unitAnswer(answer.toFixed(2), "liter", "liters"),
+    wrongAnswers: [
+      first + second,
+      Math.abs(first - second),
+      answer + 0.1,
+      Math.max(0, answer - 0.1),
+      answer + 0.01,
+    ].map((value) => unitAnswer(value.toFixed(2), "liter", "liters")),
+    hint: "Line up decimal points before adding or subtracting.",
+    secondHint: "Hundredths line up with hundredths, and tenths line up with tenths.",
   };
 }
 
@@ -1347,6 +1633,53 @@ function g4DataInterpretation(): ProblemCore {
   };
 }
 
+function g4DataModeMedianRange(): ProblemCore {
+  const values = shuffle([
+    randInt(6, 12),
+    randInt(13, 18),
+    randInt(19, 25),
+    randInt(26, 32),
+    randInt(13, 18),
+  ]);
+  const sorted = [...values].sort((a, b) => a - b);
+  const mode = values.find((value, index) => values.indexOf(value) !== index) ?? values[0];
+  const median = sorted[2];
+  const range = Math.max(...values) - Math.min(...values);
+  const questionType = ["mode", "median", "range"][randInt(0, 2)] as
+    | "mode"
+    | "median"
+    | "range";
+  const answer = questionType === "mode" ? mode : questionType === "median" ? median : range;
+  const richDisplay = [
+    dataTableDisplay(
+      "Rune counts",
+      values.map((value, index) => [`Day ${index + 1}`, value]),
+    ),
+  ];
+
+  return {
+    prompt: `Use the rune counts table below. What is the ${questionType} of the data?`,
+    correctAnswer: unitAnswer(answer, "item", "items"),
+    wrongAnswers: [
+      mode,
+      median,
+      range,
+      Math.max(...values),
+      values.reduce((sum, value) => sum + value, 0),
+    ]
+      .filter((value) => value !== answer)
+      .map((value) => unitAnswer(value, "item", "items")),
+    hint: "Use the meaning of the data word in the question.",
+    secondHint:
+      questionType === "mode"
+        ? "Mode is the value that appears most often."
+        : questionType === "median"
+          ? "Median is the middle value after the data are ordered."
+          : "Range is the greatest value minus the least value.",
+    richDisplay,
+  };
+}
+
 function g4DecimalCompare(): ProblemCore {
   const a = randInt(1, 99) / 100;
   let b = randInt(1, 99) / 100;
@@ -1364,6 +1697,26 @@ function g4DecimalCompare(): ProblemCore {
     ],
     hint: "Compare tenths first, then hundredths.",
     secondHint: "Line up the decimal points. The first different digit tells which decimal is greater.",
+  };
+}
+
+function g4AngleClassification(): ProblemCore {
+  const angle = [
+    { measure: randInt(15, 85), label: "acute" },
+    { measure: 90, label: "right" },
+    { measure: randInt(95, 175), label: "obtuse" },
+    { measure: 180, label: "straight" },
+    { measure: randInt(185, 330), label: "reflex" },
+  ][randInt(0, 4)];
+
+  return {
+    prompt: `An angle measures ${angle.measure}°. What type of angle is it?`,
+    correctAnswer: angle.label,
+    wrongAnswers: ["acute", "right", "obtuse", "straight", "reflex"].filter(
+      (choice) => choice !== angle.label,
+    ),
+    hint: "Use the angle-size categories.",
+    secondHint: "Acute is less than 90°, right is 90°, obtuse is between 90° and 180°, straight is 180°, and reflex is greater than 180°.",
   };
 }
 
@@ -2074,15 +2427,26 @@ const GENERATORS: Record<string, ProblemGenerator> = {
   g3ElapsedTimeTwoStep,
   g3DataInterpretation,
   g4Rounding,
+  g4PlaceValueShift,
+  g4ExpandedForm,
+  g4WholeNumberCompare,
   g4Multiplication,
+  g4TwoDigitMultiplication,
+  g4EstimateProduct,
   g4DivisionRemainders,
+  g4EquationTrueFalse,
+  g4UnknownNumberEquation,
+  g4NumberPatternRule,
   g4FactorsPrimeComposite,
   g4AreaPerimeterRectangles,
   g4SamePerimeterArea,
   g4EquivalentFractions,
   g4EquivalentFractionsGreaterThanOne,
+  g4FractionCompare,
   g4DecimalsHundredths,
   g4DecimalsTenthsToFraction,
+  g4DecimalMoreLess,
+  g4DecimalOperations,
   g4FractionAddLikeDenominators,
   g4FractionDecomposition,
   g4FractionTenthsHundredthsAdd,
@@ -2090,7 +2454,9 @@ const GENERATORS: Record<string, ProblemGenerator> = {
   g4MoneyDecimal,
   g4MeasurementConversion,
   g4DataInterpretation,
+  g4DataModeMedianRange,
   g4DecimalCompare,
+  g4AngleClassification,
   g4Angles,
   g4AnglesThreePart,
   g5DecimalPlaceValue,

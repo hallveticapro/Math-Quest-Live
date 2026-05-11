@@ -487,7 +487,7 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
     gradeBand: 4,
     standardsSystem: "Florida B.E.S.T. Mathematics",
     description: "Practice with Grade 4 math skills",
-    studentSummary: "Multi-digit operations, fractions, decimals, angles, area/perimeter",
+    studentSummary: "Multi-digit operations, fractions, decimals, patterns, data, angles, area/perimeter",
     readingGuidance: "moderate scenes, 90-140 words",
     skills: [
       {
@@ -500,6 +500,33 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
         ...benchmarkMetadata("MA.4.NSO.1.4"),
       },
       {
+        id: "g4_place_value_shift",
+        benchmark: "MA.4.NSO.1.1",
+        description:
+          "Practice how digit values change when moving one place left or right within Grade 4 expectations.",
+        skill: "place-value shifts",
+        generator: "g4PlaceValueShift",
+        ...benchmarkMetadata("MA.4.NSO.1.1"),
+      },
+      {
+        id: "g4_expanded_form",
+        benchmark: "MA.4.NSO.1.2",
+        description:
+          "Practice matching multi-digit whole numbers to expanded form within Grade 4 expectations.",
+        skill: "expanded form through 1,000,000",
+        generator: "g4ExpandedForm",
+        ...benchmarkMetadata("MA.4.NSO.1.2"),
+      },
+      {
+        id: "g4_whole_number_compare",
+        benchmark: "MA.4.NSO.1.3",
+        description:
+          "Practice comparing multi-digit whole numbers up to 1,000,000 within Grade 4 expectations.",
+        skill: "whole-number comparison",
+        generator: "g4WholeNumberCompare",
+        ...benchmarkMetadata("MA.4.NSO.1.3"),
+      },
+      {
         id: "g4_multiplication",
         benchmark: "MA.4.NSO.2.2",
         description:
@@ -509,6 +536,24 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
         ...benchmarkMetadata("MA.4.NSO.2.2"),
       },
       {
+        id: "g4_two_digit_multiplication",
+        benchmark: "MA.4.NSO.2.3",
+        description:
+          "Practice two-digit by two-digit whole-number multiplication within Grade 4 expectations.",
+        skill: "two-digit multiplication",
+        generator: "g4TwoDigitMultiplication",
+        ...benchmarkMetadata("MA.4.NSO.2.3"),
+      },
+      {
+        id: "g4_estimate_product",
+        benchmark: "MA.4.NSO.2.5",
+        description:
+          "Practice estimating multi-digit products using rounding and place value within Grade 4 expectations.",
+        skill: "estimated products",
+        generator: "g4EstimateProduct",
+        ...benchmarkMetadata("MA.4.NSO.2.5"),
+      },
+      {
         id: "g4_division_remainders",
         benchmark: "MA.4.NSO.2.4",
         description:
@@ -516,6 +561,33 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
         skill: "division with fractional remainders",
         generator: "g4DivisionRemainders",
         ...benchmarkMetadata("MA.4.NSO.2.4"),
+      },
+      {
+        id: "g4_equation_true_false",
+        benchmark: "MA.4.AR.2.1",
+        description:
+          "Practice determining whether whole-number equations are true or false within Grade 4 expectations.",
+        skill: "true/false equations",
+        generator: "g4EquationTrueFalse",
+        ...benchmarkMetadata("MA.4.AR.2.1"),
+      },
+      {
+        id: "g4_unknown_number_equation",
+        benchmark: "MA.4.AR.2.2",
+        description:
+          "Practice finding unknown whole numbers in multiplication or division equations within Grade 4 expectations.",
+        skill: "unknown-number equations",
+        generator: "g4UnknownNumberEquation",
+        ...benchmarkMetadata("MA.4.AR.2.2"),
+      },
+      {
+        id: "g4_number_pattern_rule",
+        benchmark: "MA.4.AR.3.2",
+        description:
+          "Practice extending numerical patterns that follow a stated rule within Grade 4 expectations.",
+        skill: "number pattern rules",
+        generator: "g4NumberPatternRule",
+        ...benchmarkMetadata("MA.4.AR.3.2"),
       },
       {
         id: "g4_factors_prime_composite",
@@ -563,6 +635,15 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
         ...benchmarkMetadata("MA.4.FR.1.3"),
       },
       {
+        id: "g4_fraction_compare",
+        benchmark: "MA.4.FR.1.4",
+        description:
+          "Practice comparing fractions, including values greater than one, within Grade 4 expectations.",
+        skill: "fraction comparison",
+        generator: "g4FractionCompare",
+        ...benchmarkMetadata("MA.4.FR.1.4"),
+      },
+      {
         id: "g4_decimals_hundredths",
         benchmark: "MA.4.FR.1.2",
         description:
@@ -579,6 +660,24 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
         skill: "tenths as decimals and fractions",
         generator: "g4DecimalsTenthsToFraction",
         ...benchmarkMetadata("MA.4.FR.1.2"),
+      },
+      {
+        id: "g4_decimal_more_less",
+        benchmark: "MA.4.NSO.2.6",
+        description:
+          "Practice identifying one-tenth or one-hundredth more or less than a decimal within Grade 4 expectations.",
+        skill: "decimal place-value changes",
+        generator: "g4DecimalMoreLess",
+        ...benchmarkMetadata("MA.4.NSO.2.6"),
+      },
+      {
+        id: "g4_decimal_operations",
+        benchmark: "MA.4.NSO.2.7",
+        description:
+          "Practice decimal addition and subtraction to the hundredths within Grade 4 expectations.",
+        skill: "decimal addition and subtraction",
+        generator: "g4DecimalOperations",
+        ...benchmarkMetadata("MA.4.NSO.2.7"),
       },
       {
         id: "g4_fraction_add_like_denominators",
@@ -644,6 +743,15 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
         ...benchmarkMetadata("MA.4.DP.1.3"),
       },
       {
+        id: "g4_data_mode_median_range",
+        benchmark: "MA.4.DP.1.2",
+        description:
+          "Practice interpreting numerical data using mode, median, or range within Grade 4 expectations.",
+        skill: "data mode, median, and range",
+        generator: "g4DataModeMedianRange",
+        ...benchmarkMetadata("MA.4.DP.1.2"),
+      },
+      {
         id: "g4_decimal_compare",
         benchmark: "MA.4.NSO.1.5",
         description:
@@ -651,6 +759,15 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
         skill: "decimal comparison to hundredths",
         generator: "g4DecimalCompare",
         ...benchmarkMetadata("MA.4.NSO.1.5"),
+      },
+      {
+        id: "g4_angle_classification",
+        benchmark: "MA.4.GR.1.1",
+        description:
+          "Practice classifying angles by measure within Grade 4 expectations.",
+        skill: "angle classification",
+        generator: "g4AngleClassification",
+        ...benchmarkMetadata("MA.4.GR.1.1"),
       },
       {
         id: "g4_angles",
