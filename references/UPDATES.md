@@ -2,6 +2,18 @@
 
 Newest entries first. Add a concise timestamped entry for every meaningful project change before creating the related commit.
 
+## 2026-05-12T06:53:07-04:00
+
+- Completed the current PLAN.md math-display and generator batch: stacked inline fractions now render through shared prompt/answer/hint/table paths, denominator-one fractions are normalized for student-facing text, fraction operations preserve intended unsimplified forms where appropriate, Hero decimal prompts vary decimal/word/fraction forms, Hero mixed-number subtraction and multi-digit regrouping problems were added, mode validation now rejects invalid mode data sets, pattern-rule identification was added, geometry comparison prompts use line breaks, unknown boxes render as styled inline placeholders, and Grade 4/5 conversion generators include direct and multi-step customary conversions.
+
+## 2026-05-12T06:53:07-04:00
+
+- Completed the current PLAN.md setup/story variety batch: centered the two pronoun choices, added selectable/focusable descriptions for ancestry and class options, added Lunamandia/Solara/Bramble names, renamed Mango person to Mango, added Starling and Pebblekin ancestries, added ten safe quest genres with backend prompt profiles and fallback scene/ending lines, and updated README/reference docs for the expanded genre and benchmark coverage.
+
+## 2026-05-12T06:53:07-04:00
+
+- Completed the current PLAN.md waiting-screen polish: intro and outro loading screens now use larger shuffled message pools that avoid repeating a line until the current pool is exhausted.
+
 ## 2026-05-11T19:22:00-04:00
 
 - Completed PLAN.md Section 20 final validation checkpoint: math validation, image validation, frontend/backend typechecks, and the full workspace build all passed after the megabatch implementation.

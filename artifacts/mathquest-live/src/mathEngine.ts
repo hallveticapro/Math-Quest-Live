@@ -194,9 +194,33 @@ function gcd(a: number, b: number): number {
   return b === 0 ? Math.abs(a) : gcd(b, a % b);
 }
 
-function fraction(numerator: number, denominator: number) {
-  const divisor = gcd(numerator, denominator);
-  return `${numerator / divisor}/${denominator / divisor}`;
+function fraction(
+  numerator: number,
+  denominator: number,
+  options: { simplify?: boolean } = {},
+) {
+  if (denominator === 0) {
+    throw new Error("Cannot format a fraction with denominator 0.");
+  }
+  const simplify = options.simplify ?? true;
+  const sign = denominator < 0 ? -1 : 1;
+  const adjustedNumerator = numerator * sign;
+  const adjustedDenominator = Math.abs(denominator);
+
+  if (adjustedNumerator % adjustedDenominator === 0) {
+    return String(adjustedNumerator / adjustedDenominator);
+  }
+
+  if (!simplify) {
+    return `${adjustedNumerator}/${adjustedDenominator}`;
+  }
+
+  const divisor = gcd(adjustedNumerator, adjustedDenominator);
+  const simplifiedNumerator = adjustedNumerator / divisor;
+  const simplifiedDenominator = adjustedDenominator / divisor;
+  return simplifiedDenominator === 1
+    ? String(simplifiedNumerator)
+    : `${simplifiedNumerator}/${simplifiedDenominator}`;
 }
 
 function money(cents: number) {
@@ -215,8 +239,36 @@ function unitAnswer(
 }
 
 function parseFraction(value: string) {
+  const mixedMatch = value.match(/^(\d+)\s+(\d+)\/(\d+)$/);
+  if (mixedMatch) {
+    const whole = Number(mixedMatch[1]);
+    const numerator = Number(mixedMatch[2]);
+    const denominator = Number(mixedMatch[3]);
+    return { numerator: whole * denominator + numerator, denominator };
+  }
+  if (!value.includes("/")) {
+    return { numerator: Number(value), denominator: 1 };
+  }
   const [n, d] = value.split("/").map(Number);
   return { numerator: n, denominator: d };
+}
+
+function expectedFraction(numerator: number, denominator: number) {
+  return fraction(numerator, denominator, { simplify: false });
+}
+
+function mixedNumber(whole: number, numerator: number, denominator: number) {
+  if (denominator === 0) {
+    throw new Error("Cannot format a mixed number with denominator 0.");
+  }
+  if (numerator === 0) return String(whole);
+  if (numerator % denominator === 0) {
+    return String(whole + numerator / denominator);
+  }
+  if (whole === 0) {
+    return expectedFraction(numerator, denominator);
+  }
+  return `${whole} ${expectedFraction(numerator, denominator)}`;
 }
 
 function fractionDisplay(
@@ -1006,6 +1058,77 @@ function g4WholeNumberCompare(): ProblemCore {
   };
 }
 
+function hasAdditionRegrouping(a: number, b: number) {
+  let left = a;
+  let right = b;
+  while (left > 0 || right > 0) {
+    if ((left % 10) + (right % 10) >= 10) return true;
+    left = Math.floor(left / 10);
+    right = Math.floor(right / 10);
+  }
+  return false;
+}
+
+function hasSubtractionRegrouping(minuend: number, subtrahend: number) {
+  let left = minuend;
+  let right = subtrahend;
+  let borrow = 0;
+  while (left > 0 || right > 0) {
+    const topDigit = (left % 10) - borrow;
+    const bottomDigit = right % 10;
+    if (topDigit < bottomDigit) return true;
+    borrow = topDigit < bottomDigit ? 1 : 0;
+    left = Math.floor(left / 10);
+    right = Math.floor(right / 10);
+  }
+  return false;
+}
+
+function g4MultiDigitAddSubtract(): ProblemCore {
+  const add = Math.random() < 0.52;
+  const wantsRegrouping = Math.random() < 0.75;
+  let first = 0;
+  let second = 0;
+  let regrouping = false;
+
+  for (let attempt = 0; attempt < 200; attempt += 1) {
+    if (add) {
+      first = randInt(12_000, 649_999);
+      second = randInt(8_000, 329_999);
+      regrouping = hasAdditionRegrouping(first, second);
+    } else {
+      first = randInt(25_000, 999_999);
+      second = randInt(8_000, first - 1_000);
+      regrouping = hasSubtractionRegrouping(first, second);
+    }
+
+    if (regrouping === wantsRegrouping) break;
+  }
+
+  const answer = add ? first + second : first - second;
+  const operationLabel = add ? "total" : "left";
+
+  return {
+    prompt: add
+      ? `A library shelf has ${first.toLocaleString()} story cards and ${second.toLocaleString()} puzzle cards. How many cards are there in all?`
+      : `A sky archive has ${first.toLocaleString()} map pages. The wind sorts away ${second.toLocaleString()} pages. How many pages are left?`,
+    correctAnswer: answer.toLocaleString(),
+    wrongAnswers: [
+      add ? Math.abs(first - second) : first + second,
+      answer + 100,
+      Math.max(0, answer - 100),
+      answer + (regrouping ? 1_000 : 10),
+      Math.max(0, answer - (regrouping ? 1_000 : 10)),
+    ].map((value) => value.toLocaleString()),
+    hint: add
+      ? "Line up the place values before adding."
+      : "Line up the place values before subtracting.",
+    secondHint: regrouping
+      ? `This problem uses regrouping. Work from ones to larger places and track each regroup carefully to find the ${operationLabel}.`
+      : `This problem does not need regrouping, but place value still matters to find the ${operationLabel}.`,
+  };
+}
+
 function g4Multiplication(): ProblemCore {
   const a = randInt(24, 96);
   const b = randInt(4, 9);
@@ -1149,6 +1272,30 @@ function g4NumberPatternRule(): ProblemCore {
   };
 }
 
+function g4NumberPatternIdentifyRule(): ProblemCore {
+  const start = randInt(3, 45);
+  const step = [3, 4, 5, 6, 8, 10, 12][randInt(0, 6)];
+  const increasing = Math.random() < 0.75;
+  const pattern = Array.from({ length: 5 }, (_, index) =>
+    increasing ? start + index * step : start + (4 - index) * step,
+  );
+  const answer = `${increasing ? "Add" : "Subtract"} ${step}`;
+
+  return {
+    prompt: `Pattern: ${pattern.join(", ")}. What rule describes the pattern?`,
+    correctAnswer: answer,
+    wrongAnswers: [
+      `${increasing ? "Add" : "Subtract"} ${step + 1}`,
+      `${increasing ? "Subtract" : "Add"} ${step}`,
+      `Multiply by ${step}`,
+      `${increasing ? "Add" : "Subtract"} ${Math.max(1, step - 1)}`,
+      "Add 1",
+    ],
+    hint: "Compare each number to the one right before it.",
+    secondHint: `The numbers change by ${step} each time, and the pattern ${increasing ? "goes up" : "goes down"}.`,
+  };
+}
+
 function g4FactorsPrimeComposite(): ProblemCore {
   const classify = Math.random() < 0.45;
   const primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47];
@@ -1248,7 +1395,7 @@ function g4SamePerimeterArea(): ProblemCore {
   const answer = areaA > areaB ? "Rectangle A" : "Rectangle B";
 
   return {
-    prompt: `Rectangle A is ${lengthA} by ${widthA}. Rectangle B is ${lengthB} by ${widthB}. They have the same perimeter. Which rectangle has the greater area?`,
+    prompt: `Rectangle A is ${lengthA} by ${widthA}.\nRectangle B is ${lengthB} by ${widthB}.\nThey have the same perimeter. Which rectangle has the greater area?`,
     correctAnswer: answer,
     wrongAnswers: [
       answer === "Rectangle A" ? "Rectangle B" : "Rectangle A",
@@ -1359,8 +1506,8 @@ function g4DecimalsTenthsToFraction(): ProblemCore {
     correctAnswer: `${tenths}/10`,
     wrongAnswers: [
       `${tenths}/100`,
-      `${tenths * 10}/10`,
-      `${10}/${tenths}`,
+      `${tenths + 10}/10`,
+      `${10}/${tenths + 1}`,
       `${tenths + 1}/10`,
       `${Math.max(1, tenths - 1)}/10`,
     ],
@@ -1374,6 +1521,20 @@ function g4DecimalMoreLess(): ProblemCore {
   const change = Math.random() < 0.5 ? 0.1 : 0.01;
   const more = Math.random() < 0.55;
   const answer = more ? base + change : Math.max(0, base - change);
+  const changeForm = ["decimal", "word", "fraction"][randInt(0, 2)] as
+    | "decimal"
+    | "word"
+    | "fraction";
+  const changeText =
+    changeForm === "word"
+      ? change === 0.1
+        ? "one-tenth"
+        : "one-hundredth"
+      : changeForm === "fraction"
+        ? change === 0.1
+          ? "1/10"
+          : "1/100"
+        : change.toFixed(2);
   const wrongs = new Set<string>();
   for (const candidate of [
     base,
@@ -1387,11 +1548,11 @@ function g4DecimalMoreLess(): ProblemCore {
     if (formatted !== answer.toFixed(2)) wrongs.add(formatted);
   }
   return {
-    prompt: `What number is ${change.toFixed(2)} ${more ? "more" : "less"} than ${base.toFixed(2)}?`,
+    prompt: `What number is ${changeText} ${more ? "more" : "less"} than ${base.toFixed(2)}?`,
     correctAnswer: answer.toFixed(2),
     wrongAnswers: [...wrongs],
     hint: "Tenths and hundredths are different place values.",
-    secondHint: `${change.toFixed(2)} changes the ${change === 0.1 ? "tenths" : "hundredths"} place.`,
+    secondHint: `${changeText} changes the ${change === 0.1 ? "tenths" : "hundredths"} place.`,
   };
 }
 
@@ -1425,7 +1586,7 @@ function g4FractionAddLikeDenominators(): ProblemCore {
   if (subtract) {
     const n1 = randInt(3, denominator + 3);
     const n2 = randInt(1, n1 - 1);
-    const answer = fraction(n1 - n2, denominator);
+    const answer = expectedFraction(n1 - n2, denominator);
     return {
       prompt: `What is ${n1}/${denominator} - ${n2}/${denominator}?`,
       correctAnswer: answer,
@@ -1446,7 +1607,7 @@ function g4FractionAddLikeDenominators(): ProblemCore {
 
   const n1 = randInt(1, denominator - 1);
   const n2 = randInt(1, denominator - 1);
-  const answer = fraction(n1 + n2, denominator);
+  const answer = expectedFraction(n1 + n2, denominator);
   return {
     prompt: `What is ${n1}/${denominator} + ${n2}/${denominator}?`,
     correctAnswer: answer,
@@ -1461,6 +1622,67 @@ function g4FractionAddLikeDenominators(): ProblemCore {
     richDisplay: [
       fractionDisplay(n1, denominator, "First fraction"),
       fractionDisplay(n2, denominator, "Second fraction"),
+    ],
+  };
+}
+
+function g4MixedNumberSubtraction(): ProblemCore {
+  const denominator = [4, 5, 6, 8, 10, 12][randInt(0, 5)];
+  const regroup = Math.random() < 0.7;
+  const minuendWhole = randInt(3, 9);
+  const subtrahendWhole = randInt(1, minuendWhole - 1);
+  let minuendNumerator = randInt(1, denominator - 1);
+  let subtrahendNumerator = randInt(1, denominator - 1);
+
+  if (regroup) {
+    while (subtrahendNumerator <= minuendNumerator) {
+      subtrahendNumerator = randInt(1, denominator - 1);
+      minuendNumerator = randInt(1, denominator - 1);
+    }
+  } else {
+    while (minuendNumerator <= subtrahendNumerator) {
+      subtrahendNumerator = randInt(1, denominator - 1);
+      minuendNumerator = randInt(1, denominator - 1);
+    }
+  }
+
+  const answerWhole = regroup
+    ? minuendWhole - subtrahendWhole - 1
+    : minuendWhole - subtrahendWhole;
+  const answerNumerator = regroup
+    ? minuendNumerator + denominator - subtrahendNumerator
+    : minuendNumerator - subtrahendNumerator;
+  const correctAnswer = mixedNumber(answerWhole, answerNumerator, denominator);
+  const minuend = mixedNumber(minuendWhole, minuendNumerator, denominator);
+  const subtrahend = mixedNumber(
+    subtrahendWhole,
+    subtrahendNumerator,
+    denominator,
+  );
+
+  return {
+    prompt: `What is ${minuend} - ${subtrahend}?`,
+    correctAnswer,
+    wrongAnswers: [
+      mixedNumber(
+        Math.max(0, minuendWhole - subtrahendWhole),
+        Math.abs(minuendNumerator - subtrahendNumerator),
+        denominator,
+      ),
+      mixedNumber(answerWhole + 1, answerNumerator, denominator),
+      mixedNumber(Math.max(0, answerWhole - 1), answerNumerator, denominator),
+      mixedNumber(answerWhole, Math.min(denominator - 1, answerNumerator + 1), denominator),
+      mixedNumber(answerWhole, Math.max(1, answerNumerator - 1), denominator),
+    ],
+    hint: regroup
+      ? "The first fraction is smaller, so regroup one whole into fraction pieces before subtracting."
+      : "The denominators match, so subtract the whole numbers and subtract the numerators.",
+    secondHint: regroup
+      ? `Regroup 1 whole as ${denominator}/${denominator}, then subtract the fraction parts.`
+      : "Keep the denominator the same. Subtract only the top numbers in the fraction parts.",
+    richDisplay: [
+      fractionDisplay(minuendNumerator, denominator, "First fraction part"),
+      fractionDisplay(subtrahendNumerator, denominator, "Second fraction part"),
     ],
   };
 }
@@ -1491,7 +1713,7 @@ function g4FractionTenthsHundredthsAdd(): ProblemCore {
   const tenths = randInt(1, 8);
   const hundredths = randInt(5, 85);
   const answerHundredths = tenths * 10 + hundredths;
-  const answer = fraction(answerHundredths, 100);
+  const answer = expectedFraction(answerHundredths, 100);
 
   return {
     prompt: `What is ${tenths}/10 + ${hundredths}/100?`,
@@ -1500,8 +1722,8 @@ function g4FractionTenthsHundredthsAdd(): ProblemCore {
       `${tenths + hundredths}/110`,
       `${tenths + hundredths}/100`,
       `${answerHundredths}/10`,
-      fraction(Math.max(1, answerHundredths - 10), 100),
-      fraction(answerHundredths + 10, 100),
+      expectedFraction(Math.max(1, answerHundredths - 10), 100),
+      expectedFraction(answerHundredths + 10, 100),
     ],
     hint: "Convert tenths to hundredths before adding.",
     secondHint: `${tenths}/10 is ${tenths * 10}/100. Add the hundredths after the denominators match.`,
@@ -1516,17 +1738,17 @@ function g4FractionTimesWhole(): ProblemCore {
   const whole = randInt(2, 8);
   const denominator = [3, 4, 5, 6, 8, 10][randInt(0, 5)];
   const numerator = randInt(1, denominator - 1);
-  const answer = fraction(whole * numerator, denominator);
+  const answer = expectedFraction(whole * numerator, denominator);
   const answerWithUnit = `${answer} yards`;
 
   return {
     prompt: `A banner uses ${numerator}/${denominator} yard of ribbon. How much ribbon is needed for ${whole} banners?`,
     correctAnswer: answerWithUnit,
     wrongAnswers: [
-      fraction(whole + numerator, denominator),
+      expectedFraction(whole + numerator, denominator),
       `${whole}/${denominator}`,
-      fraction(whole * numerator, denominator + whole),
-      fraction(whole * numerator + 1, denominator),
+      expectedFraction(whole * numerator, denominator + whole),
+      expectedFraction(whole * numerator + 1, denominator),
     ].map((value) => `${value} yards`),
     hint: "This is repeated groups of the same fraction.",
     secondHint: "Multiply the whole number by the numerator. Keep the denominator the same.",
@@ -1561,12 +1783,35 @@ function g4MoneyDecimal(): ProblemCore {
 }
 
 function g4MeasurementConversion(): ProblemCore {
-  const conversions = [
-    { from: "yards", singularFrom: "yard", to: "feet", factor: 3, category: "length" as const },
-    { from: "feet", singularFrom: "foot", to: "inches", factor: 12, category: "length" as const },
-    { from: "hours", singularFrom: "hour", to: "minutes", factor: 60, category: "time" as const },
-    { from: "quarts", singularFrom: "quart", to: "pints", factor: 2, category: "capacity" as const },
-    { from: "pounds", singularFrom: "pound", to: "ounces", factor: 16, category: "weight" as const },
+  const conversions: Array<{
+    from: string;
+    singularFrom: string;
+    to: string;
+    factor: number;
+    category: CustomaryReferenceCategory;
+    steps?: string;
+  }> = [
+    { from: "yards", singularFrom: "yard", to: "feet", factor: 3, category: "length" },
+    { from: "feet", singularFrom: "foot", to: "inches", factor: 12, category: "length" },
+    { from: "hours", singularFrom: "hour", to: "minutes", factor: 60, category: "time" },
+    { from: "quarts", singularFrom: "quart", to: "pints", factor: 2, category: "capacity" },
+    { from: "pounds", singularFrom: "pound", to: "ounces", factor: 16, category: "weight" },
+    {
+      from: "yards",
+      singularFrom: "yard",
+      to: "inches",
+      factor: 36,
+      category: "length",
+      steps: "1 yard = 3 feet and 1 foot = 12 inches",
+    },
+    {
+      from: "gallons",
+      singularFrom: "gallon",
+      to: "pints",
+      factor: 8,
+      category: "capacity",
+      steps: "1 gallon = 4 quarts and 1 quart = 2 pints",
+    },
   ];
   const conversion = conversions[randInt(0, conversions.length - 1)];
   const amount = randInt(2, 9);
@@ -1582,7 +1827,9 @@ function g4MeasurementConversion(): ProblemCore {
       `${amount} ${conversion.to}`,
     ],
     hint: `Convert from ${conversion.from} to ${conversion.to} using the matching unit relationship.`,
-    secondHint: `Each ${conversion.singularFrom} has ${conversion.factor} ${conversion.to}, so multiply ${amount} by ${conversion.factor}.`,
+    secondHint: conversion.steps
+      ? `${conversion.steps}, so each ${conversion.singularFrom} has ${conversion.factor} ${conversion.to}.`
+      : `Each ${conversion.singularFrom} has ${conversion.factor} ${conversion.to}, so multiply ${amount} by ${conversion.factor}.`,
     richDisplay: [customaryReferenceTableDisplay(conversion.category, 4)],
   };
 }
@@ -1634,15 +1881,15 @@ function g4DataInterpretation(): ProblemCore {
 }
 
 function g4DataModeMedianRange(): ProblemCore {
-  const values = shuffle([
-    randInt(6, 12),
-    randInt(13, 18),
-    randInt(19, 25),
-    randInt(26, 32),
-    randInt(13, 18),
-  ]);
+  const modeValue = randInt(13, 18);
+  const otherValues = new Set<number>();
+  while (otherValues.size < 3) {
+    const candidate = randInt(6, 32);
+    if (candidate !== modeValue) otherValues.add(candidate);
+  }
+  const values = shuffle([modeValue, modeValue, ...otherValues]);
   const sorted = [...values].sort((a, b) => a - b);
-  const mode = values.find((value, index) => values.indexOf(value) !== index) ?? values[0];
+  const mode = modeValue;
   const median = sorted[2];
   const range = Math.max(...values) - Math.min(...values);
   const questionType = ["mode", "median", "range"][randInt(0, 2)] as
@@ -1961,14 +2208,14 @@ function g5FractionAddUnlike(): ProblemCore {
   const d2 = [5, 6, 8, 10, 12][randInt(0, 4)];
   const n1 = randInt(1, d1 - 1);
   const n2 = randInt(1, d2 - 1);
-  const answer = fraction(n1 * d2 + n2 * d1, d1 * d2);
+  const answer = expectedFraction(n1 * d2 + n2 * d1, d1 * d2);
   return {
     prompt: `What is ${n1}/${d1} + ${n2}/${d2}?`,
     correctAnswer: answer,
     wrongAnswers: [
-      fraction(n1 + n2, d1 + d2),
-      fraction(n1 + n2, d1 * d2),
-      fraction(Math.abs(n1 * d2 - n2 * d1) || 1, d1 * d2),
+      expectedFraction(n1 + n2, d1 + d2),
+      expectedFraction(n1 + n2, d1 * d2),
+      expectedFraction(Math.abs(n1 * d2 - n2 * d1) || 1, d1 * d2),
       `${n1 + n2}/${Math.max(d1, d2)}`,
     ],
     hint: "For unlike denominators, first make equivalent fractions with a common denominator.",
@@ -1992,16 +2239,16 @@ function g5FractionSubtractUnlike(): ProblemCore {
     [d1, d2] = [d2, d1];
   }
 
-  const answer = fraction(n1 * d2 - n2 * d1, d1 * d2);
+  const answer = expectedFraction(n1 * d2 - n2 * d1, d1 * d2);
   return {
     prompt: `A lantern is filled ${n1}/${d1} full. The hero uses ${n2}/${d2} of the lantern oil. How much of the lantern remains filled?`,
     correctAnswer: answer,
     wrongAnswers: [
-      fraction(Math.abs(n1 - n2), Math.max(d1, d2)),
-      fraction(Math.abs(n1 - n2) || 1, d1 + d2),
-      fraction(n1 * d2 + n2 * d1, d1 * d2),
+      expectedFraction(Math.abs(n1 - n2), Math.max(d1, d2)),
+      expectedFraction(Math.abs(n1 - n2) || 1, d1 + d2),
+      expectedFraction(n1 * d2 + n2 * d1, d1 * d2),
       `${Math.abs(n1 - n2) || 1}/${d1}`,
-      fraction(n1 * d2 - n2 * d1 + 1, d1 * d2),
+      expectedFraction(n1 * d2 - n2 * d1 + 1, d1 * d2),
     ],
     hint: "For unlike denominators, make equivalent fractions with a common denominator before subtracting.",
     secondHint: "Use the common denominator, subtract the numerators, and keep the denominator the same.",
@@ -2016,16 +2263,16 @@ function g5FractionTimesWhole(): ProblemCore {
   const whole = randInt(2, 9);
   const denominator = randInt(3, 10);
   const numerator = randInt(1, denominator - 1);
-  const answer = fraction(whole * numerator, denominator);
+  const answer = expectedFraction(whole * numerator, denominator);
   const answerWithUnit = `${answer} cups`;
   return {
     prompt: `A recipe uses ${numerator}/${denominator} cup of spice for each batch. How much is needed for ${whole} batches?`,
     correctAnswer: answerWithUnit,
     wrongAnswers: [
-      fraction(whole + numerator, denominator),
-      fraction(whole * denominator, numerator),
+      expectedFraction(whole + numerator, denominator),
+      expectedFraction(whole * denominator, numerator),
       `${whole}/${denominator}`,
-      fraction(whole * numerator + 1, denominator),
+      expectedFraction(whole * numerator + 1, denominator),
     ].map((value) => `${value} cups`),
     hint: "A fraction for each batch means repeated groups of that fraction. Multiply the whole number by the numerator.",
     secondHint: "Keep the denominator the same, and multiply the whole number by the top number.",
@@ -2038,19 +2285,19 @@ function g5FractionTimesFraction(): ProblemCore {
   const d2 = [4, 5, 6, 8, 10][randInt(0, 4)];
   const n1 = randInt(1, d1 - 1);
   const n2 = randInt(1, d2 - 1);
-  const answer = fraction(n1 * n2, d1 * d2);
+  const answer = expectedFraction(n1 * n2, d1 * d2);
 
   return {
     prompt: `What is ${n1}/${d1} × ${n2}/${d2}?`,
     correctAnswer: answer,
     wrongAnswers: [
-      fraction(n1 + n2, d1 + d2),
-      fraction(n1 * d2, d1 * n2),
-      fraction(n1 * n2, d1 + d2),
-      fraction(n1 + n2, d1 * d2),
+      expectedFraction(n1 + n2, d1 + d2),
+      expectedFraction(n1 * d2, d1 * n2),
+      expectedFraction(n1 * n2, d1 + d2),
+      expectedFraction(n1 + n2, d1 * d2),
     ],
     hint: "To multiply fractions, multiply the numerators and multiply the denominators.",
-    secondHint: "Top times top, bottom times bottom. Simplify the fraction if possible.",
+    secondHint: "Top times top and bottom times bottom. Keep the product in fraction form.",
     richDisplay: [
       fractionDisplay(n1, d1, "First factor"),
       fractionDisplay(n2, d2, "Second factor"),
@@ -2347,6 +2594,44 @@ function g5WholeNumberDivision(): ProblemCore {
   };
 }
 
+function g5MeasurementConversion(): ProblemCore {
+  const conversions: Array<{
+    from: string;
+    singularFrom: string;
+    to: string;
+    factor: number;
+    category: CustomaryReferenceCategory;
+    steps?: string;
+  }> = [
+    { from: "yards", singularFrom: "yard", to: "feet", factor: 3, category: "length" },
+    { from: "feet", singularFrom: "foot", to: "inches", factor: 12, category: "length" },
+    { from: "miles", singularFrom: "mile", to: "feet", factor: 5280, category: "length" },
+    { from: "hours", singularFrom: "hour", to: "minutes", factor: 60, category: "time" },
+    { from: "days", singularFrom: "day", to: "hours", factor: 24, category: "time" },
+    { from: "gallons", singularFrom: "gallon", to: "pints", factor: 8, category: "capacity", steps: "1 gallon = 4 quarts and 1 quart = 2 pints" },
+    { from: "yards", singularFrom: "yard", to: "inches", factor: 36, category: "length", steps: "1 yard = 3 feet and 1 foot = 12 inches" },
+  ];
+  const conversion = conversions[randInt(0, conversions.length - 1)];
+  const amount = conversion.factor > 1000 ? randInt(1, 3) : randInt(2, 9);
+  const answer = amount * conversion.factor;
+
+  return {
+    prompt: `Use the reference table below. The quest record shows ${amount} ${conversion.from}. How many ${conversion.to} is that?`,
+    correctAnswer: `${answer.toLocaleString()} ${conversion.to}`,
+    wrongAnswers: [
+      `${(amount + conversion.factor).toLocaleString()} ${conversion.to}`,
+      `${Math.max(1, answer - conversion.factor).toLocaleString()} ${conversion.to}`,
+      `${(answer + conversion.factor).toLocaleString()} ${conversion.to}`,
+      `${amount.toLocaleString()} ${conversion.to}`,
+    ],
+    hint: `Convert from ${conversion.from} to ${conversion.to} using the reference table.`,
+    secondHint: conversion.steps
+      ? `${conversion.steps}. Multiply ${amount} by ${conversion.factor}.`
+      : `Each ${conversion.singularFrom} has ${conversion.factor.toLocaleString()} ${conversion.to}, so multiply ${amount} by ${conversion.factor.toLocaleString()}.`,
+    richDisplay: [customaryReferenceTableDisplay(conversion.category, 5)],
+  };
+}
+
 function g5GeometryClassification(): ProblemCore {
   const questions = [
     {
@@ -2474,7 +2759,7 @@ function g5ExtremeFractionCombo(): ProblemCore {
       partial,
       fraction(parsed.numerator + add, parsed.denominator),
       fraction(parsed.numerator, parsed.denominator + add),
-      `${add}/${parsed.denominator}`,
+      expectedFraction(add, parsed.denominator),
     ].map((value) => `${value} crystals`),
     hint: "Break this into steps: add the fractions first, then add the whole crystals.",
     secondHint: "Use a common denominator for the fractions. After that, add the whole-number amount.",
@@ -2901,6 +3186,7 @@ const GENERATORS: Record<string, ProblemGenerator> = {
   g4EquationTrueFalse,
   g4UnknownNumberEquation,
   g4NumberPatternRule,
+  g4NumberPatternIdentifyRule,
   g4FactorsPrimeComposite,
   g4AreaPerimeterRectangles,
   g4SamePerimeterArea,
@@ -2949,6 +3235,7 @@ const GENERATORS: Record<string, ProblemGenerator> = {
   g5InputOutputTable,
   g5WholeNumberMultiplication,
   g5WholeNumberDivision,
+  g5MeasurementConversion,
   g5GeometryClassification,
   g5ThreeDClassification,
   g5DataStatistics,

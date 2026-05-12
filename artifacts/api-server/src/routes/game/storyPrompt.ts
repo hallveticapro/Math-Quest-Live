@@ -49,9 +49,9 @@ export interface EndingData extends StartGameData {
   episodePlan?: EpisodePlan;
 }
 
-export const ALLOWED_HERO_NAMES = ["Astra", "Kael", "Nova", "Mira", "Jax", "Luna", "Orion", "Sage", "Zara", "Theo", "Elara", "Milo"] as const;
+export const ALLOWED_HERO_NAMES = ["Astra", "Kael", "Nova", "Mira", "Jax", "Luna", "Orion", "Sage", "Zara", "Theo", "Elara", "Milo", "Lunamandia", "Solara", "Bramble"] as const;
 export const ALLOWED_PRONOUNS = ["she/her", "he/him", "they/them"] as const;
-export const ALLOWED_ANCESTRIES = ["Human", "Elf", "Dwarf", "Dragonborn", "Fae", "Robot", "Merfolk", "Beastfolk", "Starborn", "Gnome", "Sprite", "Stonekin", "Cloudling", "Foxfolk", "Hamster", "Guinea Pig", "Wolf", "Mango person"] as const;
+export const ALLOWED_ANCESTRIES = ["Human", "Elf", "Dwarf", "Dragonborn", "Fae", "Robot", "Merfolk", "Beastfolk", "Starborn", "Gnome", "Sprite", "Stonekin", "Cloudling", "Foxfolk", "Hamster", "Guinea Pig", "Wolf", "Mango", "Starling", "Pebblekin"] as const;
 export const ALLOWED_CLASSES = ["Wizard", "Warrior", "Explorer", "Rogue", "Inventor", "Healer", "Beast Tamer", "Elementalist", "Guardian", "Cartographer", "Stargazer", "Alchemist", "Puzzle Mage"] as const;
 export const ALLOWED_DIFFICULTIES = ["Easy", "Medium", "Hard", "Extreme"] as const;
 export const ALLOWED_MAX_TURNS = [8, 12, 16] as const;
@@ -79,7 +79,17 @@ type QuestGenre =
   | "Spooky Mystery / Friendly Ghosts"
   | "Tiny World"
   | "Magical School"
-  | "Snack Escape";
+  | "Snack Escape"
+  | "Crystal Caverns"
+  | "Clockwork City"
+  | "Jungle Ruins"
+  | "Undersea Kingdom"
+  | "Moon Base Mystery"
+  | "Enchanted Library"
+  | "Candy Kingdom"
+  | "Dinosaur Valley"
+  | "Miniature Backyard Quest"
+  | "Rainbow Railway";
 
 type GenreProfile = {
   settings: string[];
@@ -192,6 +202,76 @@ const GENRE_PROFILES: Record<QuestGenre, GenreProfile> = {
     helpers: ["blueberry scout", "toast crumb cartographer", "friendly napkin kite", "tiny spoon sled"],
     details: ["giant footsteps thump like drums far away", "a napkin flutters like a sail", "crumbs make boulder-sized stepping stones", "a lunch bell rings in silly cartoon echoes"],
     avoid: "cannibalism, horror, graphic eating, biting, chewing, injury, realistic danger, scary humans",
+  },
+  "Crystal Caverns": {
+    settings: ["a glowing cave of rainbow crystals", "a gem tunnel under a sleepy mountain", "a lantern-lit cavern classroom", "a crystal bridge above a quiet underground stream"],
+    objectives: ["restore the song of the crystal bells", "sort the color keys before the lanterns dim", "help a lost echo find its cave door", "repair the gem bridge for the festival parade"],
+    helpers: ["glow-worm guide", "crystal badger", "echo sprite", "lantern mole"],
+    details: ["crystals chime when clues match", "soft lights ripple across the stone", "tiny echoes repeat helpful words", "gem dust sparkles like safe confetti"],
+    avoid: "cave-ins, darkness panic, realistic danger, injury",
+  },
+  "Clockwork City": {
+    settings: ["a city of friendly gears", "a clock tower market", "a brass bridge over a winding canal", "a robot parade workshop"],
+    objectives: ["restart the kindness clock", "help the parade robots find their rhythm", "sort the mixed-up gear tickets", "repair the bell that announces helpful ideas"],
+    helpers: ["clockwork pigeon", "robot baker", "gear librarian", "spring-powered squirrel"],
+    details: ["gears click in cheerful patterns", "steam puffs make cloud shapes", "brass signs flip toward clues", "tiny bells ding after brave choices"],
+    avoid: "explosions, burns, dangerous machinery, injury",
+  },
+  "Jungle Ruins": {
+    settings: ["sunny ruins wrapped in vines", "a treehouse beside old puzzle stones", "a flower-covered temple courtyard", "a mossy staircase with friendly signs"],
+    objectives: ["match the mural leaves", "wake the garden fountain", "guide the festival animals to the safe courtyard", "return a sun tile to the kindness gate"],
+    helpers: ["toucan mapkeeper", "leaf sprite", "gentle capybara", "frog drummer"],
+    details: ["vines curl into arrows", "flowers open around good clues", "old stones glow softly", "butterflies carry tiny flags"],
+    avoid: "predator attacks, injury, scary ruins, traps that hurt people",
+  },
+  "Undersea Kingdom": {
+    settings: ["a pearl castle beneath calm waves", "a coral classroom", "a kelp garden maze", "a shell-lit town square"],
+    objectives: ["tune the shell bells", "help lantern fish find the parade route", "repair the coral gate", "return a missing pearl bookmark"],
+    helpers: ["sea turtle guide", "merfolk librarian", "puzzle crab", "lantern fish"],
+    details: ["bubbles carry clues upward", "coral windows glow softly", "seaweed points like arrows", "shells hum when choices are kind"],
+    avoid: "drowning, scary sea monsters, storms, injury",
+  },
+  "Moon Base Mystery": {
+    settings: ["a friendly moon base garden", "a rover garage under glass", "a crater observatory", "a moon market of floating stalls"],
+    objectives: ["find the missing rover key", "restart the constellation projector", "sort moon rocks for the science fair", "repair the beacon for visiting star friends"],
+    helpers: ["rover pup", "moon moth", "robot botanist", "star-map keeper"],
+    details: ["low gravity makes notebooks float", "buttons blink in moon colors", "crater dust sparkles softly", "stars seem to wink at clues"],
+    avoid: "oxygen danger, crashes, scary aliens, realistic space emergencies",
+  },
+  "Enchanted Library": {
+    settings: ["a library where books whisper politely", "a tower of floating shelves", "a reading room under a starry skylight", "a hallway of bookmark doors"],
+    objectives: ["return a runaway chapter", "help the index cards find their shelves", "wake the sleepy story lantern", "solve why the map book keeps sneezing glitter"],
+    helpers: ["bookmark fairy", "owl librarian", "book mouse", "talking magnifying glass"],
+    details: ["pages flutter into arrows", "ink glows around clues", "shelves slide gently aside", "bookmarks bow like tiny flags"],
+    avoid: "forbidden magic, scary books, punishment, horror",
+  },
+  "Candy Kingdom": {
+    settings: ["a gumdrop castle courtyard", "a peppermint bridge", "a cupcake village square", "a licorice-road garden"],
+    objectives: ["restore the festival sprinkles", "guide the cookie carts to the parade", "repair the candy clock", "find the missing recipe ribbon"],
+    helpers: ["marshmallow messenger", "jellybean scout", "peppermint pony", "cupcake mayor"],
+    details: ["everything is cartoon-sweet and not for eating anyone", "sugar crystals sparkle like stars", "candy signs wiggle toward clues", "frosting flowers bloom after kind choices"],
+    avoid: "gross eating imagery, biting, chewing, stomach jokes, realistic danger",
+  },
+  "Dinosaur Valley": {
+    settings: ["a sunny valley of gentle dinosaurs", "a fossil library", "a fern-covered river bend", "a dino egg nursery with friendly signs"],
+    objectives: ["help the baby dinosaurs find the music trail", "sort fossil tiles for the museum", "repair the fern bridge", "return a lost footprint map"],
+    helpers: ["tiny triceratops", "fossil fairy", "gentle brontosaurus", "dino librarian"],
+    details: ["big footsteps sound like drums", "ferns wave toward clues", "fossils glow in safe patterns", "dinosaur friends rumble hello"],
+    avoid: "predator attacks, injury, scary chases, extinction danger",
+  },
+  "Miniature Backyard Quest": {
+    settings: ["a backyard where the hero is tiny", "a flowerpot village", "a garden hose river", "a birdhouse lookout tower"],
+    objectives: ["repair the acorn elevator", "help ladybugs organize the map parade", "find the missing button wheel", "guide the dew-drop lanterns home"],
+    helpers: ["ladybug scout", "button mouse", "friendly ant", "clover sprite"],
+    details: ["grass blades tower like trees", "dew drops sparkle like crystal balls", "pebbles become stepping stones", "petals unfold like maps"],
+    avoid: "being eaten, scary insects, injury, realistic animal danger",
+  },
+  "Rainbow Railway": {
+    settings: ["a rainbow train station", "a cloud platform with glowing rails", "a ticket booth run by friendly sprites", "a bridge of colored light"],
+    objectives: ["sort the color tickets", "help the train reach the festival stop", "repair the whistle that calls helpful clues", "find the missing conductor badge"],
+    helpers: ["conductor fox", "ticket sprite", "cloud turtle", "paintbrush bird"],
+    details: ["rails glow one color at a time", "tickets flutter toward clues", "the train hums a cheerful tune", "clouds puff into safe platforms"],
+    avoid: "train crashes, falling danger, injury, scary speed",
   },
 };
 
@@ -352,7 +432,7 @@ IMPORTANT RULES:
 - Allowed: cartoon adventure danger, puzzles, magical obstacles, friendly creatures, storms, locked doors, mysteries
 - Problems resolved through: math, observation, kindness, creativity, teamwork, courage
 - Ancestry/species only affects appearance and fantasy flavor — never implies intelligence or ability
-- If the hero is a Mango person, describe them as a cheerful whimsical fruit-person adventurer with cartoon-safe charm; never use gross, creepy, body-horror, or realistic eating imagery.
+- If the hero is a Mango, describe them as a cheerful whimsical fruit-shaped adventurer with cartoon-safe charm; never use gross, creepy, body-horror, or realistic eating imagery.
 - If the genre is Snack Escape, frame it as silly cartoon picnic or cafeteria chaos with distant hungry giants/humans; never use cannibalism, horror, biting, chewing, injury, gore, or realistic predator danger.
 - Pronouns only affect pronoun use in the story
 - Write in fun, adventurous middle-grade tone like a fantasy novel

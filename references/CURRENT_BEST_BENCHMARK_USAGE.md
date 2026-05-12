@@ -23,10 +23,10 @@ This file documents the benchmarks currently used by MathQuest Live. Benchmark d
 ## Summary
 
 - Unique benchmark codes currently used: 79
-- Total skill entries currently mapped to benchmarks: 99
+- Total skill entries currently mapped to benchmarks: 103
 - Grade 3 / Easy skill entries: 20
-- Grade 4 / Medium skill entries: 33
-- Grade 5 / Hard skill entries: 29
+- Grade 4 / Medium skill entries: 36
+- Grade 5 / Hard skill entries: 30
 - Advanced Grade 5 / Extreme skill entries: 17
 
 Benchmark codes and descriptions are currently internal metadata on generated math problems. Student-facing setup, settings, and app-info UI show difficulty-level descriptions and skill summaries, but they do not show individual benchmark codes. The README includes a sample metadata object that shows one benchmark code and description.
@@ -66,6 +66,8 @@ Newly added or expanded generator coverage:
 - Medium / Grade 4: `g4PlaceValueShift`, `g4ExpandedForm`, `g4WholeNumberCompare`, `g4TwoDigitMultiplication`, `g4EstimateProduct`, `g4EquationTrueFalse`, `g4UnknownNumberEquation`, `g4NumberPatternRule`, `g4FractionCompare`, `g4DecimalMoreLess`, `g4DecimalOperations`, `g4DataModeMedianRange`, and `g4AngleClassification`.
 - Hard / Grade 5: `g5DecimalPlaceValueShift`, `g5DecimalExpandedForm`, `g5DecimalEstimateProduct`, `g5DecimalPowerOfTen`, `g5UnitFractionDivision`, `g5VolumeUnitCubes`, `g5ExpressionTranslation`, `g5EquationTrueFalse`, `g5UnknownNumberEquation`, `g5PatternRuleExpression`, `g5InputOutputTable`, and `g5ThreeDClassification`.
 - Extreme / Advanced Grade 5: `g5ExtremeUnitFractionDivision`, `g5ExtremeDecimalPowerOfTen`, `g5ExtremeVolumeTwoPrisms`, `g5ExtremeMeasurementCapacityWeight`, `g5ExtremeExpressionTranslationEvaluate`, `g5ExtremeInputOutputTable`, and `g5ExtremeProductSizeReasoning`.
+- Medium / Grade 4: `g4MultiDigitAddSubtract`, `g4NumberPatternIdentifyRule`, `g4MixedNumberSubtraction`, and expanded `g4MeasurementConversion` coverage add regrouping computation, rule-identification patterns, mixed-number subtraction with regrouping, and multi-step customary conversions.
+- Hard / Grade 5: `g5MeasurementConversion` adds Grade 5 customary conversion practice including direct and multi-step conversions.
 - Easy / Grade 3: `g3MeasurementMassVolume` under `MA.3.M.1.2`.
 - Easy / Grade 3: `g3NumberPatterns` under `MA.3.AR.3.3`.
 - Medium / Grade 4: `g4SamePerimeterArea`, `g4FractionDecomposition`, `g4FractionTenthsHundredthsAdd`, `g4FractionTimesWhole`, `g4MeasurementConversion`, `g4DataInterpretation`, and `g4DecimalCompare`.
@@ -638,6 +640,7 @@ Skipped pending stronger verification before implementation:
 - `MA.5.AR.1.2` is used for both Hard fraction-times-whole-number problems and Extreme multi-step fraction reasoning. Both remain Grade 5, but the app should not claim exhaustive benchmark coverage.
 - `MA.5.NSO.2.3` appears in both Hard and Extreme. Extreme uses the same Grade 5 code with higher complexity, which matches the app's design goal.
 - `MA.5.AR.2.2` appears in both Hard and Extreme expression generators. Extreme stays within Grade 5-style numerical expressions.
+- `MA.4.NSO.2.7` is now used for the Hero multi-digit addition/subtraction generator after the current plan requested that Grade 4 practice. That pairing should receive extra review before formal standards reporting because the imported reference wording emphasizes decimal addition and subtraction.
 - Extreme now uses first-quadrant coordinate-value interpretation under `MA.5.GR.4.2` after manual review.
 - Recovery problems use easier difficulty bands through `generateUniqueRecoveryProblem`. This means a Hard recovery problem can use Medium metadata and an Extreme recovery problem can use Hard metadata. That is intentional for support, but teacher-facing reporting should explain recovery metadata if it is ever displayed.
 - README currently includes one sample benchmark description for `MA.3.AR.1.2`; keep public wording conservative and avoid claiming exhaustive coverage.
@@ -650,6 +653,7 @@ Skipped pending stronger verification before implementation:
 3. Add explicit domain/strand metadata only after official wording is verified.
 4. Review remaining potential mismatches first:
    - `MA.3.AR.1.2`
+   - `MA.4.NSO.2.7`
    - `MA.5.AR.1.2`
 5. After verification, update `floridaBestMath.ts`, this reference file, README wording, and any teacher/debug display consistently.
 6. Re-run `npm run validate:math` after any future benchmark mapping changes to confirm every generated problem still includes complete metadata.

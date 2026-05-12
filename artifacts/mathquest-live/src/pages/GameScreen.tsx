@@ -3,7 +3,11 @@ import { CheckCircle2, Lightbulb, Square, Volume2 } from "lucide-react";
 import { GameState } from "../types";
 import { playClick } from "../lib/sounds";
 import { SceneImage } from "../components/SceneImage";
-import { MathAnswerChoice, MathRichDisplay } from "../components/MathRichDisplay";
+import {
+  MathAnswerChoice,
+  MathInlineText,
+  MathRichDisplay,
+} from "../components/MathRichDisplay";
 import { getQuestLengthByTurns } from "../questLengths";
 import { resetScrollForTransition } from "../lib/scroll";
 import { getDifficultyBand } from "../math/floridaBestMath";
@@ -22,10 +26,18 @@ const QUEST_TRANSITION_IN_MS = 320;
 const LOADING_MESSAGE_INTERVAL_MS = 4500;
 const EXIT_CONTROL_HEIGHT_CLASS = "min-h-12";
 const INTRO_LOADING_MESSAGES = [
-  "The Chronicler is opening the first page of your legend...",
-  "The Illustrator is adding the final colors to your first scene...",
-  "Some tales need a moment for the ink and images to settle...",
+  "The Chronicler is choosing the perfect opening line...",
+  "The Illustrator is sketching the first spark of adventure...",
+  "The map is unfolding at the edge of the page...",
+  "A bookmark is sliding into place...",
+  "The first clue is glowing softly...",
+  "The cover lanterns are warming their light...",
+  "The quill is testing its brightest ink...",
   "The first chapter is finding its shape...",
+  "A safe path is appearing between the lines...",
+  "The hero's portrait is gathering storybook color...",
+  "The title page is dusting off a little sparkle...",
+  "The Chronicle is listening for the first brave step...",
 ];
 const STORY_LOADING_MESSAGES = [
   "Correct! The path opens.",
@@ -33,11 +45,35 @@ const STORY_LOADING_MESSAGES = [
   "Preparing the next story beat and challenge...",
 ];
 const ENDING_LOADING_MESSAGES = [
-  "The Chronicle is writing your ending...",
-  "Every great quest needs a final page...",
-  "The Illustrator is preparing your victory scene...",
-  "Your reward is taking shape in starlight...",
+  "The Chronicler is polishing the final sentence...",
+  "The Illustrator is adding a shine to your reward...",
+  "The last page is settling into the book...",
+  "Your quest badge is getting its final sparkle...",
+  "The story is tying its ribbon around the ending...",
+  "A final burst of safe magic is lighting the page...",
+  "The reward scene is getting its brightest colors...",
+  "The Chronicle is saving a place for your victory...",
+  "The ending lanterns are glowing one by one...",
+  "The final bookmark is sliding into place...",
+  "The hero's celebration is taking shape...",
+  "The last page is waiting for its perfect picture...",
 ];
+
+type LoadingKind = "idle" | "intro" | "story" | "ending";
+
+function shuffledMessages(messages: string[], previous?: string) {
+  const pool = [...messages];
+  for (let index = pool.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    [pool[index], pool[swapIndex]] = [pool[swapIndex], pool[index]];
+  }
+
+  if (previous && pool.length > 1 && pool[0] === previous) {
+    [pool[0], pool[1]] = [pool[1], pool[0]];
+  }
+
+  return pool;
+}
 
 export function GameScreen({
   state,
@@ -63,6 +99,7 @@ export function GameScreen({
   const [confirmExit, setConfirmExit] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
+  const [loadingMessageQueue, setLoadingMessageQueue] = useState<string[]>([]);
   const [speechSupported, setSpeechSupported] = useState(false);
   const [isReadingStory, setIsReadingStory] = useState(false);
   const transitionTimersRef = useRef<Array<ReturnType<typeof setTimeout>>>([]);
@@ -70,6 +107,15 @@ export function GameScreen({
   const questLength = getQuestLengthByTurns(maxTurns);
   const progressPercent = Math.min(100, Math.round((mathSolved / maxTurns) * 100));
   const challenge = getDifficultyBand(difficulty);
+  const isEndingLoading =
+    isLoading && mathSolved >= maxTurns && state.turn >= maxTurns;
+  const loadingKind: LoadingKind = !isLoading
+    ? "idle"
+    : isEndingLoading
+      ? "ending"
+      : mathSolved > 0
+        ? "story"
+        : "intro";
 
   const stopStorySpeech = useCallback((updateState = true) => {
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
@@ -104,13 +150,43 @@ export function GameScreen({
   useEffect(() => {
     if (!isLoading) {
       setLoadingMessageIndex(0);
+      setLoadingMessageQueue([]);
       return;
     }
+
+    const messages =
+      loadingKind === "ending"
+        ? ENDING_LOADING_MESSAGES
+        : loadingKind === "story"
+          ? STORY_LOADING_MESSAGES
+          : INTRO_LOADING_MESSAGES;
+    setLoadingMessageQueue(shuffledMessages(messages));
+    setLoadingMessageIndex(0);
+  }, [isLoading, loadingKind]);
+
+  useEffect(() => {
+    if (!isLoading || loadingMessageQueue.length === 0) {
+      return;
+    }
+
     const timer = window.setInterval(() => {
-      setLoadingMessageIndex((index) => index + 1);
+      setLoadingMessageIndex((index) => {
+        const nextIndex = index + 1;
+        if (nextIndex < loadingMessageQueue.length) {
+          return nextIndex;
+        }
+
+        setLoadingMessageQueue((currentQueue) =>
+          shuffledMessages(
+            currentQueue.length > 0 ? currentQueue : loadingMessageQueue,
+            currentQueue[index] ?? loadingMessageQueue[index],
+          ),
+        );
+        return 0;
+      });
     }, LOADING_MESSAGE_INTERVAL_MS);
     return () => window.clearInterval(timer);
-  }, [isLoading]);
+  }, [isLoading, loadingMessageQueue]);
 
   const runQuestTransition = (advance: () => void) => {
     if (isTransitioning) return;
@@ -197,14 +273,14 @@ export function GameScreen({
         ? currentMathProblem.secondHint || currentMathProblem.hint
         : currentMathProblem.hint
       : null;
-  const isEndingLoading =
-    isLoading && mathSolved >= maxTurns && state.turn >= maxTurns;
-  const loadingMessages = isEndingLoading
-    ? ENDING_LOADING_MESSAGES
-    : mathSolved > 0
-      ? STORY_LOADING_MESSAGES
-      : INTRO_LOADING_MESSAGES;
-  const loadingTitle = loadingMessages[loadingMessageIndex % loadingMessages.length];
+  const fallbackLoadingMessages =
+    loadingKind === "ending"
+      ? ENDING_LOADING_MESSAGES
+      : loadingKind === "story"
+        ? STORY_LOADING_MESSAGES
+        : INTRO_LOADING_MESSAGES;
+  const loadingTitle =
+    loadingMessageQueue[loadingMessageIndex] ?? fallbackLoadingMessages[0];
   const loadingDetail =
     isEndingLoading
       ? "The final page and ending illustration may take a few seconds."
@@ -379,7 +455,7 @@ export function GameScreen({
                     Math Challenge
                   </div>
                   <h3 className="text-2xl md:text-5xl font-bold font-sans py-2 md:py-4 text-[var(--mq-text)] tracking-wide leading-tight break-words">
-                    {currentMathProblem.prompt}
+                    <MathInlineText text={currentMathProblem.prompt} />
                   </h3>
                   <MathRichDisplay items={currentMathProblem.richDisplay} />
 
@@ -398,7 +474,9 @@ export function GameScreen({
                         <Lightbulb className="h-5 w-5" aria-hidden="true" />
                         {showHint ? "Support Hint" : "Hint"}
                       </div>
-                      <p>{activeHint}</p>
+                      <p>
+                        <MathInlineText text={activeHint} />
+                      </p>
                       {showHint && (
                         <p className="mt-3 text-base text-[var(--mq-text-muted)]">
                           Good effort. This support challenge is here to help
@@ -412,10 +490,14 @@ export function GameScreen({
                 <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4">
                   {currentMathProblem.choices.map((ans, idx) => {
                     const letters = ["A", "B", "C", "D"];
+                    const isLongAnswer = ans.length > 24;
                     return (
                       <button
                         key={idx}
-                        className="mq-focus rs-button !border-[var(--mq-secondary)] hover:!border-[var(--mq-primary-hover)] hover:!text-[var(--mq-text)] h-20 text-xl md:h-24 md:text-3xl w-full flex items-center justify-center disabled:pointer-events-none disabled:opacity-70"
+                        className={[
+                          "mq-focus rs-button !border-[var(--mq-secondary)] hover:!border-[var(--mq-primary-hover)] hover:!text-[var(--mq-text)] min-h-20 h-auto w-full flex items-center justify-center whitespace-normal break-words px-4 py-4 disabled:pointer-events-none disabled:opacity-70 md:min-h-24",
+                          isLongAnswer ? "text-base md:text-xl" : "text-xl md:text-3xl",
+                        ].join(" ")}
                         onClick={() => handleMathClick(ans)}
                         disabled={isTransitioning}
                         data-testid={`button-math-answer-${idx}`}

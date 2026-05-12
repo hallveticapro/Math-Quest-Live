@@ -17,6 +17,8 @@ import { resetScrollForTransition } from "../lib/scroll";
 import { playClick } from "../lib/sounds";
 import {
   HERO_ANCESTRIES,
+  HERO_ANCESTRY_DESCRIPTIONS,
+  HERO_CLASS_DESCRIPTIONS,
   HERO_CLASSES,
   HERO_NAMES,
   HERO_PRONOUNS,
@@ -254,6 +256,8 @@ export function SetupScreen({
   const [pronouns, setPronouns] = useState("");
   const [ancestry, setAncestry] = useState("");
   const [className, setClassName] = useState("");
+  const [previewAncestry, setPreviewAncestry] = useState("");
+  const [previewClassName, setPreviewClassName] = useState("");
   const [difficulty, setDifficulty] = useState("");
   const [maxTurns, setMaxTurns] = useState(DEFAULT_QUEST_LENGTH.maxTurns);
   const [seed, setSeed] = useState("");
@@ -266,6 +270,8 @@ export function SetupScreen({
 
   const currentIndex = STEP_ORDER.indexOf(step);
   const stepNumber = getStepNumber(step);
+  const activeAncestryDescription = previewAncestry || ancestry;
+  const activeClassDescription = previewClassName || className;
 
   useEffect(() => {
     return () => {
@@ -541,7 +547,7 @@ export function SetupScreen({
             <Question
               title={`And how shall the Chronicle speak of ${name || "the hero"}?`}
             >
-              <ChoiceGrid columns="three">
+              <ChoiceGrid columns="two">
                 {HERO_PRONOUNS.map((option) => (
                   <button
                     key={option}
@@ -570,6 +576,10 @@ export function SetupScreen({
                     key={option}
                     className={optionClass(ancestry === option)}
                     onClick={() => selectOption(() => setAncestry(option))}
+                    onFocus={() => setPreviewAncestry(option)}
+                    onBlur={() => setPreviewAncestry("")}
+                    onMouseEnter={() => setPreviewAncestry(option)}
+                    onMouseLeave={() => setPreviewAncestry("")}
                     data-testid={`button-ancestry-${option}`}
                   >
                     <OptionHeader selected={ancestry === option}>
@@ -580,6 +590,12 @@ export function SetupScreen({
                   </button>
                 ))}
               </ChoiceGrid>
+              {activeAncestryDescription && (
+                <ChoiceDescription
+                  label={activeAncestryDescription}
+                  description={HERO_ANCESTRY_DESCRIPTIONS[activeAncestryDescription]}
+                />
+              )}
             </Question>
           )}
 
@@ -591,6 +607,10 @@ export function SetupScreen({
                     key={option}
                     className={optionClass(className === option)}
                     onClick={() => selectOption(() => setClassName(option))}
+                    onFocus={() => setPreviewClassName(option)}
+                    onBlur={() => setPreviewClassName("")}
+                    onMouseEnter={() => setPreviewClassName(option)}
+                    onMouseLeave={() => setPreviewClassName("")}
                     data-testid={`button-class-${option}`}
                   >
                     <OptionHeader selected={className === option}>
@@ -601,6 +621,12 @@ export function SetupScreen({
                   </button>
                 ))}
               </ChoiceGrid>
+              {activeClassDescription && (
+                <ChoiceDescription
+                  label={activeClassDescription}
+                  description={HERO_CLASS_DESCRIPTIONS[activeClassDescription]}
+                />
+              )}
             </Question>
           )}
 
@@ -826,6 +852,30 @@ function ConfirmationView({ text }: { text: string }) {
   );
 }
 
+function ChoiceDescription({
+  label,
+  description,
+}: {
+  label: string;
+  description?: string;
+}) {
+  if (!description) return null;
+
+  return (
+    <div
+      className="mx-auto max-w-2xl rounded-sm border border-[var(--mq-border)] bg-[var(--mq-background)] p-4 text-center shadow-[0_0_20px_color-mix(in_srgb,var(--mq-primary)_16%,transparent)]"
+      role="status"
+    >
+      <p className="text-xs font-bold uppercase tracking-[0.24em] text-[var(--mq-secondary)]">
+        {label}
+      </p>
+      <p className="mt-2 text-base text-[var(--mq-text)] md:text-lg">
+        {description}
+      </p>
+    </div>
+  );
+}
+
 function ChoiceGrid({
   children,
   columns = "auto",
@@ -837,11 +887,11 @@ function ChoiceGrid({
     columns === "three"
       ? "md:grid-cols-3"
       : columns === "two"
-        ? "md:grid-cols-2"
+        ? "md:grid-cols-2 md:max-w-2xl"
         : "sm:grid-cols-2 lg:grid-cols-3";
 
   return (
-    <div className={`grid grid-cols-1 gap-3 md:gap-4 ${columnClass}`}>
+    <div className={`mx-auto grid w-full grid-cols-1 gap-3 md:gap-4 ${columnClass}`}>
       {children}
     </div>
   );

@@ -97,6 +97,46 @@ const FALLBACK_SCENE_LINES: Record<string, string[]> = {
     "A napkin flutters like a sail while giant picnic footsteps thump far away.",
     "A blueberry scout points toward a crumb trail that leads away from the lunch line.",
   ],
+  "Crystal Caverns": [
+    "Prism crystals glow in careful rows, pointing toward the next bright clue.",
+    "A friendly echo bounces through the cavern and lands beside a safe path.",
+  ],
+  "Clockwork City": [
+    "A tower clock ticks twice, and a tiny gear-door opens with a cheerful click.",
+    "Brass streetlamps blink in a pattern that marks the next puzzle corner.",
+  ],
+  "Jungle Ruins": [
+    "Mossy tiles brighten one by one across the sunny ruin floor.",
+    "A parrot-shaped carving points its stone beak toward a hidden clue.",
+  ],
+  "Undersea Kingdom": [
+    "Pearl lanterns shimmer as a royal coral gate hums a helpful tune.",
+    "A sea-turtle guide circles a clue in bubbles near the palace steps.",
+  ],
+  "Moon Base Mystery": [
+    "A moon rover projects a friendly arrow across the silver floor.",
+    "The observatory dome opens just enough to reveal a glowing clue.",
+  ],
+  "Enchanted Library": [
+    "Books flutter into a staircase while a bookmark points toward the next shelf.",
+    "A sleepy atlas wakes and opens to a map with one safe route circled.",
+  ],
+  "Candy Kingdom": [
+    "Peppermint signposts twist into arrows beside a gumdrop garden path.",
+    "A licorice bridge wiggles kindly and points toward the next clue.",
+  ],
+  "Dinosaur Valley": [
+    "A gentle dinosaur footprint fills with golden light beside the trail.",
+    "Fern leaves part to reveal a fossil clue sparkling in the sun.",
+  ],
+  "Miniature Backyard Quest": [
+    "A ladybug lifts a leaf like a tiny flag beside the next clue.",
+    "Pebbles line up into a safe path under the picnic table shadows.",
+  ],
+  "Rainbow Railway": [
+    "The rainbow rails hum softly as a bright ticket flips toward the next stop.",
+    "A friendly conductor lantern flashes three colors beside the platform.",
+  ],
 };
 
 const FALLBACK_ENDING_LINES: Record<string, string[]> = {
@@ -151,6 +191,46 @@ const FALLBACK_ENDING_LINES: Record<string, string[]> = {
   "Snack Escape": [
     "The hero reaches the safe snack clubhouse, where every tiny treat cheers under a banner of napkins.",
     "The picnic basket door swings open, and the whole snack-sized crew celebrates far from the lunch line.",
+  ],
+  "Crystal Caverns": [
+    "The crystal lights return to every tunnel, and the cavern sings with gentle echoes.",
+    "The final prism glows, filling the cave with safe rainbow sparkle.",
+  ],
+  "Clockwork City": [
+    "The city clocks chime together, and every gear turns in a friendly rhythm.",
+    "The grand clock face lights up as the city celebrates the solved puzzle.",
+  ],
+  "Jungle Ruins": [
+    "The ruin garden blooms again, and sunlight dances over every carved tile.",
+    "The ancient mural shines with fresh color as the jungle path opens wide.",
+  ],
+  "Undersea Kingdom": [
+    "The pearl palace glows, and the reef parade twirls through the kingdom.",
+    "The coral crown sparkles as every lantern fish cheers the final page.",
+  ],
+  "Moon Base Mystery": [
+    "The moon base beacon shines across the stars, and the mystery board clears.",
+    "The observatory lights up, showing a sky full of solved clues.",
+  ],
+  "Enchanted Library": [
+    "The library shelves settle into order, and every book gives a tiny applause.",
+    "The final chapter floats into place while bookmarks dance in the air.",
+  ],
+  "Candy Kingdom": [
+    "The gumdrop bells ring, and the candy paths sparkle with happy color.",
+    "The peppermint gates open as the kingdom celebrates a clever ending.",
+  ],
+  "Dinosaur Valley": [
+    "The valley drums echo gently, and friendly dinosaurs stomp a happy rhythm.",
+    "The fossil gate glows as the whole valley cheers under bright ferns.",
+  ],
+  "Miniature Backyard Quest": [
+    "The tiny backyard village cheers from acorn balconies and flower-petal roofs.",
+    "The final pebble clicks into place, and the miniature path shines home.",
+  ],
+  "Rainbow Railway": [
+    "The Rainbow Railway arrives right on time, glowing from wheel to whistle.",
+    "The final station lights up as every color on the railway sparkles.",
   ],
 };
 

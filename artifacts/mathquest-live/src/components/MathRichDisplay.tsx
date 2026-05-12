@@ -8,15 +8,73 @@ type MathAnswerChoiceProps = {
   value: string;
 };
 
-const FRACTION_TOKEN_PATTERN = /(\d+\s+\d+\/\d+|\d+\/\d+)/g;
+type MathInlineTextProps = {
+  text: string;
+};
+
+const MATH_TOKEN_PATTERN = /(□|\d+\s+\d+\/\d+|\d+\/\d+)/g;
 const FRACTION_TOKEN_EXACT_PATTERN = /^(\d+\s+\d+\/\d+|\d+\/\d+)$/;
 
-function InlineFraction({ token }: { token: string }) {
+function normalizeFractionToken(token: string) {
   const mixedMatch = token.match(/^(\d+)\s+(\d+)\/(\d+)$/);
   const fractionMatch = token.match(/^(\d+)\/(\d+)$/);
 
   if (mixedMatch) {
-    const [, whole, numerator, denominator] = mixedMatch;
+    const whole = Number(mixedMatch[1]);
+    const numerator = Number(mixedMatch[2]);
+    const denominator = Number(mixedMatch[3]);
+    if (!Number.isFinite(denominator) || denominator === 0) return null;
+    if (numerator === 0) {
+      return { whole: String(whole), numerator: null, denominator: null };
+    }
+    if (numerator % denominator === 0) {
+      return {
+        whole: String(whole + numerator / denominator),
+        numerator: null,
+        denominator: null,
+      };
+    }
+    return {
+      whole: String(whole),
+      numerator: String(numerator),
+      denominator: String(denominator),
+    };
+  }
+
+  if (fractionMatch) {
+    const numerator = Number(fractionMatch[1]);
+    const denominator = Number(fractionMatch[2]);
+    if (!Number.isFinite(denominator) || denominator === 0) return null;
+    if (numerator % denominator === 0) {
+      return {
+        whole: String(numerator / denominator),
+        numerator: null,
+        denominator: null,
+      };
+    }
+    return {
+      whole: null,
+      numerator: String(numerator),
+      denominator: String(denominator),
+    };
+  }
+
+  return null;
+}
+
+function InlineFraction({ token }: { token: string }) {
+  const normalized = normalizeFractionToken(token);
+
+  if (!normalized) {
+    return <span>{token}</span>;
+  }
+
+  if (!normalized.numerator || !normalized.denominator) {
+    return <span>{normalized.whole}</span>;
+  }
+
+  if (normalized.whole) {
+    const { whole, numerator, denominator } = normalized;
 
     return (
       <span className="math-answer-mixed-fraction" aria-hidden="true">
@@ -32,33 +90,39 @@ function InlineFraction({ token }: { token: string }) {
     );
   }
 
-  if (fractionMatch) {
-    const [, numerator, denominator] = fractionMatch;
+  const { numerator, denominator } = normalized;
 
-    return (
-      <span className="math-answer-fraction" aria-hidden="true">
-        <span className="math-answer-fraction-numerator">{numerator}</span>
-        <span className="math-answer-fraction-line" />
-        <span className="math-answer-fraction-denominator">{denominator}</span>
-      </span>
-    );
-  }
-
-  return <span>{token}</span>;
+  return (
+    <span className="math-answer-fraction" aria-hidden="true">
+      <span className="math-answer-fraction-numerator">{numerator}</span>
+      <span className="math-answer-fraction-line" />
+      <span className="math-answer-fraction-denominator">{denominator}</span>
+    </span>
+  );
 }
 
-export function MathAnswerChoice({ value }: MathAnswerChoiceProps) {
-  const parts = value.split(FRACTION_TOKEN_PATTERN).filter(Boolean);
+export function MathInlineText({ text }: MathInlineTextProps) {
+  const parts = text.split(MATH_TOKEN_PATTERN).filter(Boolean);
 
-  if (parts.length <= 1 || !value.includes("/")) {
-    return <>{value}</>;
+  if (parts.length <= 1 && !text.includes("/") && !text.includes("□")) {
+    return <>{text}</>;
   }
 
   return (
-    <span className="math-answer-rich" aria-label={value}>
+    <span className="math-answer-rich" aria-label={text}>
       {parts.map((part, index) => {
         if (FRACTION_TOKEN_EXACT_PATTERN.test(part)) {
           return <InlineFraction key={`${part}-${index}`} token={part} />;
+        }
+
+        if (part === "□") {
+          return (
+            <span
+              className="math-unknown-box"
+              aria-hidden="true"
+              key={`${part}-${index}`}
+            />
+          );
         }
 
         return (
@@ -75,6 +139,10 @@ export function MathAnswerChoice({ value }: MathAnswerChoiceProps) {
   );
 }
 
+export function MathAnswerChoice({ value }: MathAnswerChoiceProps) {
+  return <MathInlineText text={value} />;
+}
+
 export function MathRichDisplay({ items }: MathRichDisplayProps) {
   if (!items?.length) return null;
 
@@ -83,22 +151,16 @@ export function MathRichDisplay({ items }: MathRichDisplayProps) {
       {items.map((item, index) => {
         if (item.type === "fraction") {
           return (
-            <div className="math-fraction-card" key={`${item.type}-${index}`}>
+            <div className="math-rich-fraction-support" key={`${item.type}-${index}`}>
               {item.label && <span className="math-rich-label">{item.label}</span>}
               <span
-                className="math-fraction"
+                className="math-rich-inline-fraction"
                 aria-label={
                   item.ariaLabel ??
                   `${item.numerator} over ${item.denominator}`
                 }
               >
-                <span className="math-fraction-numerator">
-                  {item.numerator}
-                </span>
-                <span className="math-fraction-line" aria-hidden="true" />
-                <span className="math-fraction-denominator">
-                  {item.denominator}
-                </span>
+                <MathInlineText text={`${item.numerator}/${item.denominator}`} />
               </span>
             </div>
           );
@@ -107,14 +169,16 @@ export function MathRichDisplay({ items }: MathRichDisplayProps) {
         return (
           <div className="math-table-card" key={`${item.type}-${index}`}>
             {item.caption && (
-              <div className="math-rich-label">{item.caption}</div>
+              <div className="math-rich-label">
+                <MathInlineText text={item.caption} />
+              </div>
             )}
             <table className="math-data-table">
               <thead>
                 <tr>
                   {item.headers.map((header) => (
                     <th key={header} scope="col">
-                      {header}
+                      <MathInlineText text={header} />
                     </th>
                   ))}
                 </tr>
@@ -125,10 +189,12 @@ export function MathRichDisplay({ items }: MathRichDisplayProps) {
                     {row.map((cell, cellIndex) =>
                       cellIndex === 0 ? (
                         <th key={cellIndex} scope="row">
-                          {cell}
+                          <MathInlineText text={String(cell)} />
                         </th>
                       ) : (
-                        <td key={cellIndex}>{cell}</td>
+                        <td key={cellIndex}>
+                          <MathInlineText text={String(cell)} />
+                        </td>
                       ),
                     )}
                   </tr>

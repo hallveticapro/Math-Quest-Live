@@ -527,6 +527,15 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
         ...benchmarkMetadata("MA.4.NSO.1.3"),
       },
       {
+        id: "g4_multi_digit_add_subtract",
+        benchmark: "MA.4.NSO.2.7",
+        description:
+          "Practice multi-digit whole-number addition and subtraction with and without regrouping within Grade 4 expectations.",
+        skill: "multi-digit addition and subtraction",
+        generator: "g4MultiDigitAddSubtract",
+        ...benchmarkMetadata("MA.4.NSO.2.7"),
+      },
+      {
         id: "g4_multiplication",
         benchmark: "MA.4.NSO.2.2",
         description:
@@ -587,6 +596,15 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
           "Practice extending numerical patterns that follow a stated rule within Grade 4 expectations.",
         skill: "number pattern rules",
         generator: "g4NumberPatternRule",
+        ...benchmarkMetadata("MA.4.AR.3.2"),
+      },
+      {
+        id: "g4_number_pattern_identify_rule",
+        benchmark: "MA.4.AR.3.2",
+        description:
+          "Practice identifying the rule that describes a numerical pattern within Grade 4 expectations.",
+        skill: "identifying number pattern rules",
+        generator: "g4NumberPatternIdentifyRule",
         ...benchmarkMetadata("MA.4.AR.3.2"),
       },
       {
@@ -686,6 +704,15 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
           "Practice adding and subtracting fractions with like denominators within Grade 4 expectations.",
         skill: "like-denominator fraction operations",
         generator: "g4FractionAddLikeDenominators",
+        ...benchmarkMetadata("MA.4.FR.2.2"),
+      },
+      {
+        id: "g4_mixed_number_subtraction",
+        benchmark: "MA.4.FR.2.2",
+        description:
+          "Practice subtracting mixed numbers with like denominators, including regrouping, within Grade 4 expectations.",
+        skill: "mixed-number subtraction with regrouping",
+        generator: "g4MixedNumberSubtraction",
         ...benchmarkMetadata("MA.4.FR.2.2"),
       },
       {
@@ -1030,6 +1057,15 @@ export const FL_BEST_MATH_BANDS: Record<DifficultyKey, FloridaBestMathBand> = {
         skill: "multi-digit whole-number division",
         generator: "g5WholeNumberDivision",
         ...benchmarkMetadata("MA.5.NSO.2.2"),
+      },
+      {
+        id: "g5_measurement_conversion",
+        benchmark: "MA.5.M.1.1",
+        description:
+          "Practice customary measurement conversion, including multi-step conversions, within Grade 5 expectations.",
+        skill: "measurement conversion",
+        generator: "g5MeasurementConversion",
+        ...benchmarkMetadata("MA.5.M.1.1"),
       },
       {
         id: "g5_geometry_classification",

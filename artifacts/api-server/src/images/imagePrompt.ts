@@ -18,8 +18,8 @@ function heroDescription(context: ImageRequestContext) {
 }
 
 function ancestrySafetyNote(context: ImageRequestContext) {
-  if (context.hero.ancestry.trim().toLowerCase() !== "mango person") return "";
-  return "If the hero is shown as a Mango person, depict a cheerful cartoon fruit-person adventurer with friendly storybook charm, never gross, creepy, realistic, or body-horror.";
+  if (context.hero.ancestry.trim().toLowerCase() !== "mango") return "";
+  return "If the hero is shown as a Mango, depict a cheerful cartoon fruit-shaped adventurer with friendly storybook charm, never gross, creepy, realistic, or body-horror.";
 }
 
 function adventureSafetyNote(context: ImageRequestContext) {
