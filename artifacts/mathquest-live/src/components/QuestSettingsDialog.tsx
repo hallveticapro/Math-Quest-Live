@@ -28,6 +28,7 @@ type QuestSettingsDialogProps = {
   onBackgroundMusicEnabledChange: (enabled: boolean) => void;
   onBackgroundMusicVolumeChange: (volume: number) => void;
   onSoundEffectsEnabledChange: (enabled: boolean) => void;
+  showColorSettings?: boolean;
   showChallengeSettings?: boolean;
   variant?: "floating" | "inline";
 };
@@ -47,6 +48,7 @@ export function QuestSettingsDialog({
   onBackgroundMusicEnabledChange,
   onBackgroundMusicVolumeChange,
   onSoundEffectsEnabledChange,
+  showColorSettings = true,
   showChallengeSettings = true,
   variant = "floating",
 }: QuestSettingsDialogProps) {
@@ -148,66 +150,68 @@ export function QuestSettingsDialog({
             </label>
           </section>
 
-          <section className="space-y-3">
-            <div>
-              <h3 className="text-lg font-bold uppercase tracking-wide text-[var(--mq-primary-hover)]">
-                Color Scheme
-              </h3>
-              <p className="text-sm text-[var(--mq-text-muted)]">
-                Current colors: {activeScheme.name}. Changes apply instantly.
-              </p>
-            </div>
+          {showColorSettings && (
+            <section className="space-y-3">
+              <div>
+                <h3 className="text-lg font-bold uppercase tracking-wide text-[var(--mq-primary-hover)]">
+                  Color Scheme
+                </h3>
+                <p className="text-sm text-[var(--mq-text-muted)]">
+                  Current colors: {activeScheme.name}. Changes apply instantly.
+                </p>
+              </div>
 
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              {COLOR_SCHEMES.map((scheme) => {
-                const selected = scheme.id === colorSchemeId;
-                return (
-                  <button
-                    key={scheme.id}
-                    type="button"
-                    onClick={() => {
-                      playClick();
-                      onColorSchemeChange(scheme.id);
-                    }}
-                    aria-pressed={selected}
-                    className={[
-                      "mq-focus relative rounded-sm border-2 p-4 text-left transition-all",
-                      "bg-[var(--mq-surface-strong)] hover:border-[var(--mq-border-strong)] hover:bg-[var(--mq-button-hover)]",
-                      selected
-                        ? "border-[var(--mq-border-strong)] shadow-[0_0_20px_color-mix(in_srgb,var(--mq-primary)_40%,transparent)]"
-                        : "border-[var(--mq-border)]",
-                    ].join(" ")}
-                    data-testid={`button-settings-color-${scheme.id}`}
-                  >
-                    {selected && <SelectedBadge />}
-                    <div className="pr-24">
-                      <div className="font-serif text-xl text-[var(--mq-heading)]">
-                        {scheme.name}
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                {COLOR_SCHEMES.map((scheme) => {
+                  const selected = scheme.id === colorSchemeId;
+                  return (
+                    <button
+                      key={scheme.id}
+                      type="button"
+                      onClick={() => {
+                        playClick();
+                        onColorSchemeChange(scheme.id);
+                      }}
+                      aria-pressed={selected}
+                      className={[
+                        "mq-focus relative rounded-sm border-2 p-4 text-left transition-all",
+                        "bg-[var(--mq-surface-strong)] hover:border-[var(--mq-border-strong)] hover:bg-[var(--mq-button-hover)]",
+                        selected
+                          ? "border-[var(--mq-border-strong)] shadow-[0_0_20px_color-mix(in_srgb,var(--mq-primary)_40%,transparent)]"
+                          : "border-[var(--mq-border)]",
+                      ].join(" ")}
+                      data-testid={`button-settings-color-${scheme.id}`}
+                    >
+                      {selected && <SelectedBadge />}
+                      <div className="pr-24">
+                        <div className="font-serif text-xl text-[var(--mq-heading)]">
+                          {scheme.name}
+                        </div>
+                        <p className="mt-1 text-sm text-[var(--mq-text-muted)]">
+                          {scheme.description}
+                        </p>
                       </div>
-                      <p className="mt-1 text-sm text-[var(--mq-text-muted)]">
-                        {scheme.description}
-                      </p>
-                    </div>
-                    <div className="mt-4 flex gap-2" aria-hidden="true">
-                      {[
-                        scheme.colors.background,
-                        scheme.colors.surface,
-                        scheme.colors.heading,
-                        scheme.colors.primary,
-                        scheme.colors.secondary,
-                      ].map((color) => (
-                        <span
-                          key={color}
-                          className="h-6 w-6 rounded-full border border-white/40"
-                          style={{ backgroundColor: color }}
-                        />
-                      ))}
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </section>
+                      <div className="mt-4 flex gap-2" aria-hidden="true">
+                        {[
+                          scheme.colors.background,
+                          scheme.colors.surface,
+                          scheme.colors.heading,
+                          scheme.colors.primary,
+                          scheme.colors.secondary,
+                        ].map((color) => (
+                          <span
+                            key={color}
+                            className="h-6 w-6 rounded-full border border-white/40"
+                            style={{ backgroundColor: color }}
+                          />
+                        ))}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </section>
+          )}
 
           {showChallengeSettings && (
             <section className="space-y-3">

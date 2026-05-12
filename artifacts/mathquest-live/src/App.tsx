@@ -484,6 +484,8 @@ function GameApp() {
       onBackgroundMusicEnabledChange={handleBackgroundMusicEnabledChange}
       onBackgroundMusicVolumeChange={handleBackgroundMusicVolumeChange}
       onSoundEffectsEnabledChange={handleSoundEffectsEnabledChange}
+      showColorSettings={state.screen !== "setup"}
+      showChallengeSettings={state.screen !== "setup"}
       variant="inline"
     />
   );

@@ -254,10 +254,8 @@ export function SetupScreen({
   const [confirmationText, setConfirmationText] = useState("");
   const [name, setName] = useState("");
   const [pronouns, setPronouns] = useState("");
-  const [ancestry, setAncestry] = useState("");
-  const [className, setClassName] = useState("");
-  const [previewAncestry, setPreviewAncestry] = useState("");
-  const [previewClassName, setPreviewClassName] = useState("");
+  const [ancestry, setAncestry] = useState(HERO_ANCESTRIES[0]);
+  const [className, setClassName] = useState(HERO_CLASSES[0]);
   const [difficulty, setDifficulty] = useState("");
   const [maxTurns, setMaxTurns] = useState(DEFAULT_QUEST_LENGTH.maxTurns);
   const [seed, setSeed] = useState("");
@@ -270,8 +268,6 @@ export function SetupScreen({
 
   const currentIndex = STEP_ORDER.indexOf(step);
   const stepNumber = getStepNumber(step);
-  const activeAncestryDescription = previewAncestry || ancestry;
-  const activeClassDescription = previewClassName || className;
 
   useEffect(() => {
     return () => {
@@ -576,10 +572,6 @@ export function SetupScreen({
                     key={option}
                     className={optionClass(ancestry === option)}
                     onClick={() => selectOption(() => setAncestry(option))}
-                    onFocus={() => setPreviewAncestry(option)}
-                    onBlur={() => setPreviewAncestry("")}
-                    onMouseEnter={() => setPreviewAncestry(option)}
-                    onMouseLeave={() => setPreviewAncestry("")}
                     data-testid={`button-ancestry-${option}`}
                   >
                     <OptionHeader selected={ancestry === option}>
@@ -590,10 +582,10 @@ export function SetupScreen({
                   </button>
                 ))}
               </ChoiceGrid>
-              {activeAncestryDescription && (
+              {ancestry && (
                 <ChoiceDescription
-                  label={activeAncestryDescription}
-                  description={HERO_ANCESTRY_DESCRIPTIONS[activeAncestryDescription]}
+                  label={ancestry}
+                  description={HERO_ANCESTRY_DESCRIPTIONS[ancestry]}
                 />
               )}
             </Question>
@@ -607,10 +599,6 @@ export function SetupScreen({
                     key={option}
                     className={optionClass(className === option)}
                     onClick={() => selectOption(() => setClassName(option))}
-                    onFocus={() => setPreviewClassName(option)}
-                    onBlur={() => setPreviewClassName("")}
-                    onMouseEnter={() => setPreviewClassName(option)}
-                    onMouseLeave={() => setPreviewClassName("")}
                     data-testid={`button-class-${option}`}
                   >
                     <OptionHeader selected={className === option}>
@@ -621,10 +609,10 @@ export function SetupScreen({
                   </button>
                 ))}
               </ChoiceGrid>
-              {activeClassDescription && (
+              {className && (
                 <ChoiceDescription
-                  label={activeClassDescription}
-                  description={HERO_CLASS_DESCRIPTIONS[activeClassDescription]}
+                  label={className}
+                  description={HERO_CLASS_DESCRIPTIONS[className]}
                 />
               )}
             </Question>

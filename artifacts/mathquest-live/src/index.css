@@ -170,20 +170,17 @@
   max-width: min(100%, 42rem);
 }
 
-.math-rich-fraction-support,
 .math-table-card {
   border: 1px solid var(--mq-secondary);
   background: color-mix(in srgb, var(--mq-background) 86%, transparent);
   box-shadow: 0 0 20px color-mix(in srgb, var(--mq-secondary) 22%, transparent);
 }
 
-.math-rich-fraction-support {
+.math-rich-standalone-fraction {
   display: inline-flex;
-  min-width: 7rem;
   flex-direction: column;
   align-items: center;
   gap: 0.35rem;
-  padding: 0.75rem 1rem;
 }
 
 .math-rich-label {

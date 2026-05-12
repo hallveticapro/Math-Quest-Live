@@ -151,7 +151,7 @@ export function MathRichDisplay({ items }: MathRichDisplayProps) {
       {items.map((item, index) => {
         if (item.type === "fraction") {
           return (
-            <div className="math-rich-fraction-support" key={`${item.type}-${index}`}>
+            <div className="math-rich-standalone-fraction" key={`${item.type}-${index}`}>
               {item.label && <span className="math-rich-label">{item.label}</span>}
               <span
                 className="math-rich-inline-fraction"
