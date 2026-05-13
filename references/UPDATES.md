@@ -2,6 +2,10 @@
 
 Newest entries first. Add a concise timestamped entry for every meaningful project change before creating the related commit.
 
+## 2026-05-13T17:45:15-04:00
+
+- Added Koala as a preset-safe hero ancestry in the setup flow and backend story validation.
+
 ## 2026-05-12T06:53:07-04:00
 
 - Completed the current PLAN.md math-display and generator batch: stacked inline fractions now render through shared prompt/answer/hint/table paths, denominator-one fractions are normalized for student-facing text, fraction operations preserve intended unsimplified forms where appropriate, Hero decimal prompts vary decimal/word/fraction forms, Hero mixed-number subtraction and multi-digit regrouping problems were added, mode validation now rejects invalid mode data sets, pattern-rule identification was added, geometry comparison prompts use line breaks, unknown boxes render as styled inline placeholders, and Grade 4/5 conversion generators include direct and multi-step customary conversions.

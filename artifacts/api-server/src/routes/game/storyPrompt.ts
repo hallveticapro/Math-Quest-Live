@@ -51,7 +51,7 @@ export interface EndingData extends StartGameData {
 
 export const ALLOWED_HERO_NAMES = ["Astra", "Kael", "Nova", "Mira", "Jax", "Luna", "Orion", "Sage", "Zara", "Theo", "Elara", "Milo", "Lunamandia", "Solara", "Bramble"] as const;
 export const ALLOWED_PRONOUNS = ["she/her", "he/him", "they/them"] as const;
-export const ALLOWED_ANCESTRIES = ["Human", "Elf", "Dwarf", "Dragonborn", "Fae", "Robot", "Merfolk", "Beastfolk", "Starborn", "Gnome", "Sprite", "Stonekin", "Cloudling", "Foxfolk", "Hamster", "Guinea Pig", "Wolf", "Mango", "Starling", "Pebblekin"] as const;
+export const ALLOWED_ANCESTRIES = ["Human", "Elf", "Dwarf", "Dragonborn", "Fae", "Robot", "Merfolk", "Beastfolk", "Starborn", "Gnome", "Sprite", "Stonekin", "Cloudling", "Foxfolk", "Hamster", "Koala", "Guinea Pig", "Wolf", "Mango", "Starling", "Pebblekin"] as const;
 export const ALLOWED_CLASSES = ["Wizard", "Warrior", "Explorer", "Rogue", "Inventor", "Healer", "Beast Tamer", "Elementalist", "Guardian", "Cartographer", "Stargazer", "Alchemist", "Puzzle Mage"] as const;
 export const ALLOWED_DIFFICULTIES = ["Easy", "Medium", "Hard", "Extreme"] as const;
 export const ALLOWED_MAX_TURNS = [8, 12, 16] as const;
