@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { CheckCircle2, Lightbulb, Square, Volume2 } from "lucide-react";
 import { GameState } from "../types";
 import { playClick } from "../lib/sounds";
+import { backgroundMusicManager } from "../lib/musicManager";
 import { SceneImage } from "../components/SceneImage";
 import {
   MathAnswerChoice,
@@ -26,6 +27,62 @@ const QUEST_TRANSITION_IN_MS = 320;
 const LOADING_MESSAGE_INTERVAL_MS = 4500;
 const EXIT_CONTROL_CLASS =
   "h-12 min-h-12 box-border w-full items-center justify-center rounded-sm bg-[var(--mq-background)] px-3 font-sans text-xs uppercase tracking-widest sm:w-auto";
+const PREFERRED_READ_ALOUD_VOICE_TERMS = [
+  "aria",
+  "jenny",
+  "samantha",
+  "alex",
+  "google us english",
+  "google uk english",
+  "microsoft",
+  "natural",
+  "enhanced",
+  "neural",
+  "premium",
+  "zira",
+  "david",
+  "mark",
+  "serena",
+  "daniel",
+  "karen",
+  "moira",
+  "tessa",
+];
+
+function selectReadAloudVoice() {
+  if (typeof window === "undefined" || !("speechSynthesis" in window)) {
+    return null;
+  }
+
+  const voices = window.speechSynthesis.getVoices();
+  if (!voices.length) return null;
+
+  const scoredVoices = voices
+    .map((voice) => {
+      const name = voice.name.toLowerCase();
+      const lang = voice.lang.toLowerCase();
+      let score = -1;
+
+      if (lang === "en-us") score = 70;
+      else if (lang === "en-gb" || lang === "en-au" || lang === "en-ca") {
+        score = 62;
+      } else if (lang.startsWith("en")) score = 55;
+      else if (name.includes("english")) score = 40;
+
+      if (score < 0) return { voice, score };
+      if (voice.localService) score += 4;
+      PREFERRED_READ_ALOUD_VOICE_TERMS.forEach((term, index) => {
+        if (name.includes(term)) score += 30 - index;
+      });
+      if (name.includes("compact")) score -= 12;
+
+      return { voice, score };
+    })
+    .filter(({ score }) => score >= 0)
+    .sort((a, b) => b.score - a.score);
+
+  return scoredVoices[0]?.voice ?? null;
+}
 const INTRO_LOADING_MESSAGES = [
   "The Chronicler is choosing the perfect opening line...",
   "The Illustrator is sketching the first spark of adventure...",
@@ -123,6 +180,7 @@ export function GameScreen({
       window.speechSynthesis.cancel();
     }
     speechUtteranceRef.current = null;
+    backgroundMusicManager.setSpeechMuted(false);
     if (updateState) {
       setIsReadingStory(false);
     }
@@ -235,21 +293,28 @@ export function GameScreen({
 
     stopStorySpeech(false);
     const utterance = new SpeechSynthesisUtterance(storyText.trim());
+    const preferredVoice = selectReadAloudVoice();
+    if (preferredVoice) {
+      utterance.voice = preferredVoice;
+    }
     utterance.rate = 0.95;
     utterance.pitch = 1;
     utterance.onend = () => {
       if (speechUtteranceRef.current === utterance) {
         speechUtteranceRef.current = null;
+        backgroundMusicManager.setSpeechMuted(false);
         setIsReadingStory(false);
       }
     };
     utterance.onerror = utterance.onend;
     speechUtteranceRef.current = utterance;
     setIsReadingStory(true);
+    backgroundMusicManager.setSpeechMuted(true);
     try {
       window.speechSynthesis.speak(utterance);
     } catch {
       speechUtteranceRef.current = null;
+      backgroundMusicManager.setSpeechMuted(false);
       setIsReadingStory(false);
     }
   };

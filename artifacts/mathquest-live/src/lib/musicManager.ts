@@ -26,6 +26,7 @@ class BackgroundMusicManager {
   private enabled = true;
   private unlocked = false;
   private targetVolume = 0.5;
+  private speechMuted = false;
   private playlist: MusicTrack[] = [];
   private currentTrackId: string | null = null;
   private currentAudio: HTMLAudioElement | null = null;
@@ -49,7 +50,19 @@ class BackgroundMusicManager {
   setVolume(volume: number) {
     this.targetVolume = Math.max(0, Math.min(1, volume));
     if (this.currentAudio && this.enabled) {
-      this.fadeTo(this.currentAudio, this.targetVolume, 250);
+      this.fadeTo(this.currentAudio, this.getEffectiveVolume(), 250);
+    }
+  }
+
+  setSpeechMuted(muted: boolean) {
+    this.speechMuted = muted;
+    if (this.currentAudio && this.enabled) {
+      this.fadeTo(this.currentAudio, this.getEffectiveVolume(), 300);
+      return;
+    }
+
+    if (!muted) {
+      this.playIfReady();
     }
   }
 
@@ -66,6 +79,10 @@ class BackgroundMusicManager {
     if (!this.enabled || !this.unlocked || MUSIC_LIBRARY.length === 0) return;
     if (this.currentAudio) return;
     this.playNextTrack(false);
+  }
+
+  private getEffectiveVolume() {
+    return this.speechMuted ? 0 : this.targetVolume;
   }
 
   private getNextTrack() {
@@ -103,7 +120,7 @@ class BackgroundMusicManager {
     audio
       .play()
       .then(() => {
-        this.fadeTo(audio, this.targetVolume, crossfade ? CROSSFADE_MS : FADE_MS);
+        this.fadeTo(audio, this.getEffectiveVolume(), crossfade ? CROSSFADE_MS : FADE_MS);
         if (previousAudio) {
           this.fadeTo(previousAudio, 0, CROSSFADE_MS, () => {
             previousAudio.pause();

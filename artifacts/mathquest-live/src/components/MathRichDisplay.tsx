@@ -146,26 +146,15 @@ export function MathAnswerChoice({ value }: MathAnswerChoiceProps) {
 export function MathRichDisplay({ items }: MathRichDisplayProps) {
   if (!items?.length) return null;
 
+  const visibleItems = items.filter(
+    (item): item is Extract<RichMathDisplay, { type: "table" }> =>
+      item.type === "table",
+  );
+  if (!visibleItems.length) return null;
+
   return (
     <div className="math-rich-display" aria-label="Math visual support">
-      {items.map((item, index) => {
-        if (item.type === "fraction") {
-          return (
-            <div className="math-rich-standalone-fraction" key={`${item.type}-${index}`}>
-              {item.label && <span className="math-rich-label">{item.label}</span>}
-              <span
-                className="math-rich-inline-fraction"
-                aria-label={
-                  item.ariaLabel ??
-                  `${item.numerator} over ${item.denominator}`
-                }
-              >
-                <MathInlineText text={`${item.numerator}/${item.denominator}`} />
-              </span>
-            </div>
-          );
-        }
-
+      {visibleItems.map((item, index) => {
         return (
           <div className="math-table-card" key={`${item.type}-${index}`}>
             {item.caption && (

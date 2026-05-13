@@ -176,13 +176,6 @@
   box-shadow: 0 0 20px color-mix(in srgb, var(--mq-secondary) 22%, transparent);
 }
 
-.math-rich-standalone-fraction {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.35rem;
-}
-
 .math-rich-label {
   font-family: var(--app-font-sans);
   font-size: 0.75rem;
@@ -196,16 +189,6 @@
   margin-bottom: 0.55rem;
   font-size: 1rem;
   color: var(--mq-heading);
-}
-
-.math-rich-inline-fraction {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--mq-text);
-  font-family: var(--app-font-story);
-  font-size: 1.75rem;
-  line-height: 1;
 }
 
 .math-answer-rich {
