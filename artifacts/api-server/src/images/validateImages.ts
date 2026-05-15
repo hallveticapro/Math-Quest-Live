@@ -82,6 +82,24 @@ function validatePromptSafety() {
   assert(/No gore/i.test(prompt), "Prompt should include classroom safety exclusions");
   assert(!/Disney|Pixar|Studio Ghibli|Harry Potter|anime/i.test(prompt), "Prompt should not reference brands, studios, franchises, or anime style");
   assert(!/[<>]/.test(prompt), "Prompt should strip angle brackets from controlled context");
+
+  const popBandPrompt = buildImagePrompt({
+    kind: "scene",
+    hero: {
+      name: "Mira",
+      pronouns: "she/her",
+      ancestry: "Koala",
+      className: "Stargazer",
+    },
+    adventureSeed: "Pop Band Quest: a glittering rehearsal studio",
+    difficulty: "Medium",
+    sceneTitle: "The Chorus Cue",
+    storyText: "The crew practices under safe stage lights while a rhythm robot points to the missing cue.",
+    storySummary: "A fictional performance crew solves a stage clue before showtime.",
+  });
+
+  assert(/fictional performance crew/i.test(popBandPrompt), "Pop Band Quest prompt should stay fictional");
+  assert(/no real celebrities, real music groups/i.test(popBandPrompt), "Pop Band Quest prompt should ban real celebrity/group likenesses");
 }
 
 validateImageModes();

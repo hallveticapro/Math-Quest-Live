@@ -125,6 +125,7 @@ export const QUEST_GENRES = [
   "Dinosaur Valley",
   "Miniature Backyard Quest",
   "Rainbow Railway",
+  "Pop Band Quest",
 ];
 
 export const CONCRETE_QUEST_GENRES = QUEST_GENRES.filter(

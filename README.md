@@ -53,7 +53,7 @@ The game screen shows visible progress as `Math Challenges: solved / total`. Pro
 
 The Chronicler setup asks students what kind of quest they want instead of asking for an exact starting location. `Surprise Me!` picks one safe concrete genre for that session and keeps it consistent for the opening, episode plan, story continuation, image prompts, and fallbacks.
 
-Current genre options include fantasy, space adventure, mystery, pirate adventure, jungle adventure, underwater adventure, sky islands, clockwork/invention, ancient ruins, friendly-spooky mystery, tiny world, magical school, snack escape, crystal caverns, clockwork city, jungle ruins, undersea kingdom, moon base mystery, enchanted library, candy kingdom, dinosaur valley, miniature backyard quest, and rainbow railway. Friendly-spooky content is kept playful and non-horror.
+Current genre options include fantasy, space adventure, mystery, pirate adventure, jungle adventure, underwater adventure, sky islands, clockwork/invention, ancient ruins, friendly-spooky mystery, tiny world, magical school, snack escape, crystal caverns, clockwork city, jungle ruins, undersea kingdom, moon base mystery, enchanted library, candy kingdom, dinosaur valley, miniature backyard quest, rainbow railway, and pop band quest. Friendly-spooky content is kept playful and non-horror.
 
 ## Environment Variables
 

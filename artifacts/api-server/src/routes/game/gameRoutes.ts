@@ -137,6 +137,10 @@ const FALLBACK_SCENE_LINES: Record<string, string[]> = {
     "The rainbow rails hum softly as a bright ticket flips toward the next stop.",
     "A friendly conductor lantern flashes three colors beside the platform.",
   ],
+  "Pop Band Quest": [
+    "A rhythm board flashes a cheerful clue while the rehearsal lights glow softly.",
+    "The stage manager sprite points toward a missing chorus cue near the costume rack.",
+  ],
 };
 
 const FALLBACK_ENDING_LINES: Record<string, string[]> = {
@@ -231,6 +235,10 @@ const FALLBACK_ENDING_LINES: Record<string, string[]> = {
   "Rainbow Railway": [
     "The Rainbow Railway arrives right on time, glowing from wheel to whistle.",
     "The final station lights up as every color on the railway sparkles.",
+  ],
+  "Pop Band Quest": [
+    "The crew finishes the final number together, and the stage lights shimmer like safe confetti.",
+    "The harmony badges return to the wall as the whole performance crew cheers backstage.",
   ],
 };
 

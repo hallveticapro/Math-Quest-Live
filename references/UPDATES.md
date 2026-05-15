@@ -2,6 +2,14 @@
 
 Newest entries first. Add a concise timestamped entry for every meaningful project change before creating the related commit.
 
+## 2026-05-14T21:02:10-04:00
+
+- Expanded every preset quest genre with larger settings, objective, helper, and detail pools so story starts vary more often while staying inside the existing safe genre boundaries.
+
+## 2026-05-14T20:54:25-04:00
+
+- Added Pop Band Quest as a preset-safe story genre with frontend setup support, backend prompt guidance, and safe fallback lines.
+
 ## 2026-05-13T17:45:15-04:00
 
 - Added Koala as a preset-safe hero ancestry in the setup flow and backend story validation.

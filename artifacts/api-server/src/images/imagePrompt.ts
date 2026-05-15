@@ -23,8 +23,14 @@ function ancestrySafetyNote(context: ImageRequestContext) {
 }
 
 function adventureSafetyNote(context: ImageRequestContext) {
-  if (context.adventureSeed.trim().toLowerCase() !== "snack escape") return "";
-  return "For Snack Escape, show silly cartoon picnic or kitchen escape energy only; no biting, chewing, mouths about to eat anyone, injuries, horror, or realistic danger.";
+  const adventureSeed = context.adventureSeed.trim().toLowerCase();
+  if (adventureSeed.includes("snack escape")) {
+    return "For Snack Escape, show silly cartoon picnic or kitchen escape energy only; no biting, chewing, mouths about to eat anyone, injuries, horror, or realistic danger.";
+  }
+  if (adventureSeed.includes("pop band quest")) {
+    return "For Pop Band Quest, show a cheerful fictional performance crew, rehearsal room, stage lights, costumes, instruments, or dance practice energy only; no real celebrities, real music groups, brand logos, readable text, romance, or crowd danger.";
+  }
+  return "";
 }
 
 export function buildImageAlt(context: ImageRequestContext) {
