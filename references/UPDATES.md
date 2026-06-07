@@ -1,223 +1,56 @@
-# MathQuest Live Updates
-
-Newest entries first. Add a concise timestamped entry for every meaningful project change before creating the related commit.
-
-## 2026-06-07T14:24:10-04:00
-
-- Completed Code Review Resolution Plan Phase 11 by adding final review-item status evidence to `PLAN.md`, verifying docs for current env/validation guidance, confirming stale deleted-file references are historical only, and running the final validation suite. Passing commands: `pnpm --filter @workspace/mathquest-live run typecheck`, `pnpm --filter @workspace/api-server run typecheck`, `npm run validate:math`, `npm run validate:images`, `npm run validate:quest-starts`, `npm run build`, and `npm run test:smoke`. A production server startup smoke with `OPENAI_API_KEY=` also served `/api/healthz` as `{"status":"ok"}`. The remaining Vite chunk-size warning is documented as an accepted future code-splitting tradeoff.
-
-## 2026-06-07T14:20:28-04:00
-
-- Completed Code Review Resolution Plan Phase 10 by splitting backend story profile data, fallback scene/ending copy, prepared-turn stores, route response types, and game input validation into route-adjacent modules while preserving route paths and response shapes. Representative start, turn, and ending prompts matched commit `d0da2bb` byte-for-byte, and validation passed with API typecheck, `npm run validate:quest-starts`, `npm run test:smoke`, and `npm run build`.
-
-## 2026-06-07T14:12:45-04:00
-
-- Completed Code Review Resolution Plan Phase 9 by splitting the monolithic math engine into shared core helpers plus Grade 3, Grade 4, Grade 5, and Grade 5 Extreme generator modules while keeping `mathEngine.ts` as the compatibility facade. Validation passed with `pnpm --filter @workspace/mathquest-live run typecheck`, `npm run validate:math`, and `npm run build`.
-
-## 2026-06-07T14:08:16-04:00
-
-- Recorded the Code Review Resolution Plan Phase 9 pre-refactor math baseline. `npm run validate:math` passed before splitting `mathEngine.ts`, validating 20 generated problems for each difficulty plus every generator with 12 samples and 120 duplicate-choice stress samples.
-
-## 2026-06-07T14:07:11-04:00
-
-- Completed Code Review Resolution Plan Phase 8 by expanding Playwright smoke coverage for Quick Start, the full Chronicler setup path, setup settings audio-only scope, game settings full scope, mocked ending flow, mocked browser read-aloud start/stop behavior, and pending image timeout behavior. Validation passed with `npm run test:smoke`, `pnpm --filter @workspace/mathquest-live run typecheck`, and `npm run build`.
-
-## 2026-06-07T10:16:00-04:00
-
-- Updated the root `PLAN.md` for the 2026-06-06 code review cleanup with current execution status, phase commit evidence for completed Phases 1-7, and a continue-from-here checklist pointing future work at Phase 8 through final validation.
-
-## 2026-06-07T10:12:31-04:00
-
-- Completed Code Review Resolution Plan Phase 7 by standardizing the frontend on generated async API client functions, removing the unused app-level `QueryClientProvider` and direct frontend `@tanstack/react-query` dependency, preserving generated hook support inside `@workspace/api-client-react`, and passing frontend typecheck, smoke, and build validation. The main frontend JS chunk is now 501.46 kB minified / 152.57 kB gzip and remains slightly over Vite's warning threshold pending deeper code-splitting.
-
-## 2026-06-07T10:09:44-04:00
-
-- Completed Code Review Resolution Plan Phase 6 by changing settings selected badges to icon-only checkmarks with `aria-pressed` preserved, reviewing and intentionally retaining Hamster ancestry pending any explicit product removal decision, deleting the unused `attached_assets` prompt artifact and `@assets` Vite alias, and replacing open Vite allowed hosts with a documented `VITE_ALLOWED_HOSTS` configuration.
-
-## 2026-06-07T10:07:45-04:00
-
-- Completed Code Review Resolution Plan Phase 5 by deleting unused UI scaffold files, keeping only `card`, `dialog`, `toast`, `toaster`, and `tooltip`, pruning their unused frontend dependencies and stale catalog entries, removing the tooltip sourcemap warning, and passing frontend typecheck plus full build. The remaining Vite chunk-size warning is accepted temporarily at `index-Q3TSOvPD.js` 525.83 kB minified / 159.68 kB gzip pending later code-splitting or React Query cleanup.
-
-## 2026-06-07T10:05:05-04:00
-
-- Recorded Code Review Resolution Plan Phase 5 UI scaffold inventory before deletion. App source directly imports only `components/ui/card`, `dialog`, `toast`, `toaster`, and `tooltip`; all other files under `artifacts/mathquest-live/src/components/ui/` were classified as unused scaffold pending deletion after dependency proof.
-
-## 2026-06-07T10:03:39-04:00
-
-- Completed Code Review Resolution Plan Phase 4 by removing the unused Drizzle/Postgres database workspace, API database dependency edges, stale TypeScript references, and starter hello script while preserving the no-database product constraint and passing deletion-proof searches, API typecheck, and full build validation.
-
-## 2026-06-07T10:00:07-04:00
-
-- Completed Code Review Resolution Plan Phase 3 by adding explicit `TRUST_PROXY` deployment configuration, documenting public CORS/rate-limit/cap guidance, bounding pending prepared turns, episode plans, image jobs, and stored images in memory, and allowing the API server to boot for health/static diagnostics without `OPENAI_API_KEY` while preserving safe AI fallback behavior.
-
-## 2026-06-07T09:54:49-04:00
-
-- Completed Code Review Resolution Plan Phase 2 by adding prepared-turn `lastMathSkill` metadata to OpenAPI/generated contracts, replacing local frontend prepare/resolve wrappers with generated client calls, using generated zod schemas for backend prepare/resolve body parsing, and passing frontend/API typecheck, smoke, and build validation.
-
-## 2026-06-07T09:50:23-04:00
-
-- Completed Code Review Resolution Plan Phase 1 by adding a measurable pending image timeout path, smoke coverage for permanently pending image jobs, OpenAPI image status schemas for ready/pending/failed states, generated API client updates, and passing image/typecheck/smoke/build validation.
-
-## 2026-05-14T21:02:10-04:00
-
-- Expanded every preset quest genre with larger settings, objective, helper, and detail pools so story starts vary more often while staying inside the existing safe genre boundaries.
-
-## 2026-05-14T20:54:25-04:00
-
-- Added Pop Band Quest as a preset-safe story genre with frontend setup support, backend prompt guidance, and safe fallback lines.
-
-## 2026-05-13T17:45:15-04:00
-
-- Added Koala as a preset-safe hero ancestry in the setup flow and backend story validation.
-
-## 2026-05-12T06:53:07-04:00
-
-- Completed the current PLAN.md math-display and generator batch: stacked inline fractions now render through shared prompt/answer/hint/table paths, denominator-one fractions are normalized for student-facing text, fraction operations preserve intended unsimplified forms where appropriate, Hero decimal prompts vary decimal/word/fraction forms, Hero mixed-number subtraction and multi-digit regrouping problems were added, mode validation now rejects invalid mode data sets, pattern-rule identification was added, geometry comparison prompts use line breaks, unknown boxes render as styled inline placeholders, and Grade 4/5 conversion generators include direct and multi-step customary conversions.
-
-## 2026-05-12T06:53:07-04:00
-
-- Completed the current PLAN.md setup/story variety batch: centered the two pronoun choices, added selectable/focusable descriptions for ancestry and class options, added Lunamandia/Solara/Bramble names, renamed Mango person to Mango, added Starling and Pebblekin ancestries, added ten safe quest genres with backend prompt profiles and fallback scene/ending lines, and updated README/reference docs for the expanded genre and benchmark coverage.
-
-## 2026-05-12T06:53:07-04:00
-
-- Completed the current PLAN.md waiting-screen polish: intro and outro loading screens now use larger shuffled message pools that avoid repeating a line until the current pool is exhausted.
-
-## 2026-05-11T19:22:00-04:00
-
-- Completed PLAN.md Section 20 final validation checkpoint: math validation, image validation, frontend/backend typechecks, and the full workspace build all passed after the megabatch implementation.
-
-## 2026-05-11T19:16:00-04:00
-
-- Completed PLAN.md Section 19 by updating standards/reference documentation with current generator counts, newly expanded benchmark coverage, and converted reference-sheet/current-usage notes.
-
-## 2026-05-11T19:09:00-04:00
-
-- Completed PLAN.md Section 18 by adding session-only recent-domain tracking so math generation prefers unused problem groups from different recent domains when alternatives exist.
-
-## 2026-05-11T19:05:00-04:00
-
-- Completed PLAN.md Section 17 by expanding Extreme / advanced Grade 5 math variety with unit-fraction division, decimal powers-of-ten, expression translation/evaluation, input-output tables, product-size reasoning, combined volume, and capacity/weight conversion problems.
-
-## 2026-05-11T18:57:00-04:00
-
-- Completed PLAN.md Section 16 by expanding Hard / Grade 5 math variety with decimal place-value, decimal estimation, powers-of-ten, unit-fraction division, expression translation, equations, pattern/table, unit-cube volume, and 3D-classification generators.
-
-## 2026-05-11T18:48:00-04:00
-
-- Completed PLAN.md Section 15 by expanding Medium / Grade 4 math variety with place-value, comparison, multiplication, estimation, decimal, algebraic thinking, pattern, fraction-comparison, data-statistics, and angle-classification generators.
-
-## 2026-05-11T18:39:00-04:00
-
-- Completed PLAN.md Section 14 by expanding Easy / Grade 3 math variety with expanded form, whole-number comparison, missing-factor equations, multiples, composite area, and quadrilateral-attribute problems.
-
-## 2026-05-11T18:31:00-04:00
-
-- Completed PLAN.md Section 12 by rendering fraction and mixed-number answer choices with stacked visual fractions while preserving the underlying answer strings for checking.
-
-## 2026-05-11T18:28:00-04:00
-
-- Completed PLAN.md Section 11 by removing duplicated visible table rows from data prompts while keeping rich table displays as the source for the displayed values.
-
-## 2026-05-11T18:26:00-04:00
-
-- Completed PLAN.md Section 10 by adding customary conversion reference tables to rich math display metadata for Grade 4 conversion and Grade 5 extreme conversion problems.
-
-## 2026-05-11T18:23:00-04:00
-
-- Completed PLAN.md Section 9 by converting the Grade 4 and Grade 5 FAST/B.E.S.T. reference sheet PDFs into Markdown reference files under `references/` and removing the temporary root PDFs.
-
-## 2026-05-11T18:20:00-04:00
-
-- Completed PLAN.md Section 8 by adding unit labels to measurement, time, area, volume, data, money-adjacent fraction, and advanced Grade 5 answer choices while preserving deterministic checking.
-
-## 2026-05-11T18:12:00-04:00
-
-- Completed PLAN.md Section 7 by expanding Grade 4 angle decomposition to use varied whole-number angle measures, 90/180/270/360-degree totals, and degree-labeled answer choices.
-
-## 2026-05-11T18:09:00-04:00
-
-- Completed PLAN.md Section 6 by adding a browser-native `Read Story` / `Stop Reading` control that reads only the current story text and stops on math, scene changes, navigation, or unmount.
-
-## 2026-05-11T18:05:00-04:00
-
-- Completed PLAN.md Section 5 by restoring the fresh-session background music volume default to 50% and updating audio documentation to match.
-
-## 2026-05-11T18:03:00-04:00
-
-- Completed PLAN.md Section 4 by removing `they/them` from the student-facing pronoun options while leaving backend handling tolerant of stale in-session values.
-
-## 2026-05-11T18:01:00-04:00
-
-- Completed PLAN.md Sections 3 and 3B by adding the safe Snack Escape premise, corresponding fallback/image safety handling, and prompt guidance for playable scenes to end with natural next-step questions.
-
-## 2026-05-11T17:57:00-04:00
-
-- Completed PLAN.md Section 2 setup option expansion by adding Hamster, Guinea Pig, Wolf, and Mango person ancestries with backend validation and Mango person story/image safety guidance.
-
-## 2026-05-11T17:55:00-04:00
-
-- Completed PLAN.md Section 1 cleanup: removed separate action recap UI/state, removed redundant Quest Moments outro metadata, and matched ending story text to the main adventure story typography.
-
-## 2026-05-11T06:52:54-04:00
-
-- Moved the project update log into `references/` and updated agent/handoff guidance to point future sessions to `references/UPDATES.md`.
-
-## 2026-05-11T06:50:13-04:00
-
-- Added a verified Grade 3 number-pattern generator and updated standards references so Easy quests include more app-generated variety.
-
-## 2026-05-11T06:47:07-04:00
-
-- Expanded safe genre-specific fallback scene and ending copy so degraded story responses stay varied and aligned with the selected quest genre.
-
-## 2026-05-11T06:46:02-04:00
-
-- Added session-only action recaps so the next story page briefly reflects the choice that opened it.
-
-## 2026-05-11T06:44:54-04:00
-
-- Added session-only Quest Moments and stronger reward framing to the ending screen so completed adventures feel more earned and replayable.
-
-## 2026-05-11T06:44:03-04:00
-
-- Added a ChatGPT project handoff reference with current guardrails, architecture, UX conventions, math model notes, and verification commands.
-
-## 2026-05-11T06:43:25-04:00
-
-- Updated AGENTS guidance with the new update-log, rich math display, social metadata, loading-flow, and audio conventions for future Codex sessions.
-
-## 2026-05-11T06:43:02-04:00
-
-- Formalized this root update log as the durable project journal for future change checkpoints and Codex handoffs.
-
-## 2026-05-11T06:42:09-04:00
-
-- Moved the rich social preview image into the frontend public images folder and updated page metadata/tagline for richer embeds.
-
-## 2026-05-11T06:41:31-04:00
-
-- Added rich math display metadata and rendering for selected fraction and data-table problems, including stacked fractions and accessible tables in the math challenge view.
-
-## 2026-05-11T06:36:26-04:00
-
-- Removed the extra pre-quest writing screen so setup now hands directly into the game loading state for first story and cover preparation.
-
-## 2026-05-11T06:35:35-04:00
-
-- Matched the Exit Quest button and inline exit-confirmation height so the control no longer nudges the game header when toggled.
-
-## 2026-05-11T06:34:38-04:00
-
-- Slowed rotating game loading messages to a calmer 4.5-second cadence so Chronicle copy stays readable during intro, story, and ending waits.
-
-## 2026-05-11T06:30:31-04:00
-
-- Added ending-specific Chronicle loading copy so the final story and victory illustration wait feels intentional instead of looking like a generic next-page load.
-
-## 2026-05-11T06:30:31-04:00
-
-- Lowered fresh-session background music volume from 10% to 5% while keeping navigation sound effects and session-only volume controls separate.
-
-## 2026-05-11T06:30:31-04:00
-
-- Fixed ending/outro utility controls so settings and info share the same centered, reserved top-row treatment used elsewhere. This keeps the controls visible and away from ending content on narrow screens.
+2026-06-07: Removed stale completed review docs and trimmed AGENTS guidance.
+2026-06-07: Completed final review cleanup validation and recorded status evidence.
+2026-06-07: Split backend story route data, stores, validation, and fallback modules.
+2026-06-07: Split math generators into shared core and grade-owned modules.
+2026-06-07: Recorded the pre-refactor math validation baseline.
+2026-06-07: Expanded Playwright smoke coverage across setup, ending, read-aloud, and image timeout flows.
+2026-06-07: Updated the completed code-review cleanup plan with phase status evidence.
+2026-06-07: Standardized frontend calls on generated async API clients.
+2026-06-07: Cleaned settings badges, unused prompt assets, and Vite allowed-host configuration.
+2026-06-07: Pruned unused frontend UI scaffold files and dependencies.
+2026-06-07: Recorded the frontend UI scaffold inventory before pruning.
+2026-06-07: Removed unused database workspace, starter script, and stale references.
+2026-06-07: Hardened public deployment settings, memory caps, and no-key server startup behavior.
+2026-06-07: Added prepared-turn routes and metadata to OpenAPI/generated contracts.
+2026-06-07: Added pending image timeout handling and image status API schemas.
+2026-05-14: Expanded preset quest genre pools for more safe story-start variety.
+2026-05-14: Added Pop Band Quest as a preset-safe story genre.
+2026-05-13: Added Koala as a preset-safe hero ancestry.
+2026-05-12: Expanded math display and generator behavior for fractions, tables, patterns, geometry, and conversions.
+2026-05-12: Expanded setup/story variety with new names, ancestries, genres, and fallback lines.
+2026-05-12: Expanded intro and outro loading copy pools.
+2026-05-11: Completed final validation after the megabatch implementation.
+2026-05-11: Updated standards/reference docs with current generator counts and benchmark coverage.
+2026-05-11: Added session-only recent-domain tracking for math problem variety.
+2026-05-11: Expanded Extreme Grade 5 math variety.
+2026-05-11: Expanded Hard Grade 5 math variety.
+2026-05-11: Expanded Medium Grade 4 math variety.
+2026-05-11: Expanded Easy Grade 3 math variety.
+2026-05-11: Rendered fraction and mixed-number answer choices with stacked visual fractions.
+2026-05-11: Removed duplicated visible table rows from data prompts.
+2026-05-11: Added customary conversion reference tables to rich math displays.
+2026-05-11: Converted Grade 4 and Grade 5 FAST/B.E.S.T. reference sheets to Markdown.
+2026-05-11: Added unit labels to measurement, area, volume, data, and fraction answer choices.
+2026-05-11: Expanded Grade 4 angle decomposition problem variety.
+2026-05-11: Added browser-native story read-aloud controls.
+2026-05-11: Restored fresh-session background music volume to 50%.
+2026-05-11: Removed they/them from student-facing pronoun options.
+2026-05-11: Added the safe Snack Escape premise and related fallback guidance.
+2026-05-11: Added Hamster, Guinea Pig, Wolf, and Mango person ancestry options.
+2026-05-11: Cleaned ending recap UI and matched ending story typography.
+2026-05-11: Moved the update log into references/ and updated handoff guidance.
+2026-05-11: Added a verified Grade 3 number-pattern generator.
+2026-05-11: Expanded safe genre fallback scene and ending copy.
+2026-05-11: Added session-only action recaps.
+2026-05-11: Added session-only Quest Moments and stronger ending reward framing.
+2026-05-11: Added a ChatGPT project handoff reference.
+2026-05-11: Updated AGENTS with update-log, rich display, social metadata, loading, and audio guidance.
+2026-05-11: Formalized the update log as the durable project journal.
+2026-05-11: Moved the social preview image into the frontend public images folder.
+2026-05-11: Added rich math display metadata and rendering.
+2026-05-11: Removed the extra pre-quest writing screen.
+2026-05-11: Matched the Exit Quest and inline confirmation heights.
+2026-05-11: Slowed rotating game loading messages to a 4.5-second cadence.
+2026-05-11: Added ending-specific Chronicle loading copy.
+2026-05-11: Lowered fresh-session background music volume to 5%.
+2026-05-11: Fixed ending/outro utility control alignment.
