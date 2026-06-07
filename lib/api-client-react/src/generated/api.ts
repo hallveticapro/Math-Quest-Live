@@ -25,6 +25,7 @@ import type {
   ResolvePreparedGameStepBody,
   ResolvePreparedGameStepResponse,
   StartGameBody,
+  StoryImage,
   StoryTurnResponse,
   TakeTurnBody,
 } from "./api.schemas";
@@ -552,6 +553,96 @@ export const useGetEnding = <
 > => {
   return useMutation(getGetEndingMutationOptions(options));
 };
+
+/**
+ * Returns the current metadata for a temporary generated image job
+ * @summary Get generated scene image job status
+ */
+export const getGetImageJobStatusUrl = (imageJobId: string) => {
+  return `/api/images/status/${imageJobId}`;
+};
+
+export const getImageJobStatus = async (
+  imageJobId: string,
+  options?: RequestInit,
+): Promise<StoryImage> => {
+  return customFetch<StoryImage>(getGetImageJobStatusUrl(imageJobId), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetImageJobStatusQueryKey = (imageJobId: string) => {
+  return [`/api/images/status/${imageJobId}`] as const;
+};
+
+export const getGetImageJobStatusQueryOptions = <
+  TData = Awaited<ReturnType<typeof getImageJobStatus>>,
+  TError = ErrorType<void>,
+>(
+  imageJobId: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getImageJobStatus>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetImageJobStatusQueryKey(imageJobId);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getImageJobStatus>>
+  > = ({ signal }) =>
+    getImageJobStatus(imageJobId, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!imageJobId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getImageJobStatus>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetImageJobStatusQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getImageJobStatus>>
+>;
+export type GetImageJobStatusQueryError = ErrorType<void>;
+
+/**
+ * @summary Get generated scene image job status
+ */
+
+export function useGetImageJobStatus<
+  TData = Awaited<ReturnType<typeof getImageJobStatus>>,
+  TError = ErrorType<void>,
+>(
+  imageJobId: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getImageJobStatus>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetImageJobStatusQueryOptions(imageJobId, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
 
 /**
  * Returns an in-memory generated image if it has not expired

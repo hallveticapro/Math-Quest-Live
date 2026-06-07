@@ -7,18 +7,24 @@
  */
 
 export * from "./endingResponse";
+export * from "./failedStoryImage";
+export * from "./failedStoryImageError";
+export * from "./failedStoryImageStatus";
 export * from "./getEndingBody";
 export * from "./healthStatus";
 export * from "./heroInfo";
+export * from "./pendingStoryImage";
+export * from "./pendingStoryImageStatus";
 export * from "./prepareGameStepBody";
 export * from "./prepareGameStepBodyKind";
 export * from "./prepareGameStepResponse";
 export * from "./prepareGameStepResponseKind";
+export * from "./readyStoryImage";
+export * from "./readyStoryImageStatus";
 export * from "./resolvePreparedGameStepBody";
 export * from "./resolvePreparedGameStepResponse";
 export * from "./startGameBody";
 export * from "./storyChoice";
 export * from "./storyImage";
-export * from "./storyImageStatus";
 export * from "./storyTurnResponse";
 export * from "./takeTurnBody";

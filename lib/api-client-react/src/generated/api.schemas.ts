@@ -21,22 +21,61 @@ export interface StoryChoice {
   label: string;
 }
 
-export type StoryImageStatus =
-  (typeof StoryImageStatus)[keyof typeof StoryImageStatus];
+export type ReadyStoryImageStatus =
+  (typeof ReadyStoryImageStatus)[keyof typeof ReadyStoryImageStatus];
 
-export const StoryImageStatus = {
+export const ReadyStoryImageStatus = {
   ready: "ready",
 } as const;
 
-export interface StoryImage {
+export interface ReadyStoryImage {
   enabled: true;
-  status: StoryImageStatus;
+  status: ReadyStoryImageStatus;
   imageId: string;
   url: string;
   alt: string;
   provider: string;
   model: string;
 }
+
+export type PendingStoryImageStatus =
+  (typeof PendingStoryImageStatus)[keyof typeof PendingStoryImageStatus];
+
+export const PendingStoryImageStatus = {
+  pending: "pending",
+} as const;
+
+export interface PendingStoryImage {
+  enabled: true;
+  status: PendingStoryImageStatus;
+  imageId: string;
+  statusUrl: string;
+  alt: string;
+  provider: string;
+  model: string;
+}
+
+export type FailedStoryImageStatus =
+  (typeof FailedStoryImageStatus)[keyof typeof FailedStoryImageStatus];
+
+export const FailedStoryImageStatus = {
+  failed: "failed",
+} as const;
+
+export type FailedStoryImageError =
+  (typeof FailedStoryImageError)[keyof typeof FailedStoryImageError];
+
+export const FailedStoryImageError = {
+  image_generation_failed: "image_generation_failed",
+} as const;
+
+export interface FailedStoryImage {
+  enabled: true;
+  status: FailedStoryImageStatus;
+  error: FailedStoryImageError;
+}
+
+export type StoryImage = ReadyStoryImage | PendingStoryImage | FailedStoryImage;
 
 export interface StoryTurnResponse {
   episodeId?: string;

@@ -5,14 +5,8 @@
  * MathQuest Live API specification
  * OpenAPI spec version: 0.1.0
  */
-import type { StoryImageStatus } from "./storyImageStatus";
+import type { FailedStoryImage } from "./failedStoryImage";
+import type { PendingStoryImage } from "./pendingStoryImage";
+import type { ReadyStoryImage } from "./readyStoryImage";
 
-export interface StoryImage {
-  enabled: true;
-  status: StoryImageStatus;
-  imageId: string;
-  url: string;
-  alt: string;
-  provider: string;
-  model: string;
-}
+export type StoryImage = ReadyStoryImage | PendingStoryImage | FailedStoryImage;

@@ -1,9 +1,19 @@
 import { useEffect, useState } from "react";
 import { SceneImage as SceneImageType } from "../types";
 
+declare global {
+  interface Window {
+    __MATHQUEST_IMAGE_MAX_POLL_ATTEMPTS__?: number;
+    __MATHQUEST_IMAGE_POLL_INTERVAL_MS__?: number;
+  }
+}
+
 interface SceneImageProps {
   image: SceneImageType | null;
 }
+
+const DEFAULT_MAX_POLL_ATTEMPTS = 10;
+const DEFAULT_POLL_INTERVAL_MS = 2000;
 
 export function SceneImage({ image }: SceneImageProps) {
   const [resolvedImage, setResolvedImage] = useState<SceneImageType | null>(image);
@@ -14,6 +24,19 @@ export function SceneImage({ image }: SceneImageProps) {
 
     let cancelled = false;
     let attempts = 0;
+    const maxPollAttempts = window.__MATHQUEST_IMAGE_MAX_POLL_ATTEMPTS__ ?? DEFAULT_MAX_POLL_ATTEMPTS;
+    const pollIntervalMs = window.__MATHQUEST_IMAGE_POLL_INTERVAL_MS__ ?? DEFAULT_POLL_INTERVAL_MS;
+
+    const failPendingImage = () => {
+      if (!cancelled) {
+        setResolvedImage({
+          enabled: true,
+          status: "failed",
+          error: "image_generation_failed",
+        });
+      }
+    };
+
     const timer = window.setInterval(async () => {
       attempts += 1;
       try {
@@ -25,20 +48,15 @@ export function SceneImage({ image }: SceneImageProps) {
           window.clearInterval(timer);
         }
       } catch {
-        if (!cancelled) {
-          setResolvedImage({
-            enabled: true,
-            status: "failed",
-            error: "image_generation_failed",
-          });
-        }
+        failPendingImage();
         window.clearInterval(timer);
       }
 
-      if (attempts >= 10) {
+      if (attempts >= maxPollAttempts) {
+        failPendingImage();
         window.clearInterval(timer);
       }
-    }, 2000);
+    }, pollIntervalMs);
 
     return () => {
       cancelled = true;

@@ -129,6 +129,28 @@ paths:
               schema:
                 $ref: "#/components/schemas/EndingResponse"
 
+  /images/status/{imageJobId}:
+    get:
+      operationId: getImageJobStatus
+      tags: [images]
+      summary: Get generated scene image job status
+      description: Returns the current metadata for a temporary generated image job
+      parameters:
+        - name: imageJobId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Temporary generated image job status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StoryImage"
+        "404":
+          description: Image job not found or expired
+
   /images/{imageId}:
     get:
       operationId: getImage
@@ -190,7 +212,7 @@ components:
         - id
         - label
 
-    StoryImage:
+    ReadyStoryImage:
       type: object
       properties:
         enabled:
@@ -218,6 +240,60 @@ components:
         - alt
         - provider
         - model
+
+    PendingStoryImage:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          const: true
+        status:
+          type: string
+          enum:
+            - pending
+        imageId:
+          type: string
+        statusUrl:
+          type: string
+        alt:
+          type: string
+        provider:
+          type: string
+        model:
+          type: string
+      required:
+        - enabled
+        - status
+        - imageId
+        - statusUrl
+        - alt
+        - provider
+        - model
+
+    FailedStoryImage:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          const: true
+        status:
+          type: string
+          enum:
+            - failed
+        error:
+          type: string
+          enum:
+            - image_generation_failed
+      required:
+        - enabled
+        - status
+        - error
+
+    StoryImage:
+      oneOf:
+        - $ref: "#/components/schemas/ReadyStoryImage"
+        - $ref: "#/components/schemas/PendingStoryImage"
+        - $ref: "#/components/schemas/FailedStoryImage"
 
     StoryTurnResponse:
       type: object

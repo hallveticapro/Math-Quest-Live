@@ -2,6 +2,10 @@
 
 Newest entries first. Add a concise timestamped entry for every meaningful project change before creating the related commit.
 
+## 2026-06-07T09:50:23-04:00
+
+- Completed Code Review Resolution Plan Phase 1 by adding a measurable pending image timeout path, smoke coverage for permanently pending image jobs, OpenAPI image status schemas for ready/pending/failed states, generated API client updates, and passing image/typecheck/smoke/build validation.
+
 ## 2026-05-14T21:02:10-04:00
 
 - Expanded every preset quest genre with larger settings, objective, helper, and detail pools so story starts vary more often while staying inside the existing safe genre boundaries.

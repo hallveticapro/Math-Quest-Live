@@ -45,15 +45,31 @@ export const StartGameResponse = zod.object({
   storyHistory: zod.string().optional(),
   safetyRating: zod.string(),
   image: zod
-    .object({
-      enabled: zod.boolean(),
-      status: zod.enum(["ready"]),
-      imageId: zod.string(),
-      url: zod.string(),
-      alt: zod.string(),
-      provider: zod.string(),
-      model: zod.string(),
-    })
+    .union([
+      zod.object({
+        enabled: zod.boolean(),
+        status: zod.enum(["ready"]),
+        imageId: zod.string(),
+        url: zod.string(),
+        alt: zod.string(),
+        provider: zod.string(),
+        model: zod.string(),
+      }),
+      zod.object({
+        enabled: zod.boolean(),
+        status: zod.enum(["pending"]),
+        imageId: zod.string(),
+        statusUrl: zod.string(),
+        alt: zod.string(),
+        provider: zod.string(),
+        model: zod.string(),
+      }),
+      zod.object({
+        enabled: zod.boolean(),
+        status: zod.enum(["failed"]),
+        error: zod.enum(["image_generation_failed"]),
+      }),
+    ])
     .optional(),
 });
 
@@ -93,15 +109,31 @@ export const TakeTurnResponse = zod.object({
   storyHistory: zod.string().optional(),
   safetyRating: zod.string(),
   image: zod
-    .object({
-      enabled: zod.boolean(),
-      status: zod.enum(["ready"]),
-      imageId: zod.string(),
-      url: zod.string(),
-      alt: zod.string(),
-      provider: zod.string(),
-      model: zod.string(),
-    })
+    .union([
+      zod.object({
+        enabled: zod.boolean(),
+        status: zod.enum(["ready"]),
+        imageId: zod.string(),
+        url: zod.string(),
+        alt: zod.string(),
+        provider: zod.string(),
+        model: zod.string(),
+      }),
+      zod.object({
+        enabled: zod.boolean(),
+        status: zod.enum(["pending"]),
+        imageId: zod.string(),
+        statusUrl: zod.string(),
+        alt: zod.string(),
+        provider: zod.string(),
+        model: zod.string(),
+      }),
+      zod.object({
+        enabled: zod.boolean(),
+        status: zod.enum(["failed"]),
+        error: zod.enum(["image_generation_failed"]),
+      }),
+    ])
     .optional(),
 });
 
@@ -160,15 +192,31 @@ export const ResolvePreparedGameStepResponse = zod.union([
       storyHistory: zod.string().optional(),
       safetyRating: zod.string(),
       image: zod
-        .object({
-          enabled: zod.boolean(),
-          status: zod.enum(["ready"]),
-          imageId: zod.string(),
-          url: zod.string(),
-          alt: zod.string(),
-          provider: zod.string(),
-          model: zod.string(),
-        })
+        .union([
+          zod.object({
+            enabled: zod.boolean(),
+            status: zod.enum(["ready"]),
+            imageId: zod.string(),
+            url: zod.string(),
+            alt: zod.string(),
+            provider: zod.string(),
+            model: zod.string(),
+          }),
+          zod.object({
+            enabled: zod.boolean(),
+            status: zod.enum(["pending"]),
+            imageId: zod.string(),
+            statusUrl: zod.string(),
+            alt: zod.string(),
+            provider: zod.string(),
+            model: zod.string(),
+          }),
+          zod.object({
+            enabled: zod.boolean(),
+            status: zod.enum(["failed"]),
+            error: zod.enum(["image_generation_failed"]),
+          }),
+        ])
         .optional(),
     }),
   }),
@@ -181,15 +229,31 @@ export const ResolvePreparedGameStepResponse = zod.union([
       badge: zod.string(),
       safetyRating: zod.string(),
       image: zod
-        .object({
-          enabled: zod.boolean(),
-          status: zod.enum(["ready"]),
-          imageId: zod.string(),
-          url: zod.string(),
-          alt: zod.string(),
-          provider: zod.string(),
-          model: zod.string(),
-        })
+        .union([
+          zod.object({
+            enabled: zod.boolean(),
+            status: zod.enum(["ready"]),
+            imageId: zod.string(),
+            url: zod.string(),
+            alt: zod.string(),
+            provider: zod.string(),
+            model: zod.string(),
+          }),
+          zod.object({
+            enabled: zod.boolean(),
+            status: zod.enum(["pending"]),
+            imageId: zod.string(),
+            statusUrl: zod.string(),
+            alt: zod.string(),
+            provider: zod.string(),
+            model: zod.string(),
+          }),
+          zod.object({
+            enabled: zod.boolean(),
+            status: zod.enum(["failed"]),
+            error: zod.enum(["image_generation_failed"]),
+          }),
+        ])
         .optional(),
     }),
   }),
@@ -222,17 +286,67 @@ export const GetEndingResponse = zod.object({
   badge: zod.string(),
   safetyRating: zod.string(),
   image: zod
-    .object({
-      enabled: zod.boolean(),
-      status: zod.enum(["ready"]),
-      imageId: zod.string(),
-      url: zod.string(),
-      alt: zod.string(),
-      provider: zod.string(),
-      model: zod.string(),
-    })
+    .union([
+      zod.object({
+        enabled: zod.boolean(),
+        status: zod.enum(["ready"]),
+        imageId: zod.string(),
+        url: zod.string(),
+        alt: zod.string(),
+        provider: zod.string(),
+        model: zod.string(),
+      }),
+      zod.object({
+        enabled: zod.boolean(),
+        status: zod.enum(["pending"]),
+        imageId: zod.string(),
+        statusUrl: zod.string(),
+        alt: zod.string(),
+        provider: zod.string(),
+        model: zod.string(),
+      }),
+      zod.object({
+        enabled: zod.boolean(),
+        status: zod.enum(["failed"]),
+        error: zod.enum(["image_generation_failed"]),
+      }),
+    ])
     .optional(),
 });
+
+/**
+ * Returns the current metadata for a temporary generated image job
+ * @summary Get generated scene image job status
+ */
+export const GetImageJobStatusParams = zod.object({
+  imageJobId: zod.coerce.string(),
+});
+
+export const GetImageJobStatusResponse = zod.union([
+  zod.object({
+    enabled: zod.boolean(),
+    status: zod.enum(["ready"]),
+    imageId: zod.string(),
+    url: zod.string(),
+    alt: zod.string(),
+    provider: zod.string(),
+    model: zod.string(),
+  }),
+  zod.object({
+    enabled: zod.boolean(),
+    status: zod.enum(["pending"]),
+    imageId: zod.string(),
+    statusUrl: zod.string(),
+    alt: zod.string(),
+    provider: zod.string(),
+    model: zod.string(),
+  }),
+  zod.object({
+    enabled: zod.boolean(),
+    status: zod.enum(["failed"]),
+    error: zod.enum(["image_generation_failed"]),
+  }),
+]);
 
 /**
  * Returns an in-memory generated image if it has not expired

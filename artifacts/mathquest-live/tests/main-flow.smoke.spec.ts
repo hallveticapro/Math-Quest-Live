@@ -1,5 +1,12 @@
 import { expect, test } from "@playwright/test";
 
+declare global {
+  interface Window {
+    __MATHQUEST_IMAGE_MAX_POLL_ATTEMPTS__?: number;
+    __MATHQUEST_IMAGE_POLL_INTERVAL_MS__?: number;
+  }
+}
+
 test.beforeEach(async ({ page }) => {
   await page.route("**/api/game/start", async (route) => {
     await route.fulfill({
@@ -86,4 +93,66 @@ test("quick start reaches a story, opens settings during math, and advances afte
   }
 
   await expect(page.getByText("The Second Page Turns")).toBeVisible();
+});
+
+test("pending scene images time out instead of loading forever", async ({ page }) => {
+  await page.addInitScript(() => {
+    window.__MATHQUEST_IMAGE_MAX_POLL_ATTEMPTS__ = 2;
+    window.__MATHQUEST_IMAGE_POLL_INTERVAL_MS__ = 250;
+  });
+
+  await page.unroute("**/api/game/start");
+  await page.route("**/api/game/start", async (route) => {
+    await route.fulfill({
+      contentType: "application/json",
+      body: JSON.stringify({
+        sceneTitle: "The Painted Page Waits",
+        storyText:
+          "A friendly page begins to shimmer while the hero studies a safe path through the margin.",
+        choices: [
+          { id: "A", label: "Watch the margin glow" },
+          { id: "B", label: "Ask the guide about the page" },
+          { id: "C", label: "Step toward the bright path" },
+        ],
+        storySummary: "The hero waited beside a painted page.",
+        safetyRating: "kid_safe",
+        episodeId: "episode_smoke_image",
+        image: {
+          enabled: true,
+          status: "pending",
+          imageId: "imgjob_smoke_pending",
+          statusUrl: "/api/images/status/imgjob_smoke_pending",
+          alt: "A safe storybook page waiting for an illustration.",
+          provider: "openai",
+          model: "smoke",
+        },
+      }),
+    });
+  });
+
+  await page.route("**/api/images/status/imgjob_smoke_pending", async (route) => {
+    await route.fulfill({
+      contentType: "application/json",
+      body: JSON.stringify({
+        enabled: true,
+        status: "pending",
+        imageId: "imgjob_smoke_pending",
+        statusUrl: "/api/images/status/imgjob_smoke_pending",
+        alt: "A safe storybook page waiting for an illustration.",
+        provider: "openai",
+        model: "smoke",
+      }),
+    });
+  });
+
+  await page.goto("/");
+  await page.getByTestId("button-quick-start").click();
+  await expect(page.getByTestId("button-randomize-hero-begin")).toBeVisible();
+  await page.getByTestId("button-randomize-hero-begin").click();
+
+  await expect(page.getByText("The Painted Page Waits")).toBeVisible();
+  await expect(page.getByText("Illustration still loading...")).toBeVisible();
+  await expect(page.getByText("Illustration still loading...")).toHaveCount(0, {
+    timeout: 2_000,
+  });
 });

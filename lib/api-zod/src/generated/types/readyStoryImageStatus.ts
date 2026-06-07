@@ -6,9 +6,9 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export type StoryImageStatus =
-  (typeof StoryImageStatus)[keyof typeof StoryImageStatus];
+export type ReadyStoryImageStatus =
+  (typeof ReadyStoryImageStatus)[keyof typeof ReadyStoryImageStatus];
 
-export const StoryImageStatus = {
+export const ReadyStoryImageStatus = {
   ready: "ready",
 } as const;
