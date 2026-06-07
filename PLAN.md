@@ -10,6 +10,32 @@ This plan converts every action item from `MATHQUEST_CODE_REVIEW_2026-06-06.md` 
 - Review date: 2026-06-06
 - Plan date: 2026-06-07
 
+## Current Execution Status
+
+This plan is both the implementation roadmap and the durable status tracker for resolving every action item in `MATHQUEST_CODE_REVIEW_2026-06-06.md`. As of 2026-06-07 14:07 EDT, Phases 1-8 have local evidence and matching entries in `references/UPDATES.md`. Future work should continue at Phase 9 unless a fresh audit finds a regression in an earlier phase.
+
+| Phase | Status | Evidence / next step |
+| --- | --- | --- |
+| Phase 1 - Image pending state and image API contract | Complete | Commit `c419eaa` (`fix: handle pending image timeouts and image API schema`); `references/UPDATES.md` entry `2026-06-07T09:50:23-04:00`. |
+| Phase 2 - Prepared turn generated API contract | Complete | Commit `efd1163` (`chore: add prepared turn routes to API contract`); `references/UPDATES.md` entry `2026-06-07T09:54:49-04:00`. |
+| Phase 3 - AI-cost controls and OpenAI startup behavior | Complete | Commit `57cdeb5` (`chore: harden AI route limits and OpenAI startup`); `references/UPDATES.md` entry `2026-06-07T10:00:07-04:00`. |
+| Phase 4 - Database scaffold and starter script cleanup | Complete | Commit `e8e7ce5` (`chore: remove unused database and starter script`); `references/UPDATES.md` entry `2026-06-07T10:03:39-04:00`. |
+| Phase 5 - Unused UI scaffold and dependency pruning | Complete | Commit `c8e35ce` (`chore: prune unused frontend UI scaffold`); `references/UPDATES.md` entries `2026-06-07T10:05:05-04:00` and `2026-06-07T10:07:45-04:00`. |
+| Phase 6 - Small UI and asset cleanup | Complete | Commit `9055336` (`fix: clean small UI and asset leftovers`); `references/UPDATES.md` entry `2026-06-07T10:09:44-04:00`. |
+| Phase 7 - API client consistency | Complete | Commit `d14d30a` (`chore: normalize frontend API client usage`); `references/UPDATES.md` entry `2026-06-07T10:12:31-04:00`. |
+| Phase 8 - Expanded smoke coverage | Complete | Smoke tests now cover quick start, full Chronicler setup with audio-only setup settings, game settings full scope, ending flow, read-aloud start/stop with mocked browser speech, and pending image timeout. Validation passed: `npm run test:smoke`, frontend typecheck, and `npm run build`. |
+| Phase 9 - Math engine split | Pending | Next phase to implement. Refactor-only phase after Phase 8 coverage. Must preserve `npm run validate:math` behavior. |
+| Phase 10 - Backend story route/prompt data split | Pending | Refactor-only phase after Phase 8 coverage. Must preserve prompt behavior or document intentional text deltas. |
+| Phase 11 - Final docs/review cleanup | Pending | Mark every review item resolved/deferred/superseded, run final validation suite, and record final evidence. |
+
+### Continue-From-Here Checklist
+
+1. Start with Phase 9.
+2. Before coding each remaining phase, re-read that phase and inspect its listed files.
+3. Add or update `references/UPDATES.md` before each meaningful checkpoint commit.
+4. Run the targeted validation commands listed under that phase before committing.
+5. Do not mark this plan complete until Phase 11C's final validation suite exits `0`, or each failed command has an explicit blocker and next unblock step.
+
 ## Non-Negotiable Guardrails
 
 Do not add:

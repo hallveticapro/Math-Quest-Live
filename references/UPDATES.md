@@ -2,6 +2,14 @@
 
 Newest entries first. Add a concise timestamped entry for every meaningful project change before creating the related commit.
 
+## 2026-06-07T14:07:11-04:00
+
+- Completed Code Review Resolution Plan Phase 8 by expanding Playwright smoke coverage for Quick Start, the full Chronicler setup path, setup settings audio-only scope, game settings full scope, mocked ending flow, mocked browser read-aloud start/stop behavior, and pending image timeout behavior. Validation passed with `npm run test:smoke`, `pnpm --filter @workspace/mathquest-live run typecheck`, and `npm run build`.
+
+## 2026-06-07T10:16:00-04:00
+
+- Updated the root `PLAN.md` for the 2026-06-06 code review cleanup with current execution status, phase commit evidence for completed Phases 1-7, and a continue-from-here checklist pointing future work at Phase 8 through final validation.
+
 ## 2026-06-07T10:12:31-04:00
 
 - Completed Code Review Resolution Plan Phase 7 by standardizing the frontend on generated async API client functions, removing the unused app-level `QueryClientProvider` and direct frontend `@tanstack/react-query` dependency, preserving generated hook support inside `@workspace/api-client-react`, and passing frontend typecheck, smoke, and build validation. The main frontend JS chunk is now 501.46 kB minified / 152.57 kB gzip and remains slightly over Vite's warning threshold pending deeper code-splitting.
