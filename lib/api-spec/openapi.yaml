@@ -420,6 +420,8 @@ components:
           type: string
         mathSolved:
           type: integer
+        lastMathSkill:
+          $ref: "#/components/schemas/LastMathSkill"
       required:
         - kind
         - hero
@@ -429,6 +431,26 @@ components:
         - maxTurns
         - storySummary
         - chosenAction
+
+    LastMathSkill:
+      type: object
+      properties:
+        skillLabel:
+          type: string
+        problemType:
+          type: string
+        difficulty:
+          type: string
+        gradeBand:
+          type: integer
+        storyFlavor:
+          type: string
+      required:
+        - skillLabel
+        - problemType
+        - difficulty
+        - gradeBand
+        - storyFlavor
 
     PrepareGameStepResponse:
       type: object

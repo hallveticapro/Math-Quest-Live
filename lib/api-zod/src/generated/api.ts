@@ -158,6 +158,15 @@ export const PrepareGameStepBody = zod.object({
   episodeId: zod.string().optional(),
   chosenAction: zod.string(),
   mathSolved: zod.number().optional(),
+  lastMathSkill: zod
+    .object({
+      skillLabel: zod.string(),
+      problemType: zod.string(),
+      difficulty: zod.string(),
+      gradeBand: zod.number(),
+      storyFlavor: zod.string(),
+    })
+    .optional(),
 });
 
 export const PrepareGameStepResponse = zod.object({

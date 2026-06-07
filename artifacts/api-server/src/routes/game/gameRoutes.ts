@@ -1,6 +1,12 @@
 import crypto from "node:crypto";
 import { Router } from "express";
-import { StartGameBody, TakeTurnBody, GetEndingBody } from "@workspace/api-zod";
+import {
+  StartGameBody,
+  TakeTurnBody,
+  GetEndingBody,
+  PrepareGameStepBody,
+  ResolvePreparedGameStepBody,
+} from "@workspace/api-zod";
 import {
   ALLOWED_ADVENTURE_SEEDS,
   ALLOWED_ANCESTRIES,
@@ -490,35 +496,23 @@ function parseSafeMathSkill(value: unknown): SafeMathSkillMetadata | undefined {
 }
 
 function parsePrepareBody(body: unknown) {
-  if (!body || typeof body !== "object") return null;
-  const data = body as Record<string, unknown>;
-  if (!isHeroInfo(data.hero)) return null;
-  if (data.kind !== "turn" && data.kind !== "ending") return null;
-  const kind = data.kind as "turn" | "ending";
-  if (
-    typeof data.difficulty !== "string" ||
-    typeof data.adventureSeed !== "string" ||
-    typeof data.storySummary !== "string" ||
-    typeof data.chosenAction !== "string" ||
-    !Number.isInteger(data.turn) ||
-    !Number.isInteger(data.maxTurns)
-  ) {
-    return null;
-  }
+  const parsed = PrepareGameStepBody.safeParse(body);
+  if (!parsed.success || !isHeroInfo(parsed.data.hero)) return null;
+  const data = parsed.data;
 
   return {
-    kind,
+    kind: data.kind,
     hero: data.hero,
     difficulty: data.difficulty,
     adventureSeed: data.adventureSeed,
-    turn: data.turn as number,
-    maxTurns: data.maxTurns as number,
-    episodeId: typeof data.episodeId === "string" ? data.episodeId.slice(0, 80) : undefined,
+    turn: data.turn,
+    maxTurns: data.maxTurns,
+    episodeId: data.episodeId ? data.episodeId.slice(0, 80) : undefined,
     storySummary: data.storySummary,
-    storyHistory: typeof data.storyHistory === "string" ? data.storyHistory : undefined,
+    storyHistory: data.storyHistory,
     chosenAction: data.chosenAction,
     lastMathSkill: parseSafeMathSkill(data.lastMathSkill),
-    mathSolved: Number.isInteger(data.mathSolved) ? (data.mathSolved as number) : undefined,
+    mathSolved: Number.isInteger(data.mathSolved) ? data.mathSolved : undefined,
   };
 }
 
@@ -655,7 +649,8 @@ router.post("/prepare", (req, res) => {
 });
 
 router.post("/resolve", async (req, res) => {
-  const pendingId = typeof req.body?.pendingId === "string" ? req.body.pendingId : "";
+  const parsed = ResolvePreparedGameStepBody.safeParse(req.body);
+  const pendingId = parsed.success ? parsed.data.pendingId : "";
   if (!pendingId.startsWith("pending_")) {
     res.status(400).json({ error: "Invalid request body" });
     return;

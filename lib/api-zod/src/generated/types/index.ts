@@ -13,6 +13,7 @@ export * from "./failedStoryImageStatus";
 export * from "./getEndingBody";
 export * from "./healthStatus";
 export * from "./heroInfo";
+export * from "./lastMathSkill";
 export * from "./pendingStoryImage";
 export * from "./pendingStoryImageStatus";
 export * from "./prepareGameStepBody";

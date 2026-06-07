@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { HeroInfo } from "./heroInfo";
+import type { LastMathSkill } from "./lastMathSkill";
 import type { PrepareGameStepBodyKind } from "./prepareGameStepBodyKind";
 
 export interface PrepareGameStepBody {
@@ -20,4 +21,5 @@ export interface PrepareGameStepBody {
   episodeId?: string;
   chosenAction: string;
   mathSolved?: number;
+  lastMathSkill?: LastMathSkill;
 }

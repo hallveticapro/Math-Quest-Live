@@ -5,11 +5,14 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
 
 import {
-  customFetch,
   getEnding,
+  prepareGameStep,
+  PrepareGameStepBodyKind,
+  resolvePreparedGameStep,
   startGame,
   takeTurn,
   type EndingResponse,
+  type PrepareGameStepResponse,
   type StoryTurnResponse,
 } from "@workspace/api-client-react";
 import { GameState, INITIAL_STATE, Hero } from "./types";
@@ -59,52 +62,6 @@ const FALLBACK_SCENE = {
     "The hero is following a safe puzzle path and solving challenges.",
   safetyRating: "kid_safe",
 };
-
-type PreparedStepKind = "turn" | "ending";
-type PrepareGameStepBody = {
-  kind: PreparedStepKind;
-  hero: Hero;
-  difficulty: string;
-  adventureSeed: string;
-  turn: number;
-  maxTurns: number;
-  episodeId?: string | null;
-  storySummary: string;
-  storyHistory?: string;
-  chosenAction: string;
-  mathSolved?: number;
-  lastMathSkill?: {
-    skillLabel: string;
-    problemType: string;
-    difficulty: string;
-    gradeBand: number;
-    storyFlavor: string;
-  };
-};
-type PrepareGameStepResponse = {
-  pendingId: string;
-  kind: PreparedStepKind;
-  turn: number;
-};
-type ResolvePreparedStepResponse =
-  | { kind: "turn"; turn: number; data: StoryTurnResponse }
-  | { kind: "ending"; turn: number; data: EndingResponse };
-
-function prepareGameStep(data: PrepareGameStepBody) {
-  return customFetch<PrepareGameStepResponse>("/api/game/prepare", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
-}
-
-function resolvePreparedStep(pendingId: string) {
-  return customFetch<ResolvePreparedStepResponse>("/api/game/resolve", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ pendingId }),
-  });
-}
 
 function getMathStoryFlavor(problem: MathProblem) {
   const text = `${problem.skill} ${problem.problemType}`.toLowerCase();
@@ -423,7 +380,7 @@ function GameApp() {
     const isEnding = state.turn >= state.maxTurns;
     const mathProblem = generateSessionMathProblem(state.difficulty);
     pendingPreparationRef.current = prepareGameStep({
-      kind: isEnding ? "ending" : "turn",
+      kind: isEnding ? PrepareGameStepBodyKind.ending : PrepareGameStepBodyKind.turn,
       hero: state.hero,
       difficulty: state.difficulty,
       adventureSeed: state.adventureSeed,
@@ -499,7 +456,7 @@ function GameApp() {
         throw new Error("Prepared ending unavailable");
       }
 
-      const resolved = await resolvePreparedStep(prepared.pendingId);
+      const resolved = await resolvePreparedGameStep({ pendingId: prepared.pendingId });
       if (resolved.kind !== "ending") {
         throw new Error("Prepared response did not contain an ending");
       }
@@ -586,7 +543,7 @@ function GameApp() {
         throw new Error("Prepared turn unavailable");
       }
 
-      const resolved = await resolvePreparedStep(prepared.pendingId);
+      const resolved = await resolvePreparedGameStep({ pendingId: prepared.pendingId });
       if (resolved.kind !== "turn") {
         throw new Error("Prepared response did not contain a turn");
       }

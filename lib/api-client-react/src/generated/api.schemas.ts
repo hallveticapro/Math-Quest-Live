@@ -124,6 +124,14 @@ export const PrepareGameStepBodyKind = {
   ending: "ending",
 } as const;
 
+export interface LastMathSkill {
+  skillLabel: string;
+  problemType: string;
+  difficulty: string;
+  gradeBand: number;
+  storyFlavor: string;
+}
+
 export interface PrepareGameStepBody {
   kind: PrepareGameStepBodyKind;
   hero: HeroInfo;
@@ -136,6 +144,7 @@ export interface PrepareGameStepBody {
   episodeId?: string;
   chosenAction: string;
   mathSolved?: number;
+  lastMathSkill?: LastMathSkill;
 }
 
 export type PrepareGameStepResponseKind =
