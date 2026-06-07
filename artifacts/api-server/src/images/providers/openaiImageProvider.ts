@@ -1,4 +1,4 @@
-import { openai } from "../../lib/openaiClient";
+import { requireOpenAI } from "../../lib/openaiClient";
 import { logger } from "../../lib/logger";
 import type { ImageConfig } from "../imageConfig";
 import type { ProviderImageResult } from "../imageTypes";
@@ -18,6 +18,7 @@ export async function generateOpenAIImage({
   config: ImageConfig;
 }): Promise<ProviderImageResult> {
   try {
+    const openai = requireOpenAI();
     const response = await openai.images.generate({
       model: config.model,
       prompt,

@@ -59,7 +59,7 @@ Current genre options include fantasy, space adventure, mystery, pirate adventur
 
 Required:
 
-- `OPENAI_API_KEY` - Server-side OpenAI API key used by the Express backend. Keep this secret. Never put it in frontend code and never commit it.
+- `OPENAI_API_KEY` - Server-side OpenAI API key used by the Express backend for normal AI gameplay and optional images. Keep this secret. Never put it in frontend code and never commit it. The server can still boot and serve health/static diagnostics without this key, but story/image requests will use safe fallback behavior instead of AI output.
 
 Optional:
 
@@ -69,7 +69,14 @@ Optional:
 - `RATE_LIMIT_WINDOW_MS` - Rate-limit window length. Defaults to `60000`.
 - `RATE_LIMIT_MAX_REQUESTS` - Maximum game/story API requests per window. Defaults to `60`.
 - `IMAGE_RATE_LIMIT_MAX_REQUESTS` - Maximum image-status polling requests per window. Defaults to `20`.
-- `CORS_ORIGIN` - Allowed CORS origin for the API. Defaults to `*`.
+- `CORS_ORIGIN` - Allowed CORS origin for the API. Defaults to `*`, which is suitable for local/private testing. Public deployments should set this to the exact frontend origin.
+- `TRUST_PROXY` - Express trust-proxy setting for deployments behind a reverse proxy. Defaults to `false`. Use `1`, `true`, or a trusted proxy subnet/string only when your proxy setup requires it.
+- `MAX_PENDING_TURNS` - Maximum number of in-memory prepared story turns. Defaults to `120`.
+- `MAX_PENDING_TURNS_PER_CLIENT` - Maximum pending prepared story turns per client IP bucket. Defaults to `4`.
+- `MAX_PENDING_TURNS_PER_EPISODE` - Maximum pending prepared story turns per episode id. Defaults to `2`.
+- `MAX_EPISODE_PLANS` - Maximum number of temporary in-memory episode plans. Defaults to `300`.
+- `MAX_IMAGE_JOBS` - Maximum number of temporary in-memory image generation jobs. Defaults to `120`.
+- `MAX_STORED_IMAGES` - Maximum number of temporary generated images kept in memory. Defaults to `120`; oldest images are pruned when capacity is reached.
 - `PORT` - Port used by the production Express server. Defaults to `3000`.
 - `NODE_ENV` - Use `production` for Docker/Unraid production serving.
 - `STATIC_DIR` - Directory containing the built frontend files. Docker sets this to `/app/public`.
@@ -231,9 +238,17 @@ MathQuest Live includes simple, portable, in-memory rate protection for AI-cost 
 RATE_LIMIT_WINDOW_MS=60000
 RATE_LIMIT_MAX_REQUESTS=60
 IMAGE_RATE_LIMIT_MAX_REQUESTS=20
+MAX_PENDING_TURNS=120
+MAX_PENDING_TURNS_PER_CLIENT=4
+MAX_PENDING_TURNS_PER_EPISODE=2
+MAX_EPISODE_PLANS=300
+MAX_IMAGE_JOBS=120
+MAX_STORED_IMAGES=120
 ```
 
-When the limit is reached, the API returns a friendly `429` response asking the user to wait briefly.
+When a request limit or pending-turn limit is reached, the API returns a friendly `429` response asking the user to wait briefly. When temporary in-memory capacity is reached, the API returns a friendly `503` response or skips optional image generation without blocking gameplay.
+
+For public deployments, set `CORS_ORIGIN` to the exact frontend origin rather than `*`. If the API is behind a reverse proxy, set `TRUST_PROXY` to the appropriate Express trust-proxy value so rate-limit buckets use the intended client IP.
 
 ## Optional AI Image Generation
 
@@ -380,7 +395,14 @@ ghcr.io/YOUR_GITHUB_USERNAME_OR_ORG/YOUR_REPO_NAME:latest
    - `RATE_LIMIT_WINDOW_MS=60000`
    - `RATE_LIMIT_MAX_REQUESTS=60`
    - `IMAGE_RATE_LIMIT_MAX_REQUESTS=20`
-   - `CORS_ORIGIN=*`
+   - `CORS_ORIGIN=*` for private/local use, or your exact public app origin for internet deployments
+   - `TRUST_PROXY=false` unless your reverse proxy setup requires it
+   - `MAX_PENDING_TURNS=120`
+   - `MAX_PENDING_TURNS_PER_CLIENT=4`
+   - `MAX_PENDING_TURNS_PER_EPISODE=2`
+   - `MAX_EPISODE_PLANS=300`
+   - `MAX_IMAGE_JOBS=120`
+   - `MAX_STORED_IMAGES=120`
    - `ENABLE_IMAGE_GENERATION=false`
    - `IMAGE_MODE=cover_outro`
    - `IMAGE_PROVIDER=openai`

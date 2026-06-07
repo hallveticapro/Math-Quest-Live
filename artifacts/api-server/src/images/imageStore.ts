@@ -6,6 +6,14 @@ const CLEANUP_INTERVAL_MS = 5 * 60 * 1000;
 
 const images = new Map<string, StoredImage>();
 
+function readPositiveInt(value: string | undefined, fallback: number) {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed) || parsed <= 0) return fallback;
+  return Math.floor(parsed);
+}
+
+const MAX_STORED_IMAGES = readPositiveInt(process.env.MAX_STORED_IMAGES, 120);
+
 function cleanupExpiredImages() {
   const now = Date.now();
   for (const [id, image] of images.entries()) {
@@ -16,6 +24,23 @@ function cleanupExpiredImages() {
 }
 
 setInterval(cleanupExpiredImages, CLEANUP_INTERVAL_MS).unref();
+
+function pruneOldestImagesToCapacity() {
+  while (images.size >= MAX_STORED_IMAGES) {
+    let oldestId: string | undefined;
+    let oldestCreatedAt = Number.POSITIVE_INFINITY;
+
+    for (const [id, image] of images.entries()) {
+      if (image.createdAt < oldestCreatedAt) {
+        oldestId = id;
+        oldestCreatedAt = image.createdAt;
+      }
+    }
+
+    if (!oldestId) return;
+    images.delete(oldestId);
+  }
+}
 
 export function storeImage({
   buffer,
@@ -29,6 +54,7 @@ export function storeImage({
   ttlMs?: number;
 }) {
   cleanupExpiredImages();
+  pruneOldestImagesToCapacity();
   const id = `img_${crypto.randomUUID()}`;
   const now = Date.now();
   images.set(id, {

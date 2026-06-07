@@ -1,5 +1,6 @@
 import crypto from "node:crypto";
 import { Router } from "express";
+import type { Response } from "express";
 import {
   StartGameBody,
   TakeTurnBody,
@@ -22,7 +23,7 @@ import {
   type EpisodePlan,
 } from "./storyPrompt.js";
 import { checkStoryTurnSafety, checkEndingSafety } from "./safety.js";
-import { openai, STORY_MODEL } from "../../lib/openaiClient.js";
+import { requireOpenAI, STORY_MODEL } from "../../lib/openaiClient.js";
 import { maybeGenerateSceneImage, requestSceneImage } from "../../images/imageService.js";
 import type { ImageMetadata } from "../../images/imageTypes.js";
 
@@ -305,6 +306,8 @@ type PendingTurn = {
   id: string;
   kind: PreparedTurnResult["kind"];
   turn: number;
+  clientKey: string;
+  episodeId?: string;
   expiresAt: number;
   promise: Promise<PreparedTurnResult>;
 };
@@ -321,11 +324,26 @@ const EPISODE_PLAN_TTL_MS = 3 * 60 * 60 * 1000;
 const pendingTurns = new Map<string, PendingTurn>();
 const episodePlans = new Map<string, { plan: EpisodePlan; expiresAt: number }>();
 
+function readPositiveInt(value: string | undefined, fallback: number) {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed) || parsed <= 0) return fallback;
+  return Math.floor(parsed);
+}
+
+const MAX_PENDING_TURNS = readPositiveInt(process.env.MAX_PENDING_TURNS, 120);
+const MAX_PENDING_TURNS_PER_CLIENT = readPositiveInt(
+  process.env.MAX_PENDING_TURNS_PER_CLIENT,
+  4,
+);
+const MAX_PENDING_TURNS_PER_EPISODE = readPositiveInt(
+  process.env.MAX_PENDING_TURNS_PER_EPISODE,
+  2,
+);
+const MAX_EPISODE_PLANS = readPositiveInt(process.env.MAX_EPISODE_PLANS, 300);
+
 function readStoryTimeoutMs() {
-  const parsed = Number(process.env.STORY_TIMEOUT_MS ?? "30000");
-  if (!Number.isFinite(parsed) || parsed < 1000 || parsed > 120000) {
-    return 30000;
-  }
+  const parsed = readPositiveInt(process.env.STORY_TIMEOUT_MS, 30000);
+  if (parsed < 1000 || parsed > 120000) return 30000;
   return parsed;
 }
 
@@ -355,7 +373,36 @@ function createEpisodeId() {
   return `episode_${crypto.randomUUID()}`;
 }
 
+function capacityResponse(
+  res: Response,
+  status: 429 | 503,
+  error: "too_many_pending_turns" | "capacity_reached",
+  message: string,
+) {
+  res.status(status).json({ error, message });
+}
+
+function countPendingTurnsForClient(clientKey: string) {
+  let count = 0;
+  for (const pending of pendingTurns.values()) {
+    if (pending.clientKey === clientKey) count += 1;
+  }
+  return count;
+}
+
+function countPendingTurnsForEpisode(episodeId: string | undefined) {
+  if (!episodeId) return 0;
+  let count = 0;
+  for (const pending of pendingTurns.values()) {
+    if (pending.episodeId === episodeId) count += 1;
+  }
+  return count;
+}
+
 function storeEpisodePlan(plan: EpisodePlan) {
+  cleanupPendingTurns();
+  if (episodePlans.size >= MAX_EPISODE_PLANS) return null;
+
   const episodeId = createEpisodeId();
   episodePlans.set(episodeId, {
     plan,
@@ -384,6 +431,7 @@ function isMilestoneTurn(turn: number, maxTurns: number) {
 }
 
 async function callOpenAI(prompt: string): Promise<string> {
+  const openai = requireOpenAI();
   const controller = new AbortController();
   const timeoutMs = readStoryTimeoutMs();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
@@ -628,6 +676,30 @@ router.post("/prepare", (req, res) => {
   }
 
   cleanupPendingTurns();
+  const clientKey = req.ip ?? "unknown";
+  if (pendingTurns.size >= MAX_PENDING_TURNS) {
+    capacityResponse(
+      res,
+      503,
+      "capacity_reached",
+      "The Chronicle is helping many heroes right now. Please try again in a moment.",
+    );
+    return;
+  }
+
+  if (
+    countPendingTurnsForClient(clientKey) >= MAX_PENDING_TURNS_PER_CLIENT ||
+    countPendingTurnsForEpisode(parsed.episodeId) >= MAX_PENDING_TURNS_PER_EPISODE
+  ) {
+    capacityResponse(
+      res,
+      429,
+      "too_many_pending_turns",
+      "The next page is already being prepared. Please wait a moment.",
+    );
+    return;
+  }
+
   const pendingId = `pending_${crypto.randomUUID()}`;
   const promise = generatePreparedTurn(parsed).catch((err) => {
     req.log.error({ err, kind: parsed.kind, turn: parsed.turn }, "Prepared turn generation failed");
@@ -641,6 +713,8 @@ router.post("/prepare", (req, res) => {
     id: pendingId,
     kind: parsed.kind,
     turn: parsed.turn,
+    clientKey,
+    episodeId: parsed.episodeId,
     expiresAt: Date.now() + PENDING_TURN_TTL_MS,
     promise,
   });
@@ -684,6 +758,16 @@ router.post("/start", async (req, res) => {
   try {
     const episodePlan = createEpisodePlan(parsed.data);
     const episodeId = storeEpisodePlan(episodePlan);
+    if (!episodeId) {
+      capacityResponse(
+        res,
+        503,
+        "capacity_reached",
+        "The Chronicle is holding too many open quest notes right now. Please try again in a moment.",
+      );
+      return;
+    }
+
     const prompt = buildStartPrompt(parsed.data, episodePlan);
     const raw = await callOpenAI(prompt);
     const data = parseJSON(raw);
@@ -713,7 +797,7 @@ router.post("/start", async (req, res) => {
   } catch (err) {
     req.log.error({ err }, "Failed to generate start scene");
     const episodePlan = createEpisodePlan(parsed.data);
-    const episodeId = storeEpisodePlan(episodePlan);
+    const episodeId = storeEpisodePlan(episodePlan) ?? undefined;
     res.json({ ...buildGenreFallbackScene(episodePlan), episodeId });
   }
 });

@@ -9,6 +9,16 @@ import { createRateLimit } from "./lib/rateLimit";
 
 const app: Express = express();
 
+function readTrustProxy(value: string | undefined): boolean | number | string {
+  if (!value || value.toLowerCase() === "false" || value === "0") return false;
+  if (value.toLowerCase() === "true") return true;
+  const parsed = Number(value);
+  if (Number.isInteger(parsed) && parsed > 0) return parsed;
+  return value;
+}
+
+app.set("trust proxy", readTrustProxy(process.env.TRUST_PROXY));
+
 app.use(
   pinoHttp({
     logger,

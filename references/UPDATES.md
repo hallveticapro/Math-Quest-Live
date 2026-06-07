@@ -2,6 +2,10 @@
 
 Newest entries first. Add a concise timestamped entry for every meaningful project change before creating the related commit.
 
+## 2026-06-07T10:00:07-04:00
+
+- Completed Code Review Resolution Plan Phase 3 by adding explicit `TRUST_PROXY` deployment configuration, documenting public CORS/rate-limit/cap guidance, bounding pending prepared turns, episode plans, image jobs, and stored images in memory, and allowing the API server to boot for health/static diagnostics without `OPENAI_API_KEY` while preserving safe AI fallback behavior.
+
 ## 2026-06-07T09:54:49-04:00
 
 - Completed Code Review Resolution Plan Phase 2 by adding prepared-turn `lastMathSkill` metadata to OpenAPI/generated contracts, replacing local frontend prepare/resolve wrappers with generated client calls, using generated zod schemas for backend prepare/resolve body parsing, and passing frontend/API typecheck, smoke, and build validation.

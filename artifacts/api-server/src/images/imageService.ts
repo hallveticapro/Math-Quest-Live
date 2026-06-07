@@ -27,6 +27,14 @@ const imageJobs = new Map<
 >();
 const IMAGE_JOB_TTL_MS = 45 * 60 * 1000;
 
+function readPositiveInt(value: string | undefined, fallback: number) {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed) || parsed <= 0) return fallback;
+  return Math.floor(parsed);
+}
+
+const MAX_IMAGE_JOBS = readPositiveInt(process.env.MAX_IMAGE_JOBS, 120);
+
 function cleanupImageJobs() {
   const now = Date.now();
   for (const [id, job] of imageJobs.entries()) {
@@ -161,6 +169,14 @@ export function requestSceneImage({
       provider: config.provider === "openai" ? "openai" : "unsupported",
       model: config.model,
     };
+  }
+
+  if (imageJobs.size >= MAX_IMAGE_JOBS) {
+    logger.warn(
+      { maxImageJobs: MAX_IMAGE_JOBS },
+      "Image job capacity reached; skipping optional scene image",
+    );
+    return { enabled: true, status: "failed", error: "image_generation_failed" };
   }
 
   const promise = generateAndStoreSceneImage({ context, turn }).then((result) => {
