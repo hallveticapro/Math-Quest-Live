@@ -14,6 +14,24 @@ if (Number.isNaN(port) || port <= 0) {
 const basePath = process.env.BASE_PATH ?? "/";
 const apiProxyTarget = process.env.API_PROXY_TARGET ?? "http://localhost:8080";
 const host = process.env.HOST ?? "127.0.0.1";
+const defaultAllowedHosts = ["localhost", "127.0.0.1", "::1", host];
+
+function readAllowedHosts() {
+  const raw = process.env.VITE_ALLOWED_HOSTS;
+  if (!raw) return Array.from(new Set(defaultAllowedHosts));
+  if (raw.trim() === "*") return true;
+  return Array.from(
+    new Set([
+      ...defaultAllowedHosts,
+      ...raw
+        .split(",")
+        .map((entry) => entry.trim())
+        .filter(Boolean),
+    ]),
+  );
+}
+
+const allowedHosts = readAllowedHosts();
 
 export default defineConfig({
   base: basePath,
@@ -24,7 +42,6 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "src"),
-      "@assets": path.resolve(import.meta.dirname, "..", "..", "attached_assets"),
     },
     dedupe: ["react", "react-dom"],
   },
@@ -37,7 +54,7 @@ export default defineConfig({
     port,
     strictPort: true,
     host,
-    allowedHosts: true,
+    allowedHosts,
     proxy: {
       "/api": {
         target: apiProxyTarget,
@@ -51,6 +68,6 @@ export default defineConfig({
   preview: {
     port,
     host,
-    allowedHosts: true,
+    allowedHosts,
   },
 });

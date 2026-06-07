@@ -2,6 +2,10 @@
 
 Newest entries first. Add a concise timestamped entry for every meaningful project change before creating the related commit.
 
+## 2026-06-07T10:09:44-04:00
+
+- Completed Code Review Resolution Plan Phase 6 by changing settings selected badges to icon-only checkmarks with `aria-pressed` preserved, reviewing and intentionally retaining Hamster ancestry pending any explicit product removal decision, deleting the unused `attached_assets` prompt artifact and `@assets` Vite alias, and replacing open Vite allowed hosts with a documented `VITE_ALLOWED_HOSTS` configuration.
+
 ## 2026-06-07T10:07:45-04:00
 
 - Completed Code Review Resolution Plan Phase 5 by deleting unused UI scaffold files, keeping only `card`, `dialog`, `toast`, `toaster`, and `tooltip`, pruning their unused frontend dependencies and stale catalog entries, removing the tooltip sourcemap warning, and passing frontend typecheck plus full build. The remaining Vite chunk-size warning is accepted temporarily at `index-Q3TSOvPD.js` 525.83 kB minified / 159.68 kB gzip pending later code-splitting or React Query cleanup.

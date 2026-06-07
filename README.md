@@ -82,6 +82,7 @@ Optional:
 - `STATIC_DIR` - Directory containing the built frontend files. Docker sets this to `/app/public`.
 - `FRONTEND_PORT` - Vite dev server port. Defaults to `18567`.
 - `HOST` - Vite dev server host. Defaults to `127.0.0.1`.
+- `VITE_ALLOWED_HOSTS` - Optional comma-separated hostnames allowed by the Vite dev/preview server. Defaults to `localhost`, `127.0.0.1`, `::1`, and the configured `HOST`. Set to `*` only for deliberate tunnel/LAN testing.
 - `BASE_PATH` - Vite base path. Defaults to `/`.
 - `API_PROXY_TARGET` - Vite dev proxy target for `/api`. Defaults to `http://localhost:8080`.
 - `ENABLE_IMAGE_GENERATION` - Enables backend-only generated illustrations when set to `true`. Defaults to `false`.
