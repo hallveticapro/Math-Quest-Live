@@ -12,7 +12,7 @@ This plan converts every action item from `MATHQUEST_CODE_REVIEW_2026-06-06.md` 
 
 ## Current Execution Status
 
-This plan is both the implementation roadmap and the durable status tracker for resolving every action item in `MATHQUEST_CODE_REVIEW_2026-06-06.md`. As of 2026-06-07 14:12 EDT, Phases 1-9 have local evidence and matching entries in `references/UPDATES.md`. Future work should continue at Phase 10 unless a fresh audit finds a regression in an earlier phase.
+This plan is both the implementation roadmap and the durable status tracker for resolving every action item in `MATHQUEST_CODE_REVIEW_2026-06-06.md`. As of 2026-06-07 14:20 EDT, Phases 1-10 have local evidence and matching entries in `references/UPDATES.md`. Future work should continue at Phase 11 unless a fresh audit finds a regression in an earlier phase.
 
 | Phase | Status | Evidence / next step |
 | --- | --- | --- |
@@ -25,12 +25,12 @@ This plan is both the implementation roadmap and the durable status tracker for 
 | Phase 7 - API client consistency | Complete | Commit `d14d30a` (`chore: normalize frontend API client usage`); `references/UPDATES.md` entry `2026-06-07T10:12:31-04:00`. |
 | Phase 8 - Expanded smoke coverage | Complete | Smoke tests now cover quick start, full Chronicler setup with audio-only setup settings, game settings full scope, ending flow, read-aloud start/stop with mocked browser speech, and pending image timeout. Validation passed: `npm run test:smoke`, frontend typecheck, and `npm run build`. |
 | Phase 9 - Math engine split | Complete | Math engine is split into `math/engineCore.ts` plus grade-owned generator modules under `math/generators/`; `mathEngine.ts` remains a compatibility facade. Validation passed: frontend typecheck, `npm run validate:math`, and `npm run build`. |
-| Phase 10 - Backend story route/prompt data split | Pending | Next phase to implement. Refactor-only phase after Phase 8 coverage. Must preserve prompt behavior or document intentional text deltas. |
-| Phase 11 - Final docs/review cleanup | Pending | Mark every review item resolved/deferred/superseded, run final validation suite, and record final evidence. |
+| Phase 10 - Backend story route/prompt data split | Complete | Story profile data, fallback lines, input validation, pending-turn stores, route response types, and TTL cleanup now live in route-adjacent modules. Representative start/turn/ending prompts compared byte-for-byte against commit `d0da2bb`; validation passed with API typecheck, `npm run validate:quest-starts`, `npm run test:smoke`, and `npm run build`. |
+| Phase 11 - Final docs/review cleanup | Pending | Next phase to implement. Mark every review item resolved/deferred/superseded, run final validation suite, and record final evidence. |
 
 ### Continue-From-Here Checklist
 
-1. Start with Phase 10.
+1. Start with Phase 11.
 2. Before coding each remaining phase, re-read that phase and inspect its listed files.
 3. Add or update `references/UPDATES.md` before each meaningful checkpoint commit.
 4. Run the targeted validation commands listed under that phase before committing.

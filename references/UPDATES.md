@@ -2,6 +2,10 @@
 
 Newest entries first. Add a concise timestamped entry for every meaningful project change before creating the related commit.
 
+## 2026-06-07T14:20:28-04:00
+
+- Completed Code Review Resolution Plan Phase 10 by splitting backend story profile data, fallback scene/ending copy, prepared-turn stores, route response types, and game input validation into route-adjacent modules while preserving route paths and response shapes. Representative start, turn, and ending prompts matched commit `d0da2bb` byte-for-byte, and validation passed with API typecheck, `npm run validate:quest-starts`, `npm run test:smoke`, and `npm run build`.
+
 ## 2026-06-07T14:12:45-04:00
 
 - Completed Code Review Resolution Plan Phase 9 by splitting the monolithic math engine into shared core helpers plus Grade 3, Grade 4, Grade 5, and Grade 5 Extreme generator modules while keeping `mathEngine.ts` as the compatibility facade. Validation passed with `pnpm --filter @workspace/mathquest-live run typecheck`, `npm run validate:math`, and `npm run build`.
