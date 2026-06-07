@@ -2,6 +2,10 @@
 
 Newest entries first. Add a concise timestamped entry for every meaningful project change before creating the related commit.
 
+## 2026-06-07T10:03:39-04:00
+
+- Completed Code Review Resolution Plan Phase 4 by removing the unused Drizzle/Postgres database workspace, API database dependency edges, stale TypeScript references, and starter hello script while preserving the no-database product constraint and passing deletion-proof searches, API typecheck, and full build validation.
+
 ## 2026-06-07T10:00:07-04:00
 
 - Completed Code Review Resolution Plan Phase 3 by adding explicit `TRUST_PROXY` deployment configuration, documenting public CORS/rate-limit/cap guidance, bounding pending prepared turns, episode plans, image jobs, and stored images in memory, and allowing the API server to boot for health/static diagnostics without `OPENAI_API_KEY` while preserving safe AI fallback behavior.
