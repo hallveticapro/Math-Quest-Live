@@ -2,6 +2,14 @@
 
 Newest entries first. Add a concise timestamped entry for every meaningful project change before creating the related commit.
 
+## 2026-06-07T10:07:45-04:00
+
+- Completed Code Review Resolution Plan Phase 5 by deleting unused UI scaffold files, keeping only `card`, `dialog`, `toast`, `toaster`, and `tooltip`, pruning their unused frontend dependencies and stale catalog entries, removing the tooltip sourcemap warning, and passing frontend typecheck plus full build. The remaining Vite chunk-size warning is accepted temporarily at `index-Q3TSOvPD.js` 525.83 kB minified / 159.68 kB gzip pending later code-splitting or React Query cleanup.
+
+## 2026-06-07T10:05:05-04:00
+
+- Recorded Code Review Resolution Plan Phase 5 UI scaffold inventory before deletion. App source directly imports only `components/ui/card`, `dialog`, `toast`, `toaster`, and `tooltip`; all other files under `artifacts/mathquest-live/src/components/ui/` were classified as unused scaffold pending deletion after dependency proof.
+
 ## 2026-06-07T10:03:39-04:00
 
 - Completed Code Review Resolution Plan Phase 4 by removing the unused Drizzle/Postgres database workspace, API database dependency edges, stale TypeScript references, and starter hello script while preserving the no-database product constraint and passing deletion-proof searches, API typecheck, and full build validation.
