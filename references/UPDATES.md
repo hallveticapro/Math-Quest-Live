@@ -2,6 +2,14 @@
 
 Newest entries first. Add a concise timestamped entry for every meaningful project change before creating the related commit.
 
+## 2026-06-07T14:12:45-04:00
+
+- Completed Code Review Resolution Plan Phase 9 by splitting the monolithic math engine into shared core helpers plus Grade 3, Grade 4, Grade 5, and Grade 5 Extreme generator modules while keeping `mathEngine.ts` as the compatibility facade. Validation passed with `pnpm --filter @workspace/mathquest-live run typecheck`, `npm run validate:math`, and `npm run build`.
+
+## 2026-06-07T14:08:16-04:00
+
+- Recorded the Code Review Resolution Plan Phase 9 pre-refactor math baseline. `npm run validate:math` passed before splitting `mathEngine.ts`, validating 20 generated problems for each difficulty plus every generator with 12 samples and 120 duplicate-choice stress samples.
+
 ## 2026-06-07T14:07:11-04:00
 
 - Completed Code Review Resolution Plan Phase 8 by expanding Playwright smoke coverage for Quick Start, the full Chronicler setup path, setup settings audio-only scope, game settings full scope, mocked ending flow, mocked browser read-aloud start/stop behavior, and pending image timeout behavior. Validation passed with `npm run test:smoke`, `pnpm --filter @workspace/mathquest-live run typecheck`, and `npm run build`.
