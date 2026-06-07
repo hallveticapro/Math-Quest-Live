@@ -2,6 +2,10 @@
 
 Newest entries first. Add a concise timestamped entry for every meaningful project change before creating the related commit.
 
+## 2026-06-07T14:24:10-04:00
+
+- Completed Code Review Resolution Plan Phase 11 by adding final review-item status evidence to `PLAN.md`, verifying docs for current env/validation guidance, confirming stale deleted-file references are historical only, and running the final validation suite. Passing commands: `pnpm --filter @workspace/mathquest-live run typecheck`, `pnpm --filter @workspace/api-server run typecheck`, `npm run validate:math`, `npm run validate:images`, `npm run validate:quest-starts`, `npm run build`, and `npm run test:smoke`. A production server startup smoke with `OPENAI_API_KEY=` also served `/api/healthz` as `{"status":"ok"}`. The remaining Vite chunk-size warning is documented as an accepted future code-splitting tradeoff.
+
 ## 2026-06-07T14:20:28-04:00
 
 - Completed Code Review Resolution Plan Phase 10 by splitting backend story profile data, fallback scene/ending copy, prepared-turn stores, route response types, and game input validation into route-adjacent modules while preserving route paths and response shapes. Representative start, turn, and ending prompts matched commit `d0da2bb` byte-for-byte, and validation passed with API typecheck, `npm run validate:quest-starts`, `npm run test:smoke`, and `npm run build`.

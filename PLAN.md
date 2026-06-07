@@ -12,13 +12,13 @@ This plan converts every action item from `MATHQUEST_CODE_REVIEW_2026-06-06.md` 
 
 ## Current Execution Status
 
-This plan is both the implementation roadmap and the durable status tracker for resolving every action item in `MATHQUEST_CODE_REVIEW_2026-06-06.md`. As of 2026-06-07 14:20 EDT, Phases 1-10 have local evidence and matching entries in `references/UPDATES.md`. Future work should continue at Phase 11 unless a fresh audit finds a regression in an earlier phase.
+This plan is both the implementation roadmap and the durable status tracker for resolving every action item in `MATHQUEST_CODE_REVIEW_2026-06-06.md`. As of 2026-06-07 14:24 EDT, Phases 1-11 are complete with local evidence and matching entries in `references/UPDATES.md`.
 
 | Phase | Status | Evidence / next step |
 | --- | --- | --- |
 | Phase 1 - Image pending state and image API contract | Complete | Commit `c419eaa` (`fix: handle pending image timeouts and image API schema`); `references/UPDATES.md` entry `2026-06-07T09:50:23-04:00`. |
 | Phase 2 - Prepared turn generated API contract | Complete | Commit `efd1163` (`chore: add prepared turn routes to API contract`); `references/UPDATES.md` entry `2026-06-07T09:54:49-04:00`. |
-| Phase 3 - AI-cost controls and OpenAI startup behavior | Complete | Commit `57cdeb5` (`chore: harden AI route limits and OpenAI startup`); `references/UPDATES.md` entry `2026-06-07T10:00:07-04:00`. |
+| Phase 3 - AI-cost controls and OpenAI startup behavior | Complete | Commit `57cdeb5` (`chore: harden AI route limits and OpenAI startup`); `references/UPDATES.md` entry `2026-06-07T10:00:07-04:00`. Final proof: `OPENAI_API_KEY= NODE_ENV=production PORT=39999 STATIC_DIR=artifacts/mathquest-live/dist/public node --enable-source-maps artifacts/api-server/dist/index.mjs` served `/api/healthz` as `{"status":"ok"}`. |
 | Phase 4 - Database scaffold and starter script cleanup | Complete | Commit `e8e7ce5` (`chore: remove unused database and starter script`); `references/UPDATES.md` entry `2026-06-07T10:03:39-04:00`. |
 | Phase 5 - Unused UI scaffold and dependency pruning | Complete | Commit `c8e35ce` (`chore: prune unused frontend UI scaffold`); `references/UPDATES.md` entries `2026-06-07T10:05:05-04:00` and `2026-06-07T10:07:45-04:00`. |
 | Phase 6 - Small UI and asset cleanup | Complete | Commit `9055336` (`fix: clean small UI and asset leftovers`); `references/UPDATES.md` entry `2026-06-07T10:09:44-04:00`. |
@@ -26,15 +26,11 @@ This plan is both the implementation roadmap and the durable status tracker for 
 | Phase 8 - Expanded smoke coverage | Complete | Smoke tests now cover quick start, full Chronicler setup with audio-only setup settings, game settings full scope, ending flow, read-aloud start/stop with mocked browser speech, and pending image timeout. Validation passed: `npm run test:smoke`, frontend typecheck, and `npm run build`. |
 | Phase 9 - Math engine split | Complete | Math engine is split into `math/engineCore.ts` plus grade-owned generator modules under `math/generators/`; `mathEngine.ts` remains a compatibility facade. Validation passed: frontend typecheck, `npm run validate:math`, and `npm run build`. |
 | Phase 10 - Backend story route/prompt data split | Complete | Story profile data, fallback lines, input validation, pending-turn stores, route response types, and TTL cleanup now live in route-adjacent modules. Representative start/turn/ending prompts compared byte-for-byte against commit `d0da2bb`; validation passed with API typecheck, `npm run validate:quest-starts`, `npm run test:smoke`, and `npm run build`. |
-| Phase 11 - Final docs/review cleanup | Pending | Next phase to implement. Mark every review item resolved/deferred/superseded, run final validation suite, and record final evidence. |
+| Phase 11 - Final docs/review cleanup | Complete | Final review item status table added below, docs/env guidance verified, stale active references checked, no-key server startup proof recorded, and final validation passed for every command listed in [Final Validation Results](#final-validation-results). |
 
 ### Continue-From-Here Checklist
 
-1. Start with Phase 11.
-2. Before coding each remaining phase, re-read that phase and inspect its listed files.
-3. Add or update `references/UPDATES.md` before each meaningful checkpoint commit.
-4. Run the targeted validation commands listed under that phase before committing.
-5. Do not mark this plan complete until Phase 11C's final validation suite exits `0`, or each failed command has an explicit blocker and next unblock step.
+All phases are complete. Before future work begins, start from a fresh `git status --short`, inspect `references/UPDATES.md`, and treat any new product request as a separate scoped task.
 
 ## Non-Negotiable Guardrails
 
@@ -923,6 +919,45 @@ Measurable acceptance:
 | Vite `allowedHosts: true` | Phase 6D | Env-driven config or documented rationale |
 | Build warnings | Phases 5D and 11B | Warnings removed or documented |
 | Dependency pruning | Phases 4, 5, and 7 | Package/import proof and lockfile update |
+
+## Final Review Item Status
+
+| Source review item | Final status | Evidence |
+| --- | --- | --- |
+| Pending story images can leave the UI stuck | Resolved | Phase 1 added an exhausted-poll branch and smoke coverage for pending image timeout. |
+| Image status route/schema missing from OpenAPI | Resolved | Phase 1 added ready/pending/failed status schemas plus `/api/images/status/{imageJobId}` and regenerated generated clients. |
+| Public AI-cost routes need stronger backpressure | Resolved | Phase 3 added documented CORS/proxy guidance, prepared-turn/episode/image caps, and friendly capacity responses. |
+| Prepared-turn runtime contracts drift from OpenAPI | Resolved | Phase 2 added prepared-turn OpenAPI schemas, regenerated generated clients, and switched frontend/backend consumers to generated contracts. |
+| Missing OpenAI key crashes server startup | Resolved | Phase 3 moved OpenAI access behind runtime requirement checks; README documents safe fallback/static diagnostics without a key. |
+| `mathEngine.ts` too large | Resolved | Phase 9 split shared helpers into `math/engineCore.ts` and grade-owned generator modules while preserving the public facade. |
+| Backend story route/prompt files too large | Resolved | Phase 10 split story data, fallbacks, input validation, pending stores, and route response types into route-adjacent modules. |
+| Database scaffold contradicts constraints | Resolved | Phase 4 removed `lib/db`, database workspace references, and unused database dependencies. |
+| Starter `hello` script | Resolved | Phase 4 removed the unused starter script and related package entry. |
+| Large unused UI scaffold | Resolved | Phase 5 removed unused scaffold components and pruned unused frontend dependencies. |
+| API client strategy inconsistent | Resolved | Phases 2 and 7 normalized game calls through generated API clients and removed the unused app-level query client. |
+| Thin smoke coverage outside math | Resolved | Phase 8 added smoke coverage for setup, settings scope, ending flow, browser speech start/stop, and pending image timeout. |
+| Frontend bundle size warning | Accepted tradeoff | Phase 5 and 7 reduced bundle inputs, but the main Vite JS chunk remains slightly over 500 kB. This is documented in `references/UPDATES.md` and should be handled later with focused code-splitting if needed. |
+| Settings selected badge text | Resolved | Phase 6 replaced visible selected text with icon-only selected badges while preserving accessible pressed state. |
+| Hamster ancestry decision | Superseded by product direction | Phase 6 documented retention; later product work added/kept approved animal ancestry options. No removal is planned without an explicit product decision. |
+| Unused `@assets` alias and old attached asset | Resolved | Phase 6 removed the Vite alias and old attached asset artifact; only historical update notes mention them now. |
+| Vite `allowedHosts: true` | Resolved | Phase 6 replaced open allowed hosts with documented `VITE_ALLOWED_HOSTS` configuration. |
+| Build warnings | Accepted tradeoff | Tooltip sourcemap warning was removed with scaffold cleanup. The remaining Vite chunk-size warning is non-fatal and documented as a future code-splitting candidate. |
+| Dependency pruning | Resolved | Phases 4, 5, and 7 removed database, unused UI, and unused direct React Query dependency edges while preserving generated client support. |
+
+## Final Validation Results
+
+All final validation commands exited `0` on 2026-06-07:
+
+| Command | Result | Notes |
+| --- | --- | --- |
+| `pnpm --filter @workspace/mathquest-live run typecheck` | Passed | Frontend TypeScript checked with `tsc -p tsconfig.json --noEmit`. |
+| `pnpm --filter @workspace/api-server run typecheck` | Passed | API TypeScript checked with `tsc -p tsconfig.json --noEmit`. |
+| `npm run validate:math` | Passed | Validated generated problems across all difficulties and per-generator stress samples. |
+| `npm run validate:images` | Passed | Image generation mode/config validation passed. |
+| `npm run validate:quest-starts` | Passed | Reported `921984` safe quest opening combinations. |
+| `npm run build` | Passed | Typechecks and workspace builds passed; the remaining Vite chunk-size warning is accepted as a future code-splitting tradeoff. |
+| `npm run test:smoke` | Passed | Playwright ran 5 smoke tests successfully. |
+| `OPENAI_API_KEY= NODE_ENV=production PORT=39999 STATIC_DIR=artifacts/mathquest-live/dist/public node --enable-source-maps artifacts/api-server/dist/index.mjs` plus `curl http://127.0.0.1:39999/api/healthz` | Passed | Server started without `OPENAI_API_KEY`; health endpoint returned `{"status":"ok"}`. |
 
 ## Recommended Commit Strategy
 
