@@ -2,6 +2,10 @@
 
 Newest entries first. Add a concise timestamped entry for every meaningful project change before creating the related commit.
 
+## 2026-06-07T10:12:31-04:00
+
+- Completed Code Review Resolution Plan Phase 7 by standardizing the frontend on generated async API client functions, removing the unused app-level `QueryClientProvider` and direct frontend `@tanstack/react-query` dependency, preserving generated hook support inside `@workspace/api-client-react`, and passing frontend typecheck, smoke, and build validation. The main frontend JS chunk is now 501.46 kB minified / 152.57 kB gzip and remains slightly over Vite's warning threshold pending deeper code-splitting.
+
 ## 2026-06-07T10:09:44-04:00
 
 - Completed Code Review Resolution Plan Phase 6 by changing settings selected badges to icon-only checkmarks with `aria-pressed` preserved, reviewing and intentionally retaining Hamster ancestry pending any explicit product removal decision, deleting the unused `attached_assets` prompt artifact and `@assets` Vite alias, and replacing open Vite allowed hosts with a documented `VITE_ALLOWED_HOSTS` configuration.

@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
@@ -46,8 +45,6 @@ import {
   buildQuickStartSession,
   type QuickStartSession,
 } from "./quickStart";
-
-const queryClient = new QueryClient();
 
 const FALLBACK_SCENE = {
   sceneTitle: "The Puzzle Path",
@@ -781,11 +778,9 @@ function GameApp() {
 
 export default function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <GameApp />
-        <Toaster />
-      </TooltipProvider>
-    </QueryClientProvider>
+    <TooltipProvider>
+      <GameApp />
+      <Toaster />
+    </TooltipProvider>
   );
 }
