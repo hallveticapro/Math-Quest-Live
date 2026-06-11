@@ -26,6 +26,7 @@ const imageJobs = new Map<
   }
 >();
 const IMAGE_JOB_TTL_MS = 45 * 60 * 1000;
+const COVER_IMAGE_WAIT_TIMEOUT_MS = 30 * 1000;
 
 function readPositiveInt(value: string | undefined, fallback: number) {
   const parsed = Number(value);
@@ -125,7 +126,8 @@ export async function maybeGenerateSceneImage({
   const inFlight = inFlightImages.get(requestKey);
   if (inFlight) return inFlight;
 
-  const imagePromise = generateAndStoreSceneImage({ context, turn });
+  const timeoutMs = isIntro || isEnding ? COVER_IMAGE_WAIT_TIMEOUT_MS : config.timeoutMs;
+  const imagePromise = generateAndStoreSceneImage({ context, turn, timeoutMs });
   inFlightImages.set(requestKey, imagePromise);
 
   try {
@@ -233,17 +235,20 @@ export async function getImageJobStatus(imageJobId: string): Promise<ImageMetada
 async function generateAndStoreSceneImage({
   context,
   turn,
+  timeoutMs,
 }: {
   context: ImageRequestContext;
   turn?: number;
+  timeoutMs?: number;
 }): Promise<ImageMetadata | undefined> {
   const config = getImageConfig();
   const alt = buildImageAlt(context);
   const prompt = buildImagePrompt(context);
-  const result = await withTimeout(callProvider({ prompt, alt }), config.timeoutMs);
+  const imageTimeoutMs = timeoutMs ?? config.timeoutMs;
+  const result = await withTimeout(callProvider({ prompt, alt }), imageTimeoutMs);
 
   if (result === "timeout") {
-    logger.warn({ timeoutMs: config.timeoutMs, kind: context.kind, turn }, "Image generation timed out");
+    logger.warn({ timeoutMs: imageTimeoutMs, kind: context.kind, turn }, "Image generation timed out");
     return { enabled: true, status: "failed", error: "image_generation_failed" };
   }
 

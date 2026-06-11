@@ -37,9 +37,9 @@ function readEnum<T extends string>(value: string | undefined, allowed: Set<T>, 
 }
 
 function readTimeoutMs(value: string | undefined) {
-  const parsed = Number(value ?? "45000");
+  const parsed = Number(value ?? "30000");
   if (!Number.isFinite(parsed) || parsed < 1000 || parsed > 120000) {
-    return 45000;
+    return 30000;
   }
   return parsed;
 }

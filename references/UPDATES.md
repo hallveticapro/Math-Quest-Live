@@ -1,3 +1,4 @@
+2026-06-08: Capped blocking intro and outro image waits at 30 seconds.
 2026-06-07: Removed stale completed review docs and trimmed AGENTS guidance.
 2026-06-07: Completed final review cleanup validation and recorded status evidence.
 2026-06-07: Split backend story route data, stores, validation, and fallback modules.
