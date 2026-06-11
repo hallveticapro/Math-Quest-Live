@@ -26,7 +26,6 @@ const imageJobs = new Map<
   }
 >();
 const IMAGE_JOB_TTL_MS = 45 * 60 * 1000;
-const COVER_IMAGE_WAIT_TIMEOUT_MS = 30 * 1000;
 
 function readPositiveInt(value: string | undefined, fallback: number) {
   const parsed = Number(value);
@@ -126,8 +125,11 @@ export async function maybeGenerateSceneImage({
   const inFlight = inFlightImages.get(requestKey);
   if (inFlight) return inFlight;
 
-  const timeoutMs = isIntro || isEnding ? COVER_IMAGE_WAIT_TIMEOUT_MS : config.timeoutMs;
-  const imagePromise = generateAndStoreSceneImage({ context, turn, timeoutMs });
+  const imagePromise = generateAndStoreSceneImage({
+    context,
+    turn,
+    timeoutMs: config.timeoutMs,
+  });
   inFlightImages.set(requestKey, imagePromise);
 
   try {

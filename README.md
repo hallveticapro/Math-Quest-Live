@@ -92,7 +92,7 @@ Optional:
 - `IMAGE_QUALITY` - Image quality. Valid values are `low`, `medium`, and `high`. Defaults to `medium`.
 - `IMAGE_SIZE` - Generated image size. Defaults to `1024x1024`.
 - `IMAGE_STYLE` - Image prompt style. Defaults to `cartoon-fantasy`.
-- `IMAGE_TIMEOUT_MS` - Maximum time regular backend image jobs will wait before giving up. Defaults to `30000`; intro/cover and ending/outro scene responses always wait up to 30 seconds for their images before continuing without one.
+- `IMAGE_TIMEOUT_MS` - Maximum time backend image jobs will wait before giving up. Defaults to `30000`; intro/cover and ending/outro scene responses wait for their images up to this timeout before continuing without one.
 - `IMAGE_STORAGE_MODE` - Temporary image storage mode. Currently `memory`.
 
 Copy `.env.example` to `.env` for local use and fill in your real key:
@@ -273,7 +273,7 @@ Image modes:
 - `milestones` - Generate intro, every second story turn, and ending images.
 - `every_scene` - Attempt an image for each generated scene and ending.
 
-Images can increase cost and latency. `every_scene` should be used cautiously. Cover and outro images are allowed up to 30 seconds to finish before those scenes appear; regular in-story images stay non-blocking, so story text returns first and eligible images appear later if they finish in time. Image generation failure, rate limits, timeouts, or unsupported providers do not stop gameplay; the app continues with the story text and math challenge.
+Images can increase cost and latency. `every_scene` should be used cautiously. Cover and outro images wait up to `IMAGE_TIMEOUT_MS` to finish before those scenes appear; regular in-story images stay non-blocking, so story text returns first and eligible images appear later if they finish in time. Image generation failure, rate limits, timeouts, or unsupported providers do not stop gameplay; the app continues with the story text and math challenge.
 
 After the intro, the app starts preparing the next scene as soon as the student chooses an action. The student solves the required math challenge while the backend generates the next story text and any eligible image. The prepared scene is only revealed after a correct math answer, so the math gate remains required.
 
